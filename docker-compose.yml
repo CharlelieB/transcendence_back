@@ -15,6 +15,7 @@ services:
     command: >
       bash -c "python manage.py makemigrations &&
       python manage.py migrate &&
+      python create_superuser.py &&
       python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
@@ -22,6 +23,7 @@ services:
       - "8000:8000"
     env_file:
       - .env.db
+      - .env.backend
     depends_on:
       - db
     networks:
