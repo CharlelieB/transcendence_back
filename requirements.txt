@@ -1,4 +1,5 @@
 Django
 djangorestframework
+djangorestframework-simplejwt
 django-filter
 psycopg2-binary
