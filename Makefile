@@ -1,4 +1,4 @@
-all: run
+all: up
 
 run:
 	docker compose run backend django-admin startproject transcendence .
