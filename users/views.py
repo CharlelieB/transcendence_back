@@ -1,54 +1,63 @@
-from django.http import JsonResponse
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework import generics, status
 from rest_framework.views import APIView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-from django.contrib.auth import authenticate, login
-from rest_framework.permissions import AllowAny
-from .serializers import UserRegistrationSerializer, UserLoginSerializer
-from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from .models import UserProfile
+from .serializers import UserProfileSerializer
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
 
-        # Add custom claims
-        token['username'] = user.username
-        # ...
+class RegisterUserView(APIView):
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
-        return token
+    def post(self, request):
+        # Vérifier si l'email est déjà utilisé
+        if UserProfile.objects.filter(email=request.data['email']).exists():
+            return Response({'error': 'Email déjà enregistré'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            serializer = UserProfileSerializer(data=request.data)
 
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
+        # Valider et sauvegarder les données
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
- 
-def getRoutes(request):
-    routes = [
-        '/api/token',
-        '/api/token/refresh',
-    ]
-    return Response(routes)
 
-class UserRegistrationView(generics.CreateAPIView):
-    serializer_class = UserRegistrationSerializer
-    permission_classes = [AllowAny]
+class UserView(APIView):
+    permission_classes = (IsAuthenticated,)
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
-class UserLoginView(APIView):
-    permission_classes = [AllowAny]
+    def get(self, request):
+        serializer = UserProfileSerializer(request.user, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
-        serializer = UserLoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = authenticate(
-            request,
-            username=serializer.validated_data['username'],
-            password=serializer.validated_data['password']
-        )
-        if user is not None:
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({"token": token.key}, status=status.HTTP_200_OK)
-        return Response({"error": "Invalid Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request):
+        user = UserProfile.objects.get(email=request.user.email)
+        
+        # Mise à jour du nom d'utilisateur
+        if 'username' in request.data:
+            user.username = request.data['username']
+        
+        # Mise à jour du mot de passe
+        if 'password' in request.data:
+            user.set_password(request.data['password'])
+        
+        # Mise à jour de l'avatar
+        #if 'avatar' in request.data:
+         #   user.avatar = request.data['avatar']
+        
+        # Sauvegarder les modifications
+        user.save()
+        
+        return Response({'message': 'Profil mis à jour avec succès'}, status=status.HTTP_200_OK)
+
+
+class AllUsersView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        users = UserProfile.objects.all()
+        serializer = UserProfileSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
