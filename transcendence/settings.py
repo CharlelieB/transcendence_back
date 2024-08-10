@@ -36,18 +36,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg', #swager
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
-	'base.apps.BaseConfig',
-	'authenfication',
+    'rest_framework.authtoken',
+	#'base.apps.BaseConfig',
+	#'authenfication',
+    'users',
 ]
 
 REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+   )
 }
 
 
@@ -174,7 +177,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend/static'),
+   os.path.join(BASE_DIR, 'frontend/static'),
 ]
 
 MEDIA_URL = '/media/'
@@ -183,4 +186,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+#DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SWAGGER_SETTINGS = {
+   'LOGIN_URL' : '/admin/login/',
+   'LOGOUT_URL' : '/admin/logout/'
+}
+
+#AUTH_USER_MODEL = 'user.CustomUser'
+
