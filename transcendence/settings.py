@@ -193,5 +193,4 @@ SWAGGER_SETTINGS = {
    'LOGOUT_URL' : '/admin/logout/'
 }
 
-#AUTH_USER_MODEL = 'user.CustomUser'
-
+AUTH_USER_MODEL = 'users.UserProfile'
