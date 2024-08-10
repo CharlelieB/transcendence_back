@@ -1,5 +1,8 @@
 from django.contrib import admin
-from authenfication.models import GameUser
+
+
+from django.contrib import admin
+from users.models import GameUser
 
 # Register your models here.
 @admin.register(GameUser)
