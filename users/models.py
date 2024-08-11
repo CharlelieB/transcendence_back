@@ -28,13 +28,16 @@ class UserProfileManager(BaseUserManager):
 
         return self.create_user(email, username, password, **extra_fields)
 
-from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+
+def upload_to(instance, filename):
+    # Définir le chemin d'upload personnalisé
+    return f'images/{filename}'
+
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255, unique=True)
-    avatar = models.URLField(blank=True, null=True)
+    avatar = models.ImageField(upload_to=upload_to, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
