@@ -31,7 +31,7 @@ class UserProfileManager(BaseUserManager):
 
 def upload_to(instance, filename):
     # Définir le chemin d'upload personnalisé
-    return f'images/{filename}'
+    return f'avatars/{filename}'
 
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):

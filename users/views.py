@@ -34,6 +34,15 @@ class UserView(APIView):
     def put(self, request):
         user = UserProfile.objects.get(email=request.user.email)
         
+         
+        # Vérification si le nom d'utilisateur existe déjà
+        if 'username' in request.data and request.data['username'] != user.username:
+            if UserProfile.objects.filter(username=request.data['username']).exists():
+                return Response(
+                    {'error': 'Ce nom d\'utilisateur est déjà pris.'},
+                    status=status.HTTP_409_CONFLICT
+                )
+        
         # Mise à jour du nom d'utilisateur
         if 'username' in request.data:
             user.username = request.data['username']

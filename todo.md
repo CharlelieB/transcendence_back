@@ -4,9 +4,9 @@
 
 - [x] Avatar profile
 - [ ] Db table stats
-- [ ] Tester update info (mot de passe, username...)
+- [x] Tester update info (mot de passe, username...)
 - [ ] Lire doc front token
-- [ ] Systeme followers 
+- [ ] Systeme followers
 
 ### 10/08
 
