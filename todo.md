@@ -3,10 +3,10 @@
 ### 11/08
 
 - [ ] Avatar profile
-- [] Db table stats
-- [] Tester update info (mot de passe, username...)
-- [] Lire doc front token
-- [] Systeme followers 
+- [ ] Db table stats
+- [ ] Tester update info (mot de passe, username...)
+- [ ] Lire doc front token
+- [ ] Systeme followers 
 
 ### 10/08
 
