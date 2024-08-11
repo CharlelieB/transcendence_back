@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from rest_framework.decorators import api_view, permission_classes
 from .models import UserProfile
 from .serializers import UserProfileSerializer
 
@@ -66,5 +67,63 @@ class AllUsersView(APIView):
 
     def get(self, request):
         users = UserProfile.objects.all()
+        serializer = UserProfileSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FollowProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, profile_id):
+        try:
+            user_profile = request.user
+            profile_to_follow = UserProfile.objects.get(id=profile_id)
+            
+            if profile_to_follow == user_profile:
+                return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            user_profile.following.add(profile_to_follow)
+            user_profile.save()
+
+            return Response({'detail': f'You are now following {profile_to_follow.username}.'}, status=status.HTTP_200_OK)
+        except UserProfile.DoesNotExist:
+            return Response({'detail': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+class UnfollowProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, profile_id):
+        try:
+            user_profile = request.user  # Assuming request.user is already a UserProfile instance
+            profile_to_unfollow = UserProfile.objects.get(id=profile_id)
+            
+            if profile_to_unfollow == user_profile:
+                return Response({'detail': 'You cannot unfollow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            user_profile.following.remove(profile_to_unfollow)
+            user_profile.save()
+
+            return Response({'detail': f'You have unfollowed {profile_to_unfollow.username}.'}, status=status.HTTP_200_OK)
+        except UserProfile.DoesNotExist:
+            return Response({'detail': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class UserFollowersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, profile_id):
+        try:
+            profile = UserProfile.objects.get(id=profile_id)
+            followers = profile.followers.all()  # Accessing the related_name
+            serializer = UserProfileSerializer(followers, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except UserProfile.DoesNotExist:
+            return Response({'detail': 'Profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+class BulkUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user_ids = request.data.get('user_ids', [])
+        users = UserProfile.objects.filter(id__in=user_ids)
         serializer = UserProfileSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
