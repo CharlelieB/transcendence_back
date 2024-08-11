@@ -11,13 +11,11 @@ class RegisterUserView(APIView):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def post(self, request):
-        # Vérifier si l'email est déjà utilisé
         if UserProfile.objects.filter(email=request.data['email']).exists():
             return Response({'error': 'Email déjà enregistré'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            serializer = UserProfileSerializer(data=request.data)
+        
+        serializer = UserProfileSerializer(data=request.data)
 
-        # Valider et sauvegarder les données
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -45,8 +43,8 @@ class UserView(APIView):
             user.set_password(request.data['password'])
         
         # Mise à jour de l'avatar
-        #if 'avatar' in request.data:
-         #   user.avatar = request.data['avatar']
+        if 'avatar' in request.data:
+            user.avatar = request.data['avatar']
         
         # Sauvegarder les modifications
         user.save()
