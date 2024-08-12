@@ -6,9 +6,13 @@ from .models import UserProfile, UserStats
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+
+    following = serializers.PrimaryKeyRelatedField(many=True, queryset=UserProfile.objects.all())
+    followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = UserProfile
-        fields = ('id', 'email', 'username', 'password', 'avatar')
+        fields = ('id', 'email', 'username', 'password', 'avatar', 'following', 'followers')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):

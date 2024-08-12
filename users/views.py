@@ -8,6 +8,8 @@ from .serializers import UserProfileSerializer, UserStatsSerializer
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework.decorators import api_view, permission_classes
+
 
 class RegisterUserView(APIView):
     """
@@ -135,16 +137,16 @@ class FollowProfileView(APIView):
         """
         Suivre un utilisateur spécifique par son ID.
         """
+
         try:
             user_profile = request.user
             profile_to_follow = UserProfile.objects.get(id=profile_id)
             
             if profile_to_follow == user_profile:
-                return Response({'detail': 'Vous ne pouvez pas vous suivre vous-même.'}, status=status.HTTP_400_BAD_REQUEST)
-
+                return Response({'detail': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
             user_profile.following.add(profile_to_follow)
             user_profile.save()
-
+            
             return Response({'detail': f'Vous suivez maintenant {profile_to_follow.username}.'}, status=status.HTTP_200_OK)
         except UserProfile.DoesNotExist:
             return Response({'detail': 'Profil non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
@@ -297,12 +299,7 @@ class IncrementWins(APIView):
         user_stats.save()
         return Response({"message": "Statistiques mises à jour avec succès"}, status=200)
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from .models import UserStats
-from django.shortcuts import get_object_or_404
-from drf_yasg.utils import swagger_auto_schema
+
 
 class IncrementLosses(APIView):
     """

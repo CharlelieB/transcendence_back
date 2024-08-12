@@ -37,6 +37,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=255, unique=True)
     avatar = models.ImageField(upload_to=upload_to, null=True, blank=True)
+    following = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
