@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import RegisterUserView, UserView, AllUsersView, FollowProfileView, UnfollowProfileView, UserFollowersView, BulkUserView,, UserStatsView, IncrementWins, IncrementLosses
+from .views import RegisterUserView, UserView, AllUsersView, FollowProfileView, UnfollowProfileView, UserFollowersView, BulkUserView, UserStatsView, IncrementWins, IncrementLosses
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
