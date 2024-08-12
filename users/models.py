@@ -64,10 +64,14 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+
+
 class UserStats(models.Model):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
     games_played = models.IntegerField(default=0)
     # elo_rating = models.IntegerField(default=1000)  # Cette ligne est supprimée
-
+    
+    def __str__(self):
+        return f"Stats {self.user.username}"
