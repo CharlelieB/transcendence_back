@@ -42,6 +42,7 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),#swager
     path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
+    path('api/games/', include('games.urls')),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),  # Catch-all for frontend routes
 ]
 

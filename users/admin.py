@@ -1,7 +1,4 @@
 from django.contrib import admin
-
-
-from django.contrib import admin
 from users.models import UserProfile, UserStats
 
 # Register your models here.
