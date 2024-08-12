@@ -1,12 +1,17 @@
 ## Todo
+### 12/08
+
+- [ ] game history
+- [ ] test.sh
+
 
 ### 11/08
 
 - [x] Avatar profile
-- [ ] Db table stats
+- [x] Db table stats
 - [x] Tester update info (mot de passe, username...)
 - [ ] Lire doc front token
-- [ ] Systeme followers
+- [x] Systeme followers
 
 ### 10/08
 
