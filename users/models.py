@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
-
 class UserProfileManager(BaseUserManager):
     """Manager for user profiles"""
 
@@ -27,11 +26,9 @@ class UserProfileManager(BaseUserManager):
 
         return self.create_user(email, username, password, **extra_fields)
 
-
 def upload_to(instance, filename):
     # Définir le chemin d'upload personnalisé
     return f'avatars/{filename}'
-
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
@@ -40,6 +37,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     following = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_two_factor_enabled = models.BooleanField(default=False)  # Nouveau champ
 
     objects = UserProfileManager()
 
@@ -65,14 +63,11 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
-
-
 class UserStats(models.Model):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
     games_played = models.IntegerField(default=0)
-    # elo_rating = models.IntegerField(default=1000)  # Cette ligne est supprimée
     
     def __str__(self):
         return f"Stats {self.user.username}"

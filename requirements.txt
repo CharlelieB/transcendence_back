@@ -4,4 +4,8 @@ djangorestframework-simplejwt
 django-filter
 psycopg2-binary
 pillow
-drf_yasg
+drf-spectacular 
+drf-spectacular-sidecar
+django-otp
+qrcode
+requests

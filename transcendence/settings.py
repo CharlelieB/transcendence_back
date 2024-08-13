@@ -36,11 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'drf_yasg', #swager
+    'drf_spectacular',#swager
+    'drf_spectacular_sidecar',#swager
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'django_otp',#2fa
+    'django_otp.plugins.otp_totp',#2fa
 	#'base.apps.BaseConfig',
 	#'authenfication',
     'users',
@@ -49,6 +52,7 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
 
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
    )
@@ -105,6 +109,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_otp.middleware.OTPMiddleware',
+     'users.middleware.RefreshTokenMiddleware',  # swagger
 ]
 
 ROOT_URLCONF = 'transcendence.urls'
@@ -112,7 +118,7 @@ ROOT_URLCONF = 'transcendence.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend')],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,7 +130,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'transcendence.wsgi.application'
 
 
@@ -177,9 +182,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-   os.path.join(BASE_DIR, 'frontend/static'),
-]
+STATICFILES_DIRS = [BASE_DIR / "frontend/static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -189,10 +193,38 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SWAGGER_SETTINGS = {
-   'LOGIN_URL' : '/admin/login/',
-   'LOGOUT_URL' : '/admin/logout/'
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Votre API',
+    'DESCRIPTION': 'Description de votre API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+    },
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SECURITY': [
+        {
+            'bearerAuth': []
+        }
+    ],
+    'TAGS': [
+        {'name': 'Authentication', 'description': 'Endpoints for authentication'},
+        {'name': 'User Management', 'description': 'Endpoints for user management'},
+        {'name': 'User Interaction', 'description': 'Endpoints for user interactions'},
+        {'name': 'User Stats', 'description': 'Endpoints for user statistics'},
+        {'name': 'Two-Factor Authentication', 'description': 'Endpoints for two-factor authentication'},
+    ],
+    'SECURITY_DEFINITIONS': {
+        'bearerAuth': {
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT',
+            'description': 'JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer {token}"'
+        }
+    },
 }
+
 
 AUTH_USER_MODEL = 'users.UserProfile'
 

@@ -8,7 +8,7 @@ from .models import UserProfile, UserStats
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['id', 'email', 'username', 'password', 'following']  # Ajoutez ici les champs nécessaires
+        fields = ['id', 'email', 'username', 'password', 'following', 'is_two_factor_enabled']  # Ajoutez ici les champs nécessaires
         extra_kwargs = {
             'password': {'write_only': True}
         }
