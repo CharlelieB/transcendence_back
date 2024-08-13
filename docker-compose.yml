@@ -28,6 +28,15 @@ services:
       - db
     networks:
       - mynetwork
+  
+  frontend:
+    build:
+     context: .
+     dockerfile: Dockerfile.front
+    ports:
+      - "8080:80"
+    networks:
+      - mynetwork
 
 networks:
  mynetwork:
