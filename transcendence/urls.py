@@ -27,7 +27,7 @@ urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),  # Schema principal
     path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),  # Swagger UI
     path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),  # Redoc
-    path('admin/', admin.site.urls),
+    #path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
     path('api/games/', include('games.urls')),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),  # Catch-all for frontend routes
