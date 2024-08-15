@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from .models import UserProfile, UserStats
-from .serializers import UserProfileSerializer, UserStatsSerializer
+from .serializers import UserProfileSerializer, UserStatsSerializer, UserMinimalSerializer
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -185,30 +185,40 @@ class UnfollowProfileView(APIView):
             return Response({'detail': 'Profil non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class UserFollowersView(APIView):
-    """
-    API pour consulter les followers d'un utilisateur.
-    """
+
+class UserFollowingView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(
-        responses={
-            200: openapi.Response('Liste des followers', UserProfileSerializer(many=True)),
-            404: 'Profil non trouvé',
-        },
-        tags=['User Interaction']
-    )
-    def get(self, request, profile_id):
-        """
-        Récupère une liste des followers pour un utilisateur spécifique par son ID.
-        """
-        try:
-            profile = UserProfile.objects.get(id=profile_id)
-            followers = profile.followers.all()
-            serializer = UserProfileSerializer(followers, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except UserProfile.DoesNotExist:
-            return Response({'detail': 'Profil non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+    def get(self, request):
+        user = request.user
+        following = user.following.all()
+        serializer = UserMinimalSerializer(following, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+# class UserFollowersView(APIView):
+#     """
+#     API pour consulter les followers d'un utilisateur.
+#     """
+#     permission_classes = [IsAuthenticated]
+
+#     @swagger_auto_schema(
+#         responses={
+#             200: openapi.Response('Liste des followers', UserProfileSerializer(many=True)),
+#             404: 'Profil non trouvé',
+#         },
+#         tags=['User Interaction']
+#     )
+#     def get(self, request, profile_id):
+#         """
+#         Récupère une liste des followers pour un utilisateur spécifique par son ID.
+#         """
+#         try:
+#             profile = UserProfile.objects.get(id=profile_id)
+#             followers = profile.followers.all()
+#             serializer = UserProfileSerializer(followers, many=True)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         except UserProfile.DoesNotExist:
+#             return Response({'detail': 'Profil non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class BulkUserView(APIView):
