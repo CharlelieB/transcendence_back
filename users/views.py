@@ -4,54 +4,51 @@ from io import BytesIO
 import qrcode
 from django.shortcuts import get_object_or_404
 from django_otp.plugins.otp_totp.models import TOTPDevice
-from rest_framework import views, status, permissions, serializers  # Ajoutez serializers ici
+from rest_framework import views, status, permissions, serializers 
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
-from drf_spectacular.utils import extend_schema, OpenApiResponse  # Ajoutez ceci si nécessaire
+from drf_spectacular.utils import extend_schema, OpenApiResponse  
 from .models import UserProfile, UserStats
 from .serializers import UserProfileSerializer, UserStatsSerializer
 
-
-@extend_schema(tags=['Authentication'])
+@extend_schema(
+    tags=["Token"],
+    summary="Obtenir un token JWT",
+    description="Cette API permet d'obtenir un token JWT en fournissant les identifiants d'utilisateur."
+)
 class CustomTokenObtainPairView(TokenObtainPairView):
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        refresh_token = response.data.get('refresh')
-        if refresh_token:
-            response.set_cookie(
-                'refresh_token',
-                refresh_token,
-                httponly=True,
-                secure=True,
-                samesite='Strict',
-            )
-        return response
+    pass 
 
+@extend_schema(
+    tags=["Token"],
+    summary="Rafraîchir un token JWT",
+    description="Cette API permet de rafraîchir un token JWT en fournissant un token de rafraîchissement valide."
+)
+class CustomTokenRefreshView(TokenRefreshView):
+    pass
 
 @extend_schema(tags=['User Management'])
 class RegisterUserView(APIView):
-    """
-    API pour enregistrer un nouvel utilisateur.
-    """
     serializer_class = UserProfileSerializer
 
     def post(self, request):
-        """
-        Enregistre un nouvel utilisateur avec les informations fournies.
-        """
         if UserProfile.objects.filter(email=request.data['email']).exists():
             return Response({'error': 'Email déjà enregistré'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = UserProfileSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             UserStats.objects.create(user=user)
-            return Response(serializer.data, status=status.HTTP_200_CREATED)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
+            return Response({'refresh': str(refresh), 'access': access_token,}, status=status.HTTP_201_CREATED) 
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @extend_schema(tags=['User Management'])
 class UserView(APIView):
@@ -59,6 +56,7 @@ class UserView(APIView):
     API pour consulter ou mettre à jour le profil de l'utilisateur connecté.
     """
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserProfileSerializer
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def get(self, request):
@@ -90,6 +88,7 @@ class AllUsersView(APIView):
     """
     API pour lister tous les utilisateurs.
     """
+    serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -98,11 +97,12 @@ class AllUsersView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class FollowProfileSerializer(serializers.Serializer):
+    profile_id = serializers.IntegerField()
+
 @extend_schema(tags=['User Interaction'])
 class FollowProfileView(APIView):
-    """
-    API pour suivre un autre utilisateur.
-    """
+    serializer_class = FollowProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, profile_id):
@@ -116,12 +116,12 @@ class FollowProfileView(APIView):
         user_profile.save()
         return Response({'detail': f'Vous suivez maintenant {profile_to_follow.username}.'}, status=status.HTTP_200_OK)
 
+class UnfollowProfileSerializer(serializers.Serializer):
+    profile_id = serializers.IntegerField()
 
 @extend_schema(tags=['User Interaction'])
 class UnfollowProfileView(APIView):
-    """
-    API pour ne plus suivre un utilisateur.
-    """
+    serializer_class = UnfollowProfileSerializer  # Ajout du serializer_class
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, profile_id):
@@ -135,26 +135,28 @@ class UnfollowProfileView(APIView):
         user_profile.save()
         return Response({'detail': f'Vous avez désuivi {profile_to_unfollow.username}.'}, status=status.HTTP_200_OK)
 
+class UserProfileFollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['id', 'username', 'email']  # ou d'autres champs pertinents
 
 @extend_schema(tags=['User Interaction'])
 class UserFollowersView(APIView):
-    """
-    API pour consulter les followers d'un utilisateur.
-    """
+    serializer_class = UserProfileFollowSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, profile_id):
         profile = get_object_or_404(UserProfile, id=profile_id)
         followers = profile.followers.all()
-        serializer = UserProfileSerializer(followers, many=True)
+        serializer = self.serializer_class(followers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 @extend_schema(tags=['User Management'])
 class BulkUserView(APIView):
     """
     API pour récupérer les détails de plusieurs utilisateurs en une seule requête.
     """
+    serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
@@ -169,6 +171,7 @@ class UserStatsView(APIView):
     """
     API pour consulter les statistiques d'un utilisateur spécifique.
     """
+    serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, user_id):
@@ -180,26 +183,12 @@ class UserStatsView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@extend_schema(tags=['User Stats'])
-class IncrementWins(APIView):
-    """
-    API pour augmenter les victoires et les parties jouées d'un utilisateur.
-    """
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, user_id):
-        user_stats = get_object_or_404(UserStats, user__id=user_id)
-        user_stats.wins += 1
-        user_stats.games_played += 1
-        user_stats.save()
-        return Response({"message": "Statistiques mises à jour avec succès"}, status=200)
-
+class IncrementSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
 
 @extend_schema(tags=['User Stats'])
 class IncrementLosses(APIView):
-    """
-    API pour augmenter les défaites et les parties jouées d'un utilisateur.
-    """
+    serializer_class = IncrementSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, user_id):
@@ -207,7 +196,22 @@ class IncrementLosses(APIView):
         user_stats.losses += 1
         user_stats.games_played += 1
         user_stats.save()
-        return Response({"message": "Statistiques mises à jour avec succès"}, status=200)
+        return Response({"message": "Statistiques mises à jour avec succès"}, status=status.HTTP_200_OK)
+
+@extend_schema(tags=['User Stats'])
+class IncrementWins(APIView):
+    serializer_class = IncrementSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, user_id):
+        user_stats = get_object_or_404(UserStats, user__id=user_id)
+        user_stats.wins += 1
+        user_stats.games_played += 1
+        user_stats.save()
+        return Response({"message": "Statistiques mises à jour avec succès"}, status=status.HTTP_200_OK)
+
+class EmptySerializer(serializers.Serializer):
+    pass
 
 
 @extend_schema(tags=['Two-Factor Authentication'])
@@ -215,6 +219,7 @@ class TOTPCreateView(views.APIView):
     """
     API pour configurer un nouvel appareil TOTP pour un utilisateur.
     """
+    serializer_class = EmptySerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
@@ -291,8 +296,10 @@ class TOTPVerifyView(APIView):
 class ActivateTwoFactorView(views.APIView):
     """
     API pour activer l'authentification à deux facteurs.
-    """
+   """
+    serializer_class = EmptySerializer
     permission_classes = [permissions.IsAuthenticated]
+
 
     def post(self, request):
         user = request.user
@@ -309,6 +316,7 @@ class DeactivateTwoFactorView(views.APIView):
     """
     API pour désactiver l'authentification à deux facteurs.
     """
+    serializer_class = EmptySerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):

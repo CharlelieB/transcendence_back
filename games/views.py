@@ -6,7 +6,10 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Match
 from .serializers import MatchSerializer, MatchUpdateScoreSerializer
+from drf_spectacular.utils import extend_schema, OpenApiResponse  
 
+
+@extend_schema(tags=['Match'])
 class MatchCreateView(generics.CreateAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
@@ -19,11 +22,13 @@ class MatchCreateView(generics.CreateAPIView):
 
         return Response({"id": match.id}, status=status.HTTP_201_CREATED)
 
+@extend_schema(tags=['Match'])
 class MatchListView(generics.ListAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
     permission_classes = [IsAuthenticated]
 
+@extend_schema(tags=['Match'])
 class UserMatchListView(generics.ListAPIView):
     serializer_class = MatchSerializer
     permission_classes = [IsAuthenticated]
@@ -32,6 +37,7 @@ class UserMatchListView(generics.ListAPIView):
         user = self.request.user
         return Match.objects.filter(models.Q(player1=user) | models.Q(player2=user))
 
+@extend_schema(tags=['Match'])
 class MatchUpdateScoreView(generics.UpdateAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchUpdateScoreSerializer

@@ -47,7 +47,8 @@ INSTALLED_APPS = [
 	#'base.apps.BaseConfig',
 	#'authenfication',
     'users',
-    'games'
+    'games',
+    'tournois'
 ]
 
 REST_FRAMEWORK = {
@@ -110,7 +111,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_otp.middleware.OTPMiddleware',
-     'users.middleware.RefreshTokenMiddleware',  # swagger
 ]
 
 ROOT_URLCONF = 'transcendence.urls'

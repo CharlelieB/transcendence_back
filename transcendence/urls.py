@@ -30,6 +30,7 @@ urlpatterns = [
     #path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
     path('api/games/', include('games.urls')),
+    path('api/tournois/', include('tournois.urls')),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),  # Catch-all for frontend routes
 ]
 
