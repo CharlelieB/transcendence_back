@@ -69,7 +69,7 @@ class RegisterUserView(APIView):
     request=LoginSerializer ,
     description="Cette API permet à un utilisateur de se connecter en fournissant son email et son mot de passe."
 )
-class LoginView(APIView):
+class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
