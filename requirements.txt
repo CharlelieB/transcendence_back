@@ -9,3 +9,4 @@ drf-spectacular-sidecar
 django-otp
 qrcode
 requests
+django-cors-headers

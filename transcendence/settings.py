@@ -55,7 +55,8 @@ REST_FRAMEWORK = {
 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'users.authenticate.CustomAuthentication',
    )
 }
 
@@ -100,6 +101,14 @@ SIMPLE_JWT = {
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
+
+    'AUTH_COOKIE': 'access',
+    'AUTH_COOKIE_REFRESH': 'refresh',
+    'AUTH_COOKIE_DOMAIN': None,
+    'AUTH_COOKIE_SECURE': None,
+    'AUTH_COOKIE_HTTP_ONLY': True,
+    'AUTH_COOKIE_PATH': '/',
+    'AUTH_COOKIE_SAMESITE': "None",
 }
 
 MIDDLEWARE = [
@@ -228,4 +237,14 @@ SPECTACULAR_SETTINGS = {
 
 AUTH_USER_MODEL = 'users.UserProfile'
 
+
+CORS_ALLOWED_ORIGINS=['http://127.0.0.1:8000']
 CSRF_TRUSTED_ORIGINS=['http://127.0.0.1:8000']
+
+CORDS_ALLOW_CREDENTIALS=True
+CSRF_COOKIE_SECURE=True
+CSRF_COOKIE_HTTP_ONLY=True
+CORDS_EXPOSE_HEADERS=["Content-Type", 'X-CSRFToken']
+SESSION_COOKIE_SECURE=True
+CSRF_COOKIE_SAMESITE="Lax"
+SESSION_COOKIE_SAMESITE="Lax"

@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from .models import UserProfile, UserStats
 
-
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
@@ -21,7 +20,18 @@ class UserProfileSerializer(serializers.ModelSerializer):
             user.following.set(following_data)  # Utilisez .set() pour assigner les relations Many-to-Many
         
         return user
-        
+
+class UserMinimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['id', 'username', 'avatar']
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(
+        style={"input_type": "password"}, write_only=True)
+
+
 class UserStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserStats
