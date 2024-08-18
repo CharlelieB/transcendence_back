@@ -21,9 +21,6 @@ class CreateTournoiView(generics.CreateAPIView):
 @extend_schema(
     summary="Lister les tournois d'un utilisateur",
     description="Récupère tous les tournois auxquels un utilisateur spécifique a participé.",
-    parameters=[
-        OpenApiParameter(name='user_id', description='ID de l\'utilisateur', required=True, type=int)
-    ],
     responses={200: TournoiSerializer(many=True)},
     tags=["Tournois"]  
 )

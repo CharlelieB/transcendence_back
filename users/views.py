@@ -12,14 +12,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_spectacular.utils import extend_schema, OpenApiResponse  
 from .models import UserProfile, UserStats
 from .serializers import UserProfileSerializer, UserStatsSerializer, UserMinimalSerializer, LoginSerializer 
 from django.shortcuts import get_object_or_404
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt import tokens, views as jwt_views, serializers as jwt_serializers, exceptions as jwt_exceptions
 
@@ -65,12 +64,17 @@ class RegisterUserView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@extend_schema(
+    tags=["Authentication"],
+    request=LoginSerializer ,
+    description="Cette API permet à un utilisateur de se connecter en fournissant son email et son mot de passe."
+)
 class LoginView(APIView):
-
+    serializer_class = LoginSerializer
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         email = serializer.validated_data["email"]
@@ -105,8 +109,12 @@ class LoginView(APIView):
         raise rest_exceptions.AuthenticationFailed(
             "Email or Password is incorrect!")
 
+@extend_schema(
+    tags=["Authentication"],
+    description="Cette API permet à un utilisateur de se deconnecter"
+)
 class LogoutView(APIView):
-
+    serializer_class = LoginSerializer
     parser_classes = [JSONParser]
 
     def post(self, request):
