@@ -19,33 +19,21 @@ from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 from django.conf.urls.static import static
 from django.conf import settings
-from rest_framework import permissions #swager
-from drf_yasg.views import get_schema_view #swager
-from drf_yasg import openapi #swager
+from rest_framework import permissions 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView #swager
 
-
-schema_view = get_schema_view(#swager 
-   openapi.Info(
-      title="Snippets API",
-      default_version='v1',
-      description="This API is good",
-      contact=openapi.Contact(email="contact@gmail.com"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
-)
 
 urlpatterns = [
-    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),#swager
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),#swager
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),#swager
-    path('admin/', admin.site.urls),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),  # Schema principal
+    path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),  # Swagger UI
+    path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),  # Redoc
+    #path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
     path('api/games/', include('games.urls')),
+    path('api/tournois/', include('tournois.urls')),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),  # Catch-all for frontend routes
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
