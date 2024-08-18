@@ -25,7 +25,13 @@ class UserMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['id', 'username', 'avatar']
-  
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(
+        style={"input_type": "password"}, write_only=True)
+
+
 class UserStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserStats

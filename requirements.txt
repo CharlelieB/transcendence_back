@@ -5,3 +5,4 @@ django-filter
 psycopg2-binary
 pillow
 drf_yasg
+django-cors-headers
