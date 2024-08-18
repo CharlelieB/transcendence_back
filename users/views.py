@@ -94,6 +94,7 @@ class LoginView(APIView):
 class LogoutView(APIView):
 
     parser_classes = [JSONParser]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:

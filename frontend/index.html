@@ -7,5 +7,146 @@
 </head>
 <body>
     <h1>This is index</h1>
+
+    <button id="getUsers">Get users</button>
+    <button id="logout">Logout</button>
+
+    <script>
+
+    // login
+    function login(email, password) {
+        fetch('/api/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errData => {
+                console.error('Error response from server:', errData);
+                throw new Error('Login failed');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Store the access token in memory or a variable
+            window.accessToken = data.access_token;
+            console.log('Logged in successfully:', data);
+        })
+        .catch(error => {
+            console.error('Error during login:', error);
+        });
+    }
+
+    //login('charlo@gmail.com', 'qwerty12345');
+
+    function refreshToken() {
+        return fetch('/api/token/refresh/', {
+            method: 'POST',
+            headers: {
+                //'X-CSRFToken': getCSRFToken()
+            },
+            credentials: 'include'  // Include the refresh token cookie
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to refresh token');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Update the access token
+            window.accessToken = data.access;
+            console.log('Token refreshed successfully');
+        })
+        .catch(error => {
+            console.error('Error refreshing token:', error);
+        });
+    }
+
+    // Helper function to get the CSRF token from cookies or a meta tag
+    // function getCSRFToken() {
+    //     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    // }
+
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+    function getCSRFToken() {
+        return getCookie('csrftoken');
+    }
+
+    function makeAuthenticatedRequest(url, options = {}) {
+
+        const csrfToken = getCSRFToken();
+        if (!csrfToken) {
+            console.error('CSRF token is missing. Cannot refresh token.');
+            return Promise.reject('CSRF token is missing');
+        }
+
+        options.headers = options.headers || {};
+        options.headers['Authorization'] = `Bearer ${window.accessToken}`;
+        options.headers['X-CSRFToken'] = csrfToken;
+        options.credentials = 'include';
+
+        return fetch(url, options)
+            .then(response => {
+                if (response.status === 401) {
+                    // If token has expired, refresh and retry the request
+                    return refreshToken().then(() => {
+                        options.headers['Authorization'] = `Bearer ${window.accessToken}`;
+                        return fetch(url, options);
+                    });
+                    console.log("error");
+                }
+                return response;
+            });
+    }
+
+    login('charlo@gmail.com', 'qwerty12345');
+    
+    function callMyApi() {
+    makeAuthenticatedRequest('/api/users/', {method: 'GET'})
+            .then(response => response.json())
+            .then(data => {
+                console.log('Protected data:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function callLogout() {
+        makeAuthenticatedRequest('/api/logout/', {method: 'POST'})
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Protected data:', data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+    }
+
+
+    document.getElementById('getUsers').addEventListener('click', callMyApi);
+    document.getElementById('logout').addEventListener('click', callLogout);
+
+    </script>
 </body>
 </html>
