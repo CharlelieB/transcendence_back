@@ -4,7 +4,7 @@ djangorestframework-simplejwt
 django-filter
 psycopg2-binary
 pillow
-drf-spectacular 
+drf-spectacular
 drf-spectacular-sidecar
 django-otp
 qrcode

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_otp',#2fa
     'django_otp.plugins.otp_totp',#2fa
+    'corsheaders',
 	#'base.apps.BaseConfig',
 	#'authenfication',
     'users',
@@ -120,6 +121,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_otp.middleware.OTPMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'transcendence.urls'

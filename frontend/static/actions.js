@@ -159,6 +159,8 @@ function getCookie(name) {
 //	});
 //}
 
+const AccessKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI0MDc3NTU4LCJpYXQiOjE3MjQwNjkzODQsImp0aSI6IjRjMzU4NzA5MTgyMjQ3YWQ5YWI1MmVkOTgwZThhYzQwIiwidXNlcl9pZCI6Mn0.MV1hU-LKe0Z2Jg-FraQ55e_zxUTwMQKq57TS7kfbUGA"
+
 function makeAuthenticatedRequest(url, options = {}) {
 
 	const csrfToken = getCookie('csrftoken');
@@ -168,7 +170,7 @@ function makeAuthenticatedRequest(url, options = {}) {
 	}
 
 	options.headers = options.headers || {};
-	options.headers['Authorization'] = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI0MDcxNTAxLCJpYXQiOjE3MjQwNjU1MDEsImp0aSI6ImQ1YTVkNjhjNDUzZDRlYTM4OGVlYWRkNWI5MTgzMmJiIiwidXNlcl9pZCI6Mn0.KAMuai2BdU9pDcZ_06k1xPZIqfmyeDXUiurRdZhYc4c`;
+	options.headers['Authorization'] = `Bearer ${AccessKey}`;
 	options.headers['X-CSRFToken'] = csrfToken;
 	options.credentials = 'include';
 
@@ -186,11 +188,59 @@ function makeAuthenticatedRequest(url, options = {}) {
 		});
 }
 
-function getUserList()
-{
-	const userListContainer = document.getElementById('userListContainer');
+//function getUserList()
+//{
+//	const userListContainer = document.getElementById('userListContainer');
+//	const data = makeAuthenticatedRequest('/api/users/', {method: 'GET'});
+//	//console.log('Protected data: ', data.response);
+//	JSONdata = data.json();
+//	//userListContainer.innerHTML = JSON.stringify(response[], null, 2);
+//	userListContainer.innerText = JSONdata.response;
+//}
 
-	const data = makeAuthenticatedRequest('/api/users/', {method: 'GET'});
-	console.log(data);
-	userListContainer.innerText = JSON.stringify(data, null, 2);
+function getUserList() {
+    const userListContainer = document.getElementById('userListContainer');
+
+    makeAuthenticatedRequest('/api/users/', {method: 'GET'})
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json(); // Parse the response as JSON
+        })
+        .then(JSONdata => {
+            // Assuming JSONdata is an array of user objects and each user object has a 'username' field
+            const usernames = JSONdata.map(user => user.username); // Extract usernames
+			var responseHTML = "";
+            //userListContainer.innerText = usernames.length; // Display usernames, one per line
+			for (let i = 0; i < usernames.length; i++) {
+				responseHTML = responseHTML + "<div class=\"row m-2\"> <div class=\"h5 col-auto\">" + usernames[i] + "</div> <div class=\"col d-flex justify-content-end\"> <button class=\"btn btn-primary\">Follow</button> </div> </div>"
+			};
+			userListContainer.innerHTML = "<div>" + responseHTML + "</div>";
+		})
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            userListContainer.innerText = 'Error fetching user list';
+        });
 }
+
+//function getUserList() {
+//    const userListContainer = document.getElementById('userListContainer');
+
+//    makeAuthenticatedRequest('/api/users/', {method: 'GET'})
+//        .then(response => {
+//            if (!response.ok) {
+//                // Handle error if the response is not OK
+//                throw new Error('Network response was not ok');
+//            }
+//            return response.json(); // Parse the response as JSON
+//        })
+//        .then(JSONdata => {
+//            // Handle the parsed JSON data
+//            userListContainer.innerText = JSON.stringify(JSONdata, null, 2);
+//        })
+//        .catch(error => {
+//            console.error('There was a problem with the fetch operation:', error);
+//            userListContainer.innerText = 'Error fetching user list';
+//        });
+//}
