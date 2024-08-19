@@ -18,7 +18,17 @@ function ReplaceElement(elementToHideId, elementToShowId)
 	elementToShow.classList.add("d-flex");
 }
 
-/////       FUNCTIONS TO DISPLAY HTML ELEMENTS /////
+/////    FUNCTIONS TO DISPLAY HTML ELEMENTS /////
+
+/////    FIRST CONNECTION EVENT LISTENER /////
+
+// document.addEventListener('DOMContentLoaded', function() {
+//     // Call your function here
+//     ReplaceElement("buttonsContainer", "playerConnection");
+// 	ReplaceElement("loginBackButton", "null");
+// });
+
+//       OTHER DISPLAYING FUNCTIONS
 
 function DisplayQuickPlayOptions() {
 	ReplaceElement("tournamentOptions", "tournament");
