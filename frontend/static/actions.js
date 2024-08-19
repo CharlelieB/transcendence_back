@@ -107,3 +107,90 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+
+/////        API CALLS      //////
+
+// GET USERS //
+
+function getCookie(name) {
+	let cookieValue = null;
+	if (document.cookie && document.cookie !== '') {
+		const cookies = document.cookie.split(';');
+		for (let i = 0; i < cookies.length; i++) {
+			const cookie = cookies[i].trim();
+			// Does this cookie string begin with the name we want?
+			if (cookie.substring(0, name.length + 1) === (name + '=')) {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				break;
+			}
+		}
+	}
+	return cookieValue;
+}
+
+//function getUserList()
+//{
+//	const userListContainer = document.getElementById('userListContainer');
+//	const CSRFtoken = getCookie("csrftoken");
+//	console.log(CSRFtoken);
+//	const requestOptions = {
+//  		method: 'GET',
+//		headers: {
+//			'Authorization' : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI0MDcwOTAwLCJpYXQiOjE3MjQwNjQ5MDAsImp0aSI6IjM1ZmM5NjdkZWI4NDQwOGI5MWUwMjU3YTIwM2E3M2U1IiwidXNlcl9pZCI6Mn0.Pjei_YOkwsM4MLBS7vegLy7AQXx6gx1T5C_hwvPsEas`,
+//			'X-CSRFToken' : CSRFtoken
+//		},
+// 		credentials: 'include'
+//	};
+
+//	fetch('http://127.0.0.1:8000/api/users/')
+//	.then(response => {
+//	  if (!response.ok) {
+//		throw new Error('Network response was not ok');
+//	  }
+//	  return response.json();
+//	})
+//	.then(data => {
+//	  console.log(data);
+//	  userListContainer.innerText = JSON.stringify(data, null, 2);
+//	})
+//	.catch(error => {
+//	  console.error('Error:', error);
+//	});
+//}
+
+function makeAuthenticatedRequest(url, options = {}) {
+
+	const csrfToken = getCookie('csrftoken');
+	if (!csrfToken) {
+		console.error('CSRF token is missing. Cannot refresh token.');
+		return Promise.reject('CSRF token is missing');
+	}
+
+	options.headers = options.headers || {};
+	options.headers['Authorization'] = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI0MDcxNTAxLCJpYXQiOjE3MjQwNjU1MDEsImp0aSI6ImQ1YTVkNjhjNDUzZDRlYTM4OGVlYWRkNWI5MTgzMmJiIiwidXNlcl9pZCI6Mn0.KAMuai2BdU9pDcZ_06k1xPZIqfmyeDXUiurRdZhYc4c`;
+	options.headers['X-CSRFToken'] = csrfToken;
+	options.credentials = 'include';
+
+	return fetch(url, options)
+		.then(response => {
+			if (response.status === 401) {
+				// If token has expired, refresh and retry the request
+				//return refreshToken().then(() => {
+				//	options.headers['Authorization'] = `Bearer ${window.accessToken}`;
+				//	return fetch(url, options);
+				//});
+				console.log("error 401");
+			}
+			return response;
+		});
+}
+
+function getUserList()
+{
+	const userListContainer = document.getElementById('userListContainer');
+
+	const data = makeAuthenticatedRequest('/api/users/', {method: 'GET'});
+	console.log(data);
+	userListContainer.innerText = JSON.stringify(data, null, 2);
+}
