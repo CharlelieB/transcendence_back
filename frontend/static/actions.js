@@ -5,7 +5,22 @@ let playerNumber = 1;
 
 ///// GENERIC FUNCTION /////
 
-//This function replace an element by another using Bootstrap's display property classes
+function getCookie(name) {
+	let cookieValue = null;
+	if (document.cookie && document.cookie !== '') {
+		const cookies = document.cookie.split(';');
+		for (let i = 0; i < cookies.length; i++) {
+			const cookie = cookies[i].trim();
+			// Does this cookie string begin with the name we want?
+			if (cookie.substring(0, name.length + 1) === (name + '=')) {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				break;
+			}
+		}
+	}
+	return cookieValue;
+}
+
 function ReplaceElement(elementToHideId, elementToShowId)
 {
 	var elementToHide = document.getElementById(elementToHideId);
@@ -22,11 +37,20 @@ function ReplaceElement(elementToHideId, elementToShowId)
 
 /////    FIRST CONNECTION EVENT LISTENER /////
 
-// document.addEventListener('DOMContentLoaded', function() {
-//     // Call your function here
-//     ReplaceElement("buttonsContainer", "playerConnection");
-// 	ReplaceElement("loginBackButton", "null");
-// });
+document.addEventListener('DOMContentLoaded', function() {
+	makeAuthenticatedRequest("/api/token/refresh/", {method : 'POST'})
+	.then (response => {
+		if (!response.ok)
+		{
+			ReplaceElement("buttonsContainer", "playerConnection");
+			ReplaceElement("loginBackButton", "null");
+		}
+		//else {
+		//	JSONformat  = response.json();
+		//	document.getElementById("testContainer").innerText(JSONformat);
+		//}
+	})
+ });
 
 //       OTHER DISPLAYING FUNCTIONS
 
@@ -111,55 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /////        API CALLS      //////
 
-// GET USERS //
-
-function getCookie(name) {
-	let cookieValue = null;
-	if (document.cookie && document.cookie !== '') {
-		const cookies = document.cookie.split(';');
-		for (let i = 0; i < cookies.length; i++) {
-			const cookie = cookies[i].trim();
-			// Does this cookie string begin with the name we want?
-			if (cookie.substring(0, name.length + 1) === (name + '=')) {
-				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-				break;
-			}
-		}
-	}
-	return cookieValue;
-}
-
-//function getUserList()
-//{
-//	const userListContainer = document.getElementById('userListContainer');
-//	const CSRFtoken = getCookie("csrftoken");
-//	console.log(CSRFtoken);
-//	const requestOptions = {
-//  		method: 'GET',
-//		headers: {
-//			'Authorization' : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI0MDcwOTAwLCJpYXQiOjE3MjQwNjQ5MDAsImp0aSI6IjM1ZmM5NjdkZWI4NDQwOGI5MWUwMjU3YTIwM2E3M2U1IiwidXNlcl9pZCI6Mn0.Pjei_YOkwsM4MLBS7vegLy7AQXx6gx1T5C_hwvPsEas`,
-//			'X-CSRFToken' : CSRFtoken
-//		},
-// 		credentials: 'include'
-//	};
-
-//	fetch('http://127.0.0.1:8000/api/users/')
-//	.then(response => {
-//	  if (!response.ok) {
-//		throw new Error('Network response was not ok');
-//	  }
-//	  return response.json();
-//	})
-//	.then(data => {
-//	  console.log(data);
-//	  userListContainer.innerText = JSON.stringify(data, null, 2);
-//	})
-//	.catch(error => {
-//	  console.error('Error:', error);
-//	});
-//}
-
-const AccessKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI0MDc3NTU4LCJpYXQiOjE3MjQwNjkzODQsImp0aSI6IjRjMzU4NzA5MTgyMjQ3YWQ5YWI1MmVkOTgwZThhYzQwIiwidXNlcl9pZCI6Mn0.MV1hU-LKe0Z2Jg-FraQ55e_zxUTwMQKq57TS7kfbUGA"
+const AccessKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI0MTYxNjgxLCJpYXQiOjE3MjQxNTU2ODEsImp0aSI6ImM3NjQ3OWE3ODY4MDQyOGRiMmM5ZjhmMzRhNjA3YTE4IiwidXNlcl9pZCI6Mn0.PtLbOUmuE5YK4Bp3htv6fzao9_fPUTAQMLIYszkuYiU"
 
 function makeAuthenticatedRequest(url, options = {}) {
 
@@ -171,14 +147,15 @@ function makeAuthenticatedRequest(url, options = {}) {
 
 	options.headers = options.headers || {};
 	options.headers['Authorization'] = `Bearer ${AccessKey}`;
+	options.headers['Refresh'] =
 	options.headers['X-CSRFToken'] = csrfToken;
 	options.credentials = 'include';
 
 	return fetch(url, options)
-		.then(response => {
-			if (response.status === 401) {
-				// If token has expired, refresh and retry the request
-				//return refreshToken().then(() => {
+	.then(response => {
+		if (response.status === 401) {
+			// If token has expired, refresh and retry the request
+			//return refreshToken().then(() => {
 				//	options.headers['Authorization'] = `Bearer ${window.accessToken}`;
 				//	return fetch(url, options);
 				//});
@@ -186,22 +163,26 @@ function makeAuthenticatedRequest(url, options = {}) {
 			}
 			return response;
 		});
-}
+	}
 
-//function getUserList()
-//{
-//	const userListContainer = document.getElementById('userListContainer');
-//	const data = makeAuthenticatedRequest('/api/users/', {method: 'GET'});
-//	//console.log('Protected data: ', data.response);
-//	JSONdata = data.json();
-//	//userListContainer.innerHTML = JSON.stringify(response[], null, 2);
-//	userListContainer.innerText = JSONdata.response;
-//}
+	// LOGIN
 
-function getUserList() {
-    const userListContainer = document.getElementById('userListContainer');
+	//function userLogin() {
+	//	email = document.getElementById("emailInput");
+	//	password = document.getElementById("passwordInput");
 
-    makeAuthenticatedRequest('/api/users/', {method: 'GET'})
+	//	makeAuthenticatedRequest("/api/login/", {
+	//		method: 'POST',
+	//		body:
+	//	})
+	//}
+
+	// GET USERS //
+
+	function getUserList() {
+		const userListContainer = document.getElementById('userListContainer');
+
+		makeAuthenticatedRequest('/api/users/', {method: 'GET'})
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -221,26 +202,5 @@ function getUserList() {
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
             userListContainer.innerText = 'Error fetching user list';
-        });
+    });
 }
-
-//function getUserList() {
-//    const userListContainer = document.getElementById('userListContainer');
-
-//    makeAuthenticatedRequest('/api/users/', {method: 'GET'})
-//        .then(response => {
-//            if (!response.ok) {
-//                // Handle error if the response is not OK
-//                throw new Error('Network response was not ok');
-//            }
-//            return response.json(); // Parse the response as JSON
-//        })
-//        .then(JSONdata => {
-//            // Handle the parsed JSON data
-//            userListContainer.innerText = JSON.stringify(JSONdata, null, 2);
-//        })
-//        .catch(error => {
-//            console.error('There was a problem with the fetch operation:', error);
-//            userListContainer.innerText = 'Error fetching user list';
-//        });
-//}

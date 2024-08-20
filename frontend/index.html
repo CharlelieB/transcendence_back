@@ -126,6 +126,7 @@
 		</div>
 		<!-- Main menu buttons -->
 		<div id="buttonsContainer" class="container-menu flex-column mt-5 pt-5 d-flex">
+				<div id="testContainer"></div>
 				<!-- Quick play buttons -->
 				<div>
 					<button id="quickPlay" class="btn btn-outline-warning m-1 d-flex" onclick="DisplayQuickPlayOptions()">Quick Play</button>
@@ -172,9 +173,10 @@
 				<label for="inputConfirmPassword" class="form-label">Confirm password</label>
 				<input type="password" class="form-control" id="inputConfirmPassword">
 			</div>
+			<div id="connectionErrorMessage" class="text-danger">This user doesn't exist, please create an account</div>
 			<div class="m-4">
 				<button id=loginBackButton class="btn btn-outline-secondary mx-2" onclick="BackButtonConnection()">Back</button>
-				<button class="btn btn-outline-primary mx-2">Next</button>
+				<button class="btn btn-outline-primary mx-2" onclick="userLogin()">Submit</button>
 			</div>
 		</div>
 		<!-- Title Pong -->
