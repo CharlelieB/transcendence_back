@@ -160,20 +160,20 @@
 			</div>
 			<!-- Form email -->
 			<div class="m-2">
-				<label for="inputEmail" class="form-label">Email address</label>
-				<input type="email" class="form-control" id="inputEmail">
+				<label for="emailInput" class="form-label">Email address</label>
+				<input type="email" class="form-control" id="emailInput">
 			</div>
 			<!-- Form password -->
 			<div class="mb-2">
-				<label for="inputPassword" class="form-label">Password</label>
-				<input type="password" class="form-control" id="inputPassword">
+				<label for="passwordInput" class="form-label">Password</label>
+				<input type="password" class="form-control" id="passwordInput">
 			</div>
 			<!-- Form confirm password -->
 			<div class="mb-2 d-none" id="confirmPasswordContainer">
 				<label for="inputConfirmPassword" class="form-label">Confirm password</label>
 				<input type="password" class="form-control" id="inputConfirmPassword">
 			</div>
-			<div id="connectionErrorMessage" class="text-danger">This user doesn't exist, please create an account</div>
+			<div id="connectionErrorMessage" class="text-danger"></div>
 			<div class="m-4">
 				<button id=loginBackButton class="btn btn-outline-secondary mx-2" onclick="BackButtonConnection()">Back</button>
 				<button class="btn btn-outline-primary mx-2" onclick="userLogin()">Submit</button>
