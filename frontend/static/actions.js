@@ -41,7 +41,7 @@ function ReplaceElement(elementToHideId, elementToShowId)
 /////    FIRST CONNECTION EVENT LISTENER /////
 
 document.addEventListener('DOMContentLoaded', function() {
-	makeAuthenticatedRequest("/api/token/refresh/", {method : 'POST'})
+	makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'})
 	.then (response => {
 		if (!response.ok)
 		{
@@ -144,8 +144,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /////        API CALLS      //////
 
-const AccessKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI0NDExNjA4LCJpYXQiOjE3MjQ0MDU2MDgsImp0aSI6ImFiNTUyYTI2NWMyZjRiYjliYzRjOGY0ZDE0YWQ5NTEyIiwidXNlcl9pZCI6MX0.xrn7V1NKTs_7UrEALJvhtqWF6Fu9Hp2pwm7SaqiGk5c"
-
 function makeUnauthenticatedRequest(url, options = {}) {
 
 	const csrfToken = getCookie('csrftoken');
@@ -163,11 +161,6 @@ function makeUnauthenticatedRequest(url, options = {}) {
 	return fetch(url, options)
 	.then(response => {
 		if (response.status === 401) {
-			// If token has expired, refresh and retry the request
-			//return refreshToken().then(() => {
-				//	options.headers['Authorization'] = `Bearer ${window.accessToken}`;
-				//	return fetch(url, options);
-				//});
 				console.log("error 401");
 			}
 			return response;
@@ -193,18 +186,35 @@ function makeAuthenticatedRequest(url, options = {}) {
 	return fetch(url, options)
 	.then(response => {
 		if (response.status === 401) {
-			// If token has expired, refresh and retry the request
-			//return refreshToken().then(() => {
-				//	options.headers['Authorization'] = `Bearer ${window.accessToken}`;
-				//	return fetch(url, options);
-				//});
-				console.log("error 401");
-			}
-			return response;
+			console.log("Refreshing token");
+			refreshToken().then(() => {
+				options.headers['Authorization'] = `Bearer ${window.accessToken}`;
+				return fetch(url, options);
+			});
+		}
+		return response;
 	});
 }
 
-	// LOGIN
+// REFRESH
+
+
+function refreshToken()
+{
+	makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'})
+	.then(response => {
+		if (!response.ok) {
+			console.error("Refresh token failed");
+		}
+		return response.json();
+	})
+	.then(data => {
+		window.accessToken = data.access;
+			console.log(window.accessToken);
+			console.log('Access token refreshed');
+	});
+}
+// LOGIN
 
 function userLogin() {
 	email = document.getElementById("emailInput").value;
