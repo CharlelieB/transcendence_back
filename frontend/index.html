@@ -107,6 +107,7 @@
 				<div class="modal-body">
 					<div class="custom-modal-body">
 						<p>Enable 2FA</p>
+						<p>Change username</p>
 						<p>Change profile picture</p>
 						<p>Change password</p>
 					</div>
@@ -145,7 +146,7 @@
 					</div>
 				</div>
 				<!-- Social button -->
-				<button class="btn btn-outline-secondary m-1" data-bs-toggle="offcanvas" onclick="ResetMenuButtons()" href="#socialDrawer">Social</button>
+				<button class="btn btn-outline-secondary m-1" data-bs-toggle="offcanvas" onclick="displaySocialDrawer()" href="#socialDrawer">Social</button>
 		</div>
 		<!-- Connection container -->
 		<div id="playerConnection"class="container-connection flex-column d-none">
@@ -198,7 +199,7 @@
 						<div class="card-body">
 							<div class="row g-0">
 								<div class="col-md-auto">
-									<h5 id="UserNameContainer" class="card-title">Bobby Brian</h5>
+									<h5 id="userNameContainer" class="card-title">Bobby Brian</h5>
 								</div>
 								<div class="col d-flex justify-content-end">
 									<button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#userSettingsModal">
@@ -206,7 +207,7 @@
 									</button>
 								</div>
 							</div>
-							<p id="UserEmailContainer" class="card-text">The scoring machine</p>
+							<p id="userEmailContainer" class="card-text">The scoring machine</p>
 						</div>
 					  </div>
 					</div>

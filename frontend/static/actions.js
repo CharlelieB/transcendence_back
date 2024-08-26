@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	})
 	.then(data => {
 		if (data.access) {
+			hostConnected = true;
 			window.accessToken = data.access;
 			console.log(window.accessToken);
 			console.log('Access token saved');
@@ -103,6 +104,7 @@ function DisplayTournamentOptions() {
 
 function BackButtonConnection()
 {
+	playerIndex = 2;
 	ReplaceElement("playerConnection", "buttonsContainer");
 }
 
@@ -205,7 +207,7 @@ function makeAuthenticatedRequest(url, options = {}) {
 	.then(response => {
 		if (response.status === 401) {
 			console.log("Refreshing token");
-			refreshToken().then(() => {
+			return refreshToken().then(() => {
 				options.headers['Authorization'] = `Bearer ${window.accessToken}`;
 				return fetch(url, options);
 			});
@@ -244,13 +246,17 @@ function submitUserForm() {
 			checkAdversaryCredentials();
 			if (playerNumber === 2) {
 				console.log("Displaying the game");
+				//CREATE GAME
 				DisplayGame();
 			}
 			else {
+				//CREATE TOURNAMENT
 				if (playerIndex <= playerNumber) {
 					playerIndex++;
 					document.getElementById("userForm").reset();
 					document.getElementById("connectionErrorMessage").classList.add("d-none");
+					document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
+
 				}
 				else {
 					DisplayGame();
@@ -364,7 +370,22 @@ function userRegistration() {
 // Display User name, Stats, and follow
 
 function displaySocialDrawer() {
-	
+	ResetMenuButtons();
+	makeAuthenticatedRequest('/api/user/', {method: 'GET'})
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		return response.json(); // Parse the response as JSON
+	}).then(data => {
+		console.log("The user name trying to be displayed in the social drawer is" + data.username);
+		console.log("The email trying to be displayed in the social drawer is" + data.email);
+		document.getElementById("userNameContainer").innerText = data.username;
+		document.getElementById("userEmailContainer").innerText = data.email;
+	})
+	.catch(error => {
+		console.error('There was a problem with the fetch operation:', error);
+	})
 }
 
 // GET USERS //
@@ -442,11 +463,9 @@ function createAdversaryCredentials () {
 
 	const data = {
 		email: email,
-		username: "testUser" + counter,
+		username: email,
 		password: password
 	};
-
-	counter++;
 	if (password !== passwordComfirmation)
 	{
 		errorMessageContainer.innerText = "The passwords don't match";
