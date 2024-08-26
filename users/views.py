@@ -62,7 +62,7 @@ class RegisterUserView(APIView):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 
-            return Response({'refresh': str(refresh), 'access': access_token,}, status=status.HTTP_201_CREATED) 
+            return Response({'id': user.id,'refresh': str(refresh), 'access_token': access_token,}, status=status.HTTP_201_CREATED) 
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -105,7 +105,15 @@ class LoginView(GenericAPIView):
                 samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
             )
 
-            res.data = tokens
+            user_id = user.id
+
+
+            res.data = {
+                'id': user_id,
+                'access_token': tokens["access_token"],
+                'refresh_token': tokens["refresh_token"],
+            }
+
             res["X-CSRFToken"] = csrf.get_token(request)
             return res
         raise rest_exceptions.AuthenticationFailed(
@@ -155,6 +163,10 @@ class CookieTokenRefreshView(jwt_views.TokenRefreshView):
     serializer_class = CookieTokenRefreshSerializer
 
     def finalize_response(self, request, response, *args, **kwargs):
+
+        if 'access' in response.data:
+            response.data['access_token'] = response.data.pop('access')
+
         if response.data.get("refresh"):
             response.set_cookie(
                 key=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'],
