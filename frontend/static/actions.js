@@ -106,6 +106,11 @@ function BackButtonConnection()
 	ReplaceElement("playerConnection", "buttonsContainer");
 }
 
+function DisplayGame()
+{
+	//ReplaceElement("baseContainer", "gameContainer");
+}
+
 ////// Event Listenner for Account Creation
 
 // Select the radio buttons and the element to be displayed
@@ -235,7 +240,24 @@ function submitUserForm() {
 		if (!hostConnected) {
 			userLogin();
 		}
+		else {
+			checkAdversaryCredentials();
+			if (playerNumber === 2) {
+				console.log("Displaying the game");
+				DisplayGame();
+			}
+			else {
+				if (playerIndex <= playerNumber) {
+					playerIndex++;
+					document.getElementById("userForm").reset();
+					document.getElementById("connectionErrorMessage").classList.add("d-none");
+				}
+				else {
+					DisplayGame();
+				}
+			}
 
+		}
 		//if adversary connection (1v1)
 			//AddUserToMatch
 		//if adversary connection (tournament)
@@ -243,8 +265,12 @@ function submitUserForm() {
 	}
 	else
 	{
-		//if host connection
-		userRegistration();
+		if (!hostConnected) {
+			userRegistration();
+		}
+		else {
+			createAdversaryCredentials();
+		}
 
 		//if adversary connection
 			//registercall then addUsertoMatch display connection container again
@@ -300,10 +326,9 @@ function userRegistration() {
 
 	const data = {
 		email: email,
-		username: "testUser2",
+		username: email,
 		password: password
 	};
-
 	if (password !== passwordComfirmation)
 	{
 		errorMessageContainer.innerText = "The passwords don't match";
@@ -334,7 +359,15 @@ function userRegistration() {
 	})
 }
 
-	// GET USERS //
+//////////// SOCIAL BUTTON ////////////
+
+// Display User name, Stats, and follow
+
+function displaySocialDrawer() {
+	
+}
+
+// GET USERS //
 
 function getUserList() {
 	const userListContainer = document.getElementById('userListContainer');
@@ -392,10 +425,46 @@ function checkAdversaryCredentials() {
 		}
 		//HERE I NEED TO PASS ON THE USER ID BUT I DONT HAVE IT
 		addAdversaryToMatch();
+		console.log("all good for player " + playerIndex);
 		return response.json();
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
 		errorMessageContainer.innerText = "This user doesn't exist, please create an account"
 	})	.catch
+}
+
+function createAdversaryCredentials () {
+	email = document.getElementById('emailInput').value;
+	password = document.getElementById('passwordInput').value;
+	passwordComfirmation = document.getElementById('passwordConfirmationInput').value;
+	errorMessageContainer = document.getElementById("connectionErrorMessage")
+
+	const data = {
+		email: email,
+		username: "testUser" + counter,
+		password: password
+	};
+
+	counter++;
+	if (password !== passwordComfirmation)
+	{
+		errorMessageContainer.innerText = "The passwords don't match";
+		return;
+	}
+	makeUnauthenticatedRequest("/api/register/", {
+		method: 'POST',
+		body: JSON.stringify(data)
+	}).then(response => {
+		if(!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		addAdversaryToMatch();
+		console.log("all good for player " + playerIndex);
+		return response.json();
+	})
+	.catch(error => {
+		console.error('There was a problem with the fetch operation:', error);
+		errorMessageContainer.innerText = "This user doesn't exist, please create an account"
+	})
 }

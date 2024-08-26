@@ -119,7 +119,7 @@
 		</div>
 	</div>
 	<!-- Base Container -->
-	<div class="container-full-height">
+	<div id="baseContainer" class="container-full-height">
 		<!-- Customization button -->
 		<div class="container-customButton p-3">
 			<button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#customizationModal">Game customization</button>
@@ -192,13 +192,13 @@
 				<div class="card mb-3" style="max-width: 540px;">
 					<div class="row g-0">
 					  <div class="col-md-4">
-						<img src="assets/pp.png" class="img-thumbnail">
+						<img src="./static/pp.png" class="img-thumbnail">
 					  </div>
 					  <div class="col-md-8">
 						<div class="card-body">
 							<div class="row g-0">
 								<div class="col-md-auto">
-									<h5 class="card-title">Bobby Brian</h5>
+									<h5 id="UserNameContainer" class="card-title">Bobby Brian</h5>
 								</div>
 								<div class="col d-flex justify-content-end">
 									<button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#userSettingsModal">
@@ -206,7 +206,7 @@
 									</button>
 								</div>
 							</div>
-							<p class="card-text">The scoring machine</p>
+							<p id="UserEmailContainer" class="card-text">The scoring machine</p>
 						</div>
 					  </div>
 					</div>
