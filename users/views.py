@@ -3,6 +3,7 @@ from io import BytesIO
 
 import qrcode
 from django.shortcuts import get_object_or_404
+from customization.models import UserCustom
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from rest_framework import views, status, permissions, serializers, exceptions as rest_exceptions, response
 from django.contrib.auth import authenticate
@@ -57,6 +58,7 @@ class RegisterUserView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             UserStats.objects.create(user=user)
+            UserCustom.objects.create(user=user)
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
 

@@ -48,7 +48,8 @@ INSTALLED_APPS = [
 	#'authenfication',
     'users',
     'games',
-    'tournois'
+    'tournois',
+    'customization'
 ]
 
 REST_FRAMEWORK = {
@@ -221,6 +222,7 @@ SPECTACULAR_SETTINGS = {
         }
     ],
     'TAGS': [
+        {'name': 'User Custom', 'description': 'Endpoints for customization'},
         {'name': 'Authentication', 'description': 'Endpoints for authentication'},
         {'name': 'User Management', 'description': 'Endpoints for user management'},
         {'name': 'User Interaction', 'description': 'Endpoints for user interactions'},
