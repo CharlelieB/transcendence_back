@@ -197,7 +197,6 @@ function makeAuthenticatedRequest(url, options = {}) {
 
 	options.headers = options.headers || {};
 	options.headers['Authorization'] = `Bearer ${window.accessToken}`;
-	// options.headers['Refresh'] =
 	options.headers['Accept'] = 'application/json';
 	options.headers['Content-Type'] = 'application/json';
 	options.headers['X-CSRFToken'] = csrfToken;
@@ -221,7 +220,7 @@ function makeAuthenticatedRequest(url, options = {}) {
 
 function refreshToken()
 {
-	makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'})
+	return makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'})
 	.then(response => {
 		if (!response.ok) {
 			console.error("Refresh token failed");
@@ -232,8 +231,13 @@ function refreshToken()
 		window.accessToken = data.access;
 			console.log(window.accessToken);
 			console.log('Access token refreshed');
+	})
+	.catch(error => {
+		console.error('Error refreshing token:', error);
+		return Promise.reject(error);
 	});
 }
+
 // LOGIN & REGISTER
 
 function submitUserForm() {
@@ -403,12 +407,23 @@ function getUserList() {
 	.then(JSONdata => {
 		// Assuming JSONdata is an array of user objects and each user object has a 'username' field
 		const usernames = JSONdata.map(user => user.username); // Extract usernames
+		const userIds = JSONdata.map(user => user.id);
 		var responseHTML = "";
 		//userListContainer.innerText = usernames.length; // Display usernames, one per line
 		for (let i = 0; i < usernames.length; i++) {
-			responseHTML = responseHTML + "<div class=\"row m-2\"> <div class=\"h5 col-auto\">" + usernames[i] + "</div> <div class=\"col d-flex justify-content-end\"> <button class=\"btn btn-primary\">Follow</button> </div> </div>"
+			console.log(userIds[i]);
+			responseHTML = responseHTML + "<div class=\"row m-2\"> <div class=\"h5 col-auto\">" + usernames[i] + "</div> <div class=\"col d-flex justify-content-end\"> <button class=\"btn btn-primary follow-button\" data-user-id=\"" + userIds[i] + "\">Follow</button> </div> </div>"
+
 		};
 		userListContainer.innerHTML = "<div>" + responseHTML + "</div>";
+
+		const followButtons = document.querySelectorAll(".follow-button");
+		followButtons.forEach(button => {
+			button.addEventListener('click', (event) => {
+				const userId = event.target.getAttribute('data-user-id');
+				followUser(userId);
+			});
+		});
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -416,6 +431,24 @@ function getUserList() {
     });
 }
 
+// FOLLOW USER
+
+function followUser(userId) {
+	console.log("Trying to follow user with id :", userId);
+	makeAuthenticatedRequest("/api/follow/" + userId + "/", {method: "POST"})
+	.then(response => {
+		if (!response.ok) {
+			throw new Error ('Network response was not ok');
+		}
+		return response.json();
+	})
+	.then(data => {
+		console.log("User followed successfully : ", data);
+	})
+	.catch(error => {
+		console.error("There was an issue with the api call");
+	})
+}
 
 // ADVERSARY CONNECTIONS
 

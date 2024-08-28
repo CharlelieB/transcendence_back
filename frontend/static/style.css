@@ -51,6 +51,11 @@ html, body {
 	width: 100%;
   }
 
+  .scrollable-container {
+	max-height: 300px;
+	overflow-y: auto;
+  }
+
 /* BUTTONS */
 
   /* .menu-buttons {
