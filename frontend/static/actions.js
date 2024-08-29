@@ -6,6 +6,20 @@ let gamesNb = 1;
 let hostConnected = false;
 let hostId = 0;
 
+let currentMatch = {
+	idPlayer1 : 0,
+	idPlayer2 : 0,
+	scorePlayer1 : 0,
+	scorePlayer2 : 0
+};
+
+let currentTournament = {
+	idPlayers : [],
+	winner : 0,
+	name : "",
+	gameType : ""
+};
+
 //Tournament of 8 : 7 games
 //Tournament of 6 : 6 games
 //Tournament of 4 : 3 games
@@ -111,7 +125,9 @@ function BackButtonConnection()
 
 function DisplayGame()
 {
-	//ReplaceElement("baseContainer", "gameContainer");
+	document.getElementById("containerCustomButton").classList.add("d-none");
+	document.getElementById("containerTitle").classList.add("d-none");
+	ReplaceElement("playerConnection", "gameContainer");
 }
 
 ////// Event Listenner for Account Creation
@@ -242,37 +258,37 @@ function refreshToken()
 // LOGIN & REGISTER
 
 function submitUserForm() {
+	let temporaryId;
 	if(connectAccountRadio.checked)
 	{
 		if (!hostConnected) {
 			userLogin();
 		}
 		else {
-			checkAdversaryCredentials();
+			temporaryId = checkAdversaryCredentials()
+			//.then(id => {
 			if (playerNumber === 2) {
 				console.log("Displaying the game");
-				//CREATE GAME
+				currentMatch.idPlayer1 = hostId;
+				currentMatch.idPlayer2 = temporaryId;
+				console.log("id player 1 : " + currentMatch.idPlayer1 + "id player 2 : " + currentMatch.idPlayer2);
 				DisplayGame();
 			}
 			else {
-				//CREATE TOURNAMENT
 				if (playerIndex <= playerNumber) {
 					playerIndex++;
+					currentTournament.idPlayers.push(temporaryId);
 					document.getElementById("userForm").reset();
 					document.getElementById("connectionErrorMessage").classList.add("d-none");
 					document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
-
 				}
 				else {
+					currentTournament.idPlayers.push(hostId);
 					DisplayGame();
 				}
 			}
-
+			//})
 		}
-		//if adversary connection (1v1)
-			//AddUserToMatch
-		//if adversary connection (tournament)
-			//add user to tournament
 	}
 	else
 	{
@@ -282,10 +298,6 @@ function submitUserForm() {
 		else {
 			createAdversaryCredentials();
 		}
-
-		//if adversary connection
-			//registercall then addUsertoMatch display connection container again
-		//if
 	}
 }
 
@@ -315,6 +327,7 @@ function userLogin() {
 	.then(data => {
 		if (data.access_token) {
 			window.accessToken = data.access_token;
+			hostId = data.id;
 			console.log(window.accessToken);
 			console.log('Access token saved');
 		} else {
@@ -356,6 +369,7 @@ function userRegistration() {
 	}).then(data => {
 		if (data.access) {
 			window.accessToken = data.access;
+			hostId = data.id;
 			console.log(window.accessToken);
 			console.log('Access token saved');
 		} else {
@@ -413,7 +427,6 @@ function displaySocialDrawer() {
 		console.log("The email trying to be displayed in the social drawer is" + data.email);
 		document.getElementById("userNameContainer").innerText = data.username;
 		document.getElementById("userEmailContainer").innerText = data.email;
-		hostId = data.id;
 		getFriendsList(data);
 	})
 	.catch(error => {
@@ -483,7 +496,7 @@ function followUser(userId) {
 
 function getUserStats()
 {
-	recordMatch(1,2,4,5,2);
+	//recordMatch(1,2,4,5,2);
 	console.log("Getting User stats for ", hostId);
 	makeAuthenticatedRequest("/api/user-stats/" + hostId + "/", {method: 'GET'})
 	.then(response => {
@@ -499,10 +512,6 @@ function getUserStats()
 }
 
 // ADVERSARY CONNECTIONS
-
-function addAdversaryToMatch() {
-
-}
 
 function checkAdversaryCredentials() {
 	email = document.getElementById("emailInput").value;
@@ -525,15 +534,18 @@ function checkAdversaryCredentials() {
 		if(!response.ok) {
 			throw new Error('Network response was not ok');
 		}
-		//HERE I NEED TO PASS ON THE USER ID BUT I DONT HAVE IT
-		addAdversaryToMatch();
-		console.log("all good for player " + playerIndex);
 		return response.json();
+	})
+	.then(data => {
+		console.log("all good for player " + playerIndex);
+		console.log("player id : " + data.id);
+		return data.id;
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
 		errorMessageContainer.innerText = "This user doesn't exist, please create an account"
-	})	.catch
+		return Promise.reject(error);
+	})
 }
 
 function createAdversaryCredentials () {
@@ -614,4 +626,3 @@ function getCustomizationSettings() {
 		console.error('There was a problem with the fetch operation:', error);
 	})
 }
-
