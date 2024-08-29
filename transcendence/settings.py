@@ -49,7 +49,8 @@ INSTALLED_APPS = [
 	#'authenfication',
     'users',
     'games',
-    'tournois'
+    'tournois',
+    'customization'
 ]
 
 REST_FRAMEWORK = {
@@ -192,7 +193,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "frontend/static"]
+STATICFILES_DIRS = [BASE_DIR / "frontend/"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = '/media/'
@@ -222,6 +223,7 @@ SPECTACULAR_SETTINGS = {
         }
     ],
     'TAGS': [
+        {'name': 'User Custom', 'description': 'Endpoints for customization'},
         {'name': 'Authentication', 'description': 'Endpoints for authentication'},
         {'name': 'User Management', 'description': 'Endpoints for user management'},
         {'name': 'User Interaction', 'description': 'Endpoints for user interactions'},
