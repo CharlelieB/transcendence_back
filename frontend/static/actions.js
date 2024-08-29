@@ -4,6 +4,7 @@ let playerIndex = 2;
 let playerNumber = 1;
 let gamesNb = 1;
 let hostConnected = false;
+let hostId = 0;
 
 //Tournament of 8 : 7 games
 //Tournament of 6 : 6 games
@@ -59,9 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		return response.json()
 	})
 	.then(data => {
-		if (data.access) {
+		if (data.access_token) {
 			hostConnected = true;
-			window.accessToken = data.access;
+			window.accessToken = data.access_token;
 			console.log(window.accessToken);
 			console.log('Access token saved');
 		} else {
@@ -228,7 +229,7 @@ function refreshToken()
 		return response.json();
 	})
 	.then(data => {
-		window.accessToken = data.access;
+		window.accessToken = data.access_token;
 			console.log(window.accessToken);
 			console.log('Access token refreshed');
 	})
@@ -365,7 +366,7 @@ function userRegistration() {
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
-		errorMessageContainer.innerText = "This user doesn't exist, please create an account"
+		errorMessageContainer.innerText = "This user is allready registered, you can connect"
 	})
 }
 
@@ -412,6 +413,7 @@ function displaySocialDrawer() {
 		console.log("The email trying to be displayed in the social drawer is" + data.email);
 		document.getElementById("userNameContainer").innerText = data.username;
 		document.getElementById("userEmailContainer").innerText = data.email;
+		hostId = data.id;
 		getFriendsList(data);
 	})
 	.catch(error => {
@@ -473,7 +475,26 @@ function followUser(userId) {
 		console.log("User followed successfully : ", data);
 	})
 	.catch(error => {
-		console.error("There was an issue with the api call");
+		console.error("There was an issue with the fetch operation: ", error);
+	})
+}
+
+// USER STATS
+
+function getUserStats()
+{
+	recordMatch(1,2,4,5,2);
+	console.log("Getting User stats for ", hostId);
+	makeAuthenticatedRequest("/api/user-stats/" + hostId + "/", {method: 'GET'})
+	.then(response => {
+		if(!response.ok) {
+			throw new Error ('Network response was not ok');
+		}
+		return response.json();
+	}).then(JSONdata => {
+		console.log(JSONdata);
+	}).catch(error => {
+		console.error("There was an issue with the fetch operation: ", error);
 	})
 }
 
@@ -547,3 +568,50 @@ function createAdversaryCredentials () {
 		errorMessageContainer.innerText = "This user doesn't exist, please create an account"
 	})
 }
+
+// MATCH & TOURNAMENT RECORDS
+
+function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner) {
+	const data = {
+		player1 : idPlayer1,
+		player2 : idPlayer2,
+		player1_score : scorePlayer1,
+		player2_score : scorePlayer2,
+		winner : idWinner
+	};
+
+	makeAuthenticatedRequest('/api/games/matches/create/', {
+		method: 'POST',
+		body: JSON.stringify(data)
+	}).then(response => {
+		if(!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		console.log("Match added successfully");
+	}).catch(error => {
+		console.error('There was a problem with the fetch operation:', error);
+	})
+}
+
+// CUSTOMIZATION
+
+function getCustomizationSettings() {
+	makeAuthenticatedRequest("/api/customization/view/", { method: "GET"})
+	.then(response => {
+		if(!response.ok)
+		{
+			throw new Error('Network response was not ok');
+		}
+		console.log("on arrive la");
+		response.json();
+	})
+	.then(JSONdata => {
+		console.log("ici aussi");
+		console.log(JSONdata);
+		console.log("la ça deconne");
+	})
+	.catch(error => {
+		console.error('There was a problem with the fetch operation:', error);
+	})
+}
+

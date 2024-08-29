@@ -123,7 +123,7 @@
 	<div id="baseContainer" class="container-full-height">
 		<!-- Customization button -->
 		<div class="container-customButton p-3">
-			<button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#customizationModal">Game customization</button>
+			<button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#customizationModal" onclick=getCustomizationSettings()>Game customization</button>
 		</div>
 		<!-- Main menu buttons -->
 		<div id="buttonsContainer" class="container-menu flex-column mt-5 pt-5 d-flex">
@@ -221,7 +221,7 @@
 
 							<button class="nav-link active" id="nav-channel-tab" data-bs-toggle="tab" data-bs-target="#nav-channel" type="button" role="tab" aria-controls="nav-channel" aria-selected="true">Friends</button>
 
-							<button class="nav-link" id="nav-priv-tab" data-bs-toggle="tab" data-bs-target="#nav-priv" type="button" role="tab" aria-controls="nav-private-message" aria-selected="false">Game Statistics</button>
+							<button class="nav-link" id="nav-priv-tab" data-bs-toggle="tab" data-bs-target="#nav-priv" type="button" role="tab" aria-controls="nav-private-message" aria-selected="false" onclick="getUserStats()">Game Statistics</button>
 
 						</div>
 					</nav>
@@ -244,11 +244,11 @@
 					<!-- Stats tab -->
 					<div class="tab-pane fade p-3 border-start border-end border-bottom" id="nav-priv" role="tabpanel" aria-labelledby="nav-private-message">
 						<h2>Game Statistics</h2>
-						<p>Nombre de victoire 1v1</p>
-						<p>Nombre de victoire contre l'IA</p>
-						<p>Nombre de victoire de tournois</p>
-						<p>Bouton vers l'historique des matchs effectués</p>
-						<p>Bouton vers l'historique des tournois effectués</p>
+						<p id="fieldVictoryNumber">Nombre de victoire 1v1</p>
+						<p id="fieldAiVictoryNumber">Nombre de victoire contre l'IA</p>
+						<p id="fieldTournamentVictory">Nombre de victoire de tournois</p>
+						<!-- <p>Bouton vers l'historique des matchs effectués</p>
+						<p>Bouton vers l'historique des tournois effectués</p> -->
 					</div>
  				</div>
 			</div>

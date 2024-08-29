@@ -4,7 +4,7 @@ run:
 	docker-compose run backend django-admin startproject transcendence .
 
 up:
-	docker-compose up --build
+	docker-compose up
 
 back:
 	docker-compose up backend db
