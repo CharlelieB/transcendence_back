@@ -121,8 +121,42 @@ class LoginView(GenericAPIView):
 
 @extend_schema(
     tags=["Authentication"],
-    description="Cette API permet à un utilisateur de se deconnecter"
+    request=LoginSerializer ,
+    description="Cette API permet à un utilisateur de se connecter en fournissant son email et son mot de passe."
 )
+class GuestLoginView(GenericAPIView):
+    serializer_class = LoginSerializer
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"]
+        password = serializer.validated_data["password"]
+
+        user = authenticate(email=email, password=password)
+
+        if user is not None:
+            user_serializer = UserMinimalSerializer(user)
+            
+            res = response.Response(
+                user_serializer.data,
+                status=status.HTTP_200_OK
+            )
+
+            res["X-CSRFToken"] = csrf.get_token(request)
+
+            return res
+
+        raise rest_exceptions.AuthenticationFailed("Email or Password is incorrect!")
+
+@extend_schema(
+    tags=["Authentication"],
+    description="Connecter un autre user (guest) sur la session de l'hote"
+)
+
 class LogoutView(APIView):
     serializer_class = LoginSerializer
     parser_classes = [JSONParser]
