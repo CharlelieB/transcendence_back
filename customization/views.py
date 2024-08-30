@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from .serializers import CustomSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response  # Import correct de Response
+from rest_framework.response import Response  
 from rest_framework import status
 
 # Create your views here.
@@ -14,10 +14,10 @@ class UserCustomView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        queryset = UserCustom.objects.all()
-        serializer = CustomSerializer(queryset, many=True)
+        user_custom = UserCustom.objects.get(user=request.user)
+        serializer = CustomSerializer(user_custom)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    
 @extend_schema(tags=['User Custom'])
 class UpdateUserCustom(generics.UpdateAPIView):
     serializer_class = CustomSerializer
