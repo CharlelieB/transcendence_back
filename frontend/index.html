@@ -106,10 +106,23 @@
 				</div>
 				<div class="modal-body">
 					<div class="custom-modal-body">
-						<p>Enable 2FA</p>
-						<p>Change username</p>
-						<p>Change profile picture</p>
-						<p>Change password</p>
+						<div class="flex-column">
+							<div class="row m-2">
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+									<label class="form-check-label" for="flexSwitchCheckDefault">2 factor authentication</label>
+								</div>
+							</div>
+							<div class="row m-1">
+								<button class="btn btn-outline-primary" id="usernameChange">Change username</button>
+							</div>
+							<div class="row m-1">
+								<button class="btn btn-outline-success" id="passwordChange">Change password</button>
+							</div>
+							<div class="row m-1">
+								<button class="btn btn-outline-warning">Change profile picture</button>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -255,9 +268,28 @@
 		</div>
 
 	</div>
-	<div id="gameContainer" class="d-none">
-		<button class="btn btn-primary">Add point</button>
-		<button class="btn btn-danger">Add point</button>
+	<div id="gameContainer" class="flex-column d-none">
+		<div class="row">
+			<div class="col">
+				<button class="btn btn-primary" onclick="addPointPlayer1()">Add point</button>
+			</div>
+			<div class="col">
+				<button class="btn btn-danger" onclick="addPointPlayer2()">Add point</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<h1 id="scorePlayer1">0</h1>
+			</div>
+			<div class="col">
+				<h1 id="scorePlayer2">0</h1>
+			</div>
+		</div>
+
+	</div>
+	<div id="endOfGame" class="d-none">
+		<button class="btn btn-primary" onclick="backButtonEOG()">Back to menu</button>
+		<button class="btn btn-danger" onclick="replayButtonEOG()">Replay</button>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 	integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

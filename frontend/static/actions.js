@@ -5,6 +5,9 @@ let playerNumber = 1;
 let gamesNb = 1;
 let hostConnected = false;
 let hostId = 0;
+let tempAdversaryId = 0;
+
+let pointsForVictory = 5;
 
 let currentMatch = {
 	idPlayer1 : 0,
@@ -76,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	.then(data => {
 		if (data.access_token) {
 			hostConnected = true;
+
 			window.accessToken = data.access_token;
 			console.log(window.accessToken);
 			console.log('Access token saved');
@@ -128,6 +132,23 @@ function DisplayGame()
 	document.getElementById("containerCustomButton").classList.add("d-none");
 	document.getElementById("containerTitle").classList.add("d-none");
 	ReplaceElement("playerConnection", "gameContainer");
+}
+
+function DisplayWinnerMenu() {
+	document.getElementById("scorePlayer1").innerText = 0;
+	document.getElementById("scorePlayer2").innerText = 0;
+	ReplaceElement("gameContainer", "endOfGame");
+}
+
+function backButtonEOG() {
+	document.getElementById("containerCustomButton").classList.remove("d-none");
+	document.getElementById("containerTitle").classList.remove("d-none");
+	ReplaceElement("endOfGame", "buttonsContainer");
+}
+
+function replayButtonEOG() {
+
+	ReplaceElement("endOfGame", "gameContainer");
 }
 
 ////// Event Listenner for Account Creation
@@ -258,26 +279,24 @@ function refreshToken()
 // LOGIN & REGISTER
 
 function submitUserForm() {
-	let temporaryId;
 	if(connectAccountRadio.checked)
 	{
 		if (!hostConnected) {
 			userLogin();
 		}
 		else {
-			temporaryId = checkAdversaryCredentials()
-			//.then(id => {
+			checkAdversaryCredentials();
 			if (playerNumber === 2) {
 				console.log("Displaying the game");
 				currentMatch.idPlayer1 = hostId;
-				currentMatch.idPlayer2 = temporaryId;
+				currentMatch.idPlayer2 = tempAdversaryId;
 				console.log("id player 1 : " + currentMatch.idPlayer1 + "id player 2 : " + currentMatch.idPlayer2);
 				DisplayGame();
 			}
 			else {
 				if (playerIndex <= playerNumber) {
 					playerIndex++;
-					currentTournament.idPlayers.push(temporaryId);
+					currentTournament.idPlayers.push(tempAdversaryId);
 					document.getElementById("userForm").reset();
 					document.getElementById("connectionErrorMessage").classList.add("d-none");
 					document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
@@ -287,7 +306,6 @@ function submitUserForm() {
 					DisplayGame();
 				}
 			}
-			//})
 		}
 	}
 	else
@@ -297,6 +315,26 @@ function submitUserForm() {
 		}
 		else {
 			createAdversaryCredentials();
+			if (playerNumber === 2) {
+				console.log("Displaying the game");
+				currentMatch.idPlayer1 = hostId;
+				currentMatch.idPlayer2 = tempAdversaryId;
+				console.log("id player 1 : " + currentMatch.idPlayer1 + "id player 2 : " + currentMatch.idPlayer2);
+				DisplayGame();
+			}
+			else {
+				if (playerIndex <= playerNumber) {
+					playerIndex++;
+					currentTournament.idPlayers.push(tempAdversaryId);
+					document.getElementById("userForm").reset();
+					document.getElementById("connectionErrorMessage").classList.add("d-none");
+					document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
+				}
+				else {
+					currentTournament.idPlayers.push(hostId);
+					DisplayGame();
+				}
+			}
 		}
 	}
 }
@@ -425,6 +463,7 @@ function displaySocialDrawer() {
 	}).then(data => {
 		console.log("The user name trying to be displayed in the social drawer is" + data.username);
 		console.log("The email trying to be displayed in the social drawer is" + data.email);
+		hostId = data.id;
 		document.getElementById("userNameContainer").innerText = data.username;
 		document.getElementById("userEmailContainer").innerText = data.email;
 		getFriendsList(data);
@@ -539,6 +578,7 @@ function checkAdversaryCredentials() {
 	.then(data => {
 		console.log("all good for player " + playerIndex);
 		console.log("player id : " + data.id);
+		tempAdversaryId = data.id;
 		return data.id;
 	})
 	.catch(error => {
@@ -571,9 +611,13 @@ function createAdversaryCredentials () {
 		if(!response.ok) {
 			throw new Error('Network response was not ok');
 		}
-		addAdversaryToMatch();
-		console.log("all good for player " + playerIndex);
 		return response.json();
+	})
+	.then(data => {
+		console.log("all good for the registration of player " + playerIndex);
+		console.log("player id : " + data.id);
+		tempAdversaryId = data.id;
+		return data.id;
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -625,4 +669,28 @@ function getCustomizationSettings() {
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
 	})
+}
+
+// GAME VIEW
+
+function addPointPlayer1() {
+	currentMatch.scorePlayer1++;
+	document.getElementById("scorePlayer1").innerText = currentMatch.scorePlayer1;
+	if (currentMatch.scorePlayer1 === pointsForVictory)	{
+		recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
+		currentMatch.scorePlayer1 = 0;
+		currentMatch.scorePlayer2 = 0;
+		DisplayWinnerMenu();
+	}
+}
+
+function addPointPlayer2() {
+	currentMatch.scorePlayer2++;
+	document.getElementById("scorePlayer2").innerText = currentMatch.scorePlayer2;
+	if(currentMatch.scorePlayer2 === pointsForVictory) {
+		recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+		currentMatch.scorePlayer1 = 0;
+		currentMatch.scorePlayer2 = 0;
+		DisplayWinnerMenu();
+	}
 }
