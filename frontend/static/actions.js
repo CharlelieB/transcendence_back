@@ -62,6 +62,11 @@ function ReplaceElement(elementToHideId, elementToShowId)
 	}
 }
 
+function validateEmail(email) {
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	return emailRegex.test(email);
+}
+
 /////    FUNCTIONS TO DISPLAY HTML ELEMENTS /////
 
 /////    FIRST CONNECTION EVENT LISTENER /////
@@ -157,18 +162,22 @@ function replayButtonEOG() {
 const connectAccountRadio = document.getElementById('vbtn-radio1');
 const createAccountRadio = document.getElementById('vbtn-radio2');
 const createAccountForm = document.getElementById('confirmPasswordContainer');
+const errorMessageContainer = document.getElementById("connectionErrorMessage");
+
 
 // Event listener for the "Create account" radio button
 createAccountRadio.addEventListener('change', function() {
 	if (this.checked) {
-      createAccountForm.classList.remove("d-none");
+		errorMessageContainer.innerText = "";
+		createAccountForm.classList.remove("d-none");
     }
 });
 
 // Event listener for the "Connect account" radio button to hide the element
 connectAccountRadio.addEventListener('change', function() {
 	if (this.checked) {
-      createAccountForm.classList.add("d-none");
+		errorMessageContainer.innerText = "";
+		createAccountForm.classList.add("d-none");
     }
 });
 
@@ -193,7 +202,10 @@ document.addEventListener('DOMContentLoaded', function () {
             return new bootstrap.Popover(popoverTriggerEl, {
                 container: '.modal-body',
 				html: true,
-				content:'<div>BONJOUR AEOUWD</div>'
+				content:'<div>\
+				<p>HELLOOOO</p>\
+				<p>OSEIFH</p>\
+				</div>'
             });
         });
     });
@@ -342,7 +354,6 @@ function submitUserForm() {
 function userLogin() {
 	email = document.getElementById("emailInput").value;
 	password = document.getElementById("passwordInput").value;
-	errorMessageContainer = document.getElementById("connectionErrorMessage")
 
 	console.log(email);
 	console.log(password);
@@ -376,7 +387,7 @@ function userLogin() {
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
-		errorMessageContainer.innerText = "This user doesn't exist, please create an account"
+		errorMessageContainer.innerText = "Email or password incorect"
 	})
 }
 
@@ -384,13 +395,16 @@ function userRegistration() {
 	email = document.getElementById('emailInput').value;
 	password = document.getElementById('passwordInput').value;
 	passwordComfirmation = document.getElementById('passwordConfirmationInput').value;
-	errorMessageContainer = document.getElementById("connectionErrorMessage")
 
 	const data = {
 		email: email,
 		username: email,
 		password: password
 	};
+	if (!validateEmail(email)) {
+		errorMessageContainer.innerText = "Please enter a valid email address";
+		return;
+	}
 	if (password !== passwordComfirmation)
 	{
 		errorMessageContainer.innerText = "The passwords don't match";
@@ -418,7 +432,7 @@ function userRegistration() {
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
-		errorMessageContainer.innerText = "This user is allready registered, you can connect"
+		errorMessageContainer.innerText = "This user is allready registered, you can connect";
 	})
 }
 
@@ -565,7 +579,7 @@ function checkAdversaryCredentials() {
 		password: password
 	};
 
-	makeUnauthenticatedRequest("/api/login/", {
+	makeAuthenticatedRequest("/api/guest-login/", {
 		method: 'POST',
 		body: JSON.stringify(data)
 	})
