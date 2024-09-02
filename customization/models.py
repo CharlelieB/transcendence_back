@@ -3,7 +3,7 @@ from users.models import UserProfile
 
 class UserCustom(models.Model):
     user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
-    score_win = models.IntegerField(default=1)
+    score_win = models.IntegerField(default=5)
     color_1 = models.IntegerField(default=3)
     color_2 = models.IntegerField(default=2)
     color_filet = models.IntegerField(default=4)
