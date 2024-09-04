@@ -19,6 +19,9 @@
 	<script src="static/app.js" defer></script>
 	<script src="static/ui.js" defer></script>
 	<script src="static/game.js" defer></script>
+	<script src="static/social.js" defer></script>
+	<script src="static/customization.js" defer></script>
+	<script src="static/userSettings.js" defer></script>
 </head>
 <body>
 	<!-- Modal Customization-->
@@ -149,7 +152,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 				<h1 class="modal-title fs-5">User settings</h1>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetUserSettingsButtons()"></button>
 				</div>
 				<div class="modal-body">
 					<div class="custom-modal-body">
@@ -161,10 +164,42 @@
 								</div>
 							</div>
 							<div class="row m-1">
-								<button class="btn btn-outline-primary" id="usernameChange">Change username</button>
+								<button class="btn btn-outline-primary" id="usernameChangeButton" onclick="displayChangeUsernameField()">Change username</button>
+							</div>
+							<div class="m-2 d-none" id="usernameChangeContainer">
+								<div>
+									<div class="row">
+										<div class="col-8">
+											<form id="usernameChangeForm">
+												<label for="usernameChangeInput" class="form-label">New username</label>
+												<input type="text" class="form-control" id="usernameChangeInput">
+											</form>
+										</div>
+										<div class="col d-flex justify-content-center align-items-center">
+											<button class="btn btn-outline-primary" onclick="changeUsername()">Confirm</button>
+										</div>
+										<div id="changeUsernameErrorContainer" class="text-danger"></div>
+									</div>
+								</div>
 							</div>
 							<div class="row m-1">
-								<button class="btn btn-outline-success" id="passwordChange">Change password</button>
+								<button class="btn btn-outline-success" id="passwordChangeButton" onclick="displayChangePasswordField()">Change password</button>
+							</div>
+							<div class="m-2 d-none" id="passwordChangeContainer">
+								<div>
+									<div class="row">
+										<div class="col-8">
+											<form id="passwordChangeForm">
+												<label for="passwordChangeInput" class="form-label">New password</label>
+												<input type="password" class="form-control" id="passwordChangeInput">
+											</form>
+										</div>
+										<div class="col d-flex justify-content-center align-items-center">
+											<button class="btn btn-outline-success" onclick="changePassword()">Confirm</button>
+										</div>
+										<div id="changePasswordErrorContainer" class="text-danger"></div>
+									</div>
+								</div>
 							</div>
 							<div class="row m-1">
 								<button class="btn btn-outline-warning">Change profile picture</button>
@@ -173,8 +208,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetUserSettingsButtons()">Close</button>
 				</div>
 			</div>
 		</div>

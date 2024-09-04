@@ -79,6 +79,29 @@ function replayButtonEOG() {
 	ReplaceElement("endOfGame", "gameContainer");
 }
 
+function displayChangeUsernameField() {
+	ReplaceElement("passwordChangeContainer", "passwordChangeButton");
+	document.getElementById("passwordChangeButton").classList.remove('d-flex');
+	document.getElementById("usernameChangeForm").reset();
+	ReplaceElement("usernameChangeButton", "usernameChangeContainer");
+	document.getElementById("usernameChangeContainer").classList.remove('d-flex');
+}
+
+function displayChangePasswordField() {
+	ReplaceElement("usernameChangeContainer", "usernameChangeButton");
+	document.getElementById("usernameChangeButton").classList.remove('d-flex');
+	document.getElementById("passwordChangeForm").reset();
+	ReplaceElement("passwordChangeButton", "passwordChangeContainer");
+	document.getElementById("passwordChangeContainer").classList.remove('d-flex');
+}
+
+function resetUserSettingsButtons() {
+	ReplaceElement("passwordChangeContainer", "passwordChangeButton");
+	document.getElementById("passwordChangeButton").classList.remove('d-flex');
+	ReplaceElement("usernameChangeContainer", "usernameChangeButton");
+	document.getElementById("usernameChangeButton").classList.remove('d-flex');
+}
+
 
 ////// Event Listenner for Account Creation
 
