@@ -12,6 +12,7 @@ function displaySocialDrawer() {
 		hostId = data.id;
 		document.getElementById("userNameContainer").innerText = data.username;
 		document.getElementById("userEmailContainer").innerText = data.email;
+		document.getElementById("profilePic").innerHTML = "<img src=\"localhost:8000" + data.avatar + "\" class=\"img-thumbnail\">";
 		getFriendsList(data);
 	})
 	.catch(error => {
