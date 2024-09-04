@@ -22,7 +22,6 @@ from django.conf import settings
 from rest_framework import permissions
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView #swager
 
-
 urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),  # Schema principal
     path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),  # Swagger UI
@@ -32,12 +31,12 @@ urlpatterns = [
     path('api/games/', include('games.urls')),
     path('api/tournois/', include('tournois.urls')),
     path('api/customization/', include('customization.urls')),
-    re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),  # Catch-all for frontend routes
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 urlpatterns += [
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),  # Catch-all for frontend routes
