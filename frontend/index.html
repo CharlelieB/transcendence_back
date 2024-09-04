@@ -31,22 +31,22 @@
 				<div class="modal-body">
 					<div class="custom-modal-body">
 						<div>
-							<label for="customRange" class="form-label" id="CustomVictoryField">Score required for victory : 5</label>
-							<input type="range" class="form-range" min="0" max="10" step="1" id="CustomVictoryValue">
+							<label for="customRange" class="form-label" id="customVictoryField">Score required for victory : 5</label>
+							<input type="range" class="form-range" min="0" max="10" step="1" id="customVictoryValue">
 						</div>
 						<div>
 							Color first racket
 							<div class="container-custom-colors flex-column ms-2">
 								<div class="row d-flex align-items-center">
-									<div class="color-box bg-danger col-2 ms-2"></div>
+									<div class="color-box bg-danger col-2 ms-2" id="colorBoxRacket1"></div>
 									<div class="col-8">
-										<select class="form-select m-2">
-											<option value="1">Blue</option>
-											<option value="2">Grey</option>
-											<option value="3">Green</option>
-											<option value="4" selected>Red</option>
-											<option value="5">Yellow</option>
-											<option value="6">Black</option>
+										<select class="form-select m-2" id="formColorRacket1">
+											<option value="0">Blue</option>
+											<option value="1">Grey</option>
+											<option value="2">Green</option>
+											<option value="3">Red</option>
+											<option value="4">Yellow</option>
+											<option value="5">Black</option>
 										</select>
 									</div>
 								</div>
@@ -56,15 +56,15 @@
 							Color second racket
 							<div class="container-custom-colors flex-column ms-2">
 								<div class="row d-flex align-items-center">
-									<div class="color-box bg-warning col-2 ms-2"></div>
+									<div class="color-box bg-warning col-2 ms-2" id="colorBoxRacket2"></div>
 									<div class="col-8">
-										<select class="form-select m-2">
-											<option value="1">Blue</option>
-											<option value="2">Grey</option>
-											<option value="3">Green</option>
-											<option value="4">Red</option>
-											<option value="5" selected>Yellow</option>
-											<option value="6">Black</option>
+										<select class="form-select m-2" id="formColorRacket2">
+											<option value="0">Blue</option>
+											<option value="1">Grey</option>
+											<option value="2">Green</option>
+											<option value="3">Red</option>
+											<option value="4">Yellow</option>
+											<option value="5">Black</option>
 										</select>
 									</div>
 								</div>
@@ -74,15 +74,15 @@
 							Color net
 							<div class="container-custom-colors flex-column ms-2">
 								<div class="row d-flex align-items-center">
-									<div class="color-box bg-success col-2 ms-2"></div>
+									<div class="color-box bg-success col-2 ms-2" id="colorBoxNet"></div>
 									<div class="col-8">
-										<select class="form-select m-2">
-											<option value="1" selected>Blue</option>
-											<option value="2">Grey</option>
-											<option value="3" selected>Green</option>
-											<option value="4">Red</option>
-											<option value="5">Yellow</option>
-											<option value="6">Black</option>
+										<select class="form-select m-2" id="formColorNet">
+											<option value="0">Blue</option>
+											<option value="1">Grey</option>
+											<option value="2">Green</option>
+											<option value="3">Red</option>
+											<option value="4">Yellow</option>
+											<option value="5">Black</option>
 										</select>
 									</div>
 								</div>
@@ -90,24 +90,24 @@
 						</div>
 						<div>
 							Racket size
-							<select class="form-select m-2">
-								<option value="1" >Small</option>
-								<option value="2" selected>Regular</option>
-								<option value="3">Large</option>
+							<select class="form-select m-2" id="formRacketSize">
+								<option value="0">Small</option>
+								<option value="1">Regular</option>
+								<option value="2">Large</option>
 							</select>
 						</div>
 						<div>
 							Number of balls
 							<div class="btn-group-horizontal d-flex justify-content-start container-ball-nb">
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb1" checked>
+								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb1" onclick="updateBallsNumber(1)">
 								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb1">1</label>
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb2">
+								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb2" onclick="updateBallsNumber(2)">
 								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb2">2</label>
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb3">
+								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb3" onclick="updateBallsNumber(3)">
 								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb3">3</label>
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb4">
+								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb4" onclick="updateBallsNumber(4)">
 								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb4">4</label>
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb5">
+								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb5" onclick="updateBallsNumber(5)">
 								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb5">5</label>
 							</div>
 						</div>
@@ -115,7 +115,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="updateCustomizationSettings()">Save changes</button>
 				</div>
 			</div>
 		</div>

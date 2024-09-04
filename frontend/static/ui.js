@@ -104,12 +104,3 @@ connectAccountRadio.addEventListener('change', function() {
 		createAccountForm.classList.add("d-none");
     }
 });
-
-////// Event Listenner for Customization modale
-
-const customVictoryValue = document.getElementById('CustomVictoryValue');
-const customVictoryScoreField = document.getElementById('CustomVictoryField');
-
-customVictoryValue.addEventListener('change', function() {
-	customVictoryScoreField.innerHTML = "Nombre de points pour la victoire : " + customVictoryValue.value;
-});
