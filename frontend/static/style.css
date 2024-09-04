@@ -58,9 +58,10 @@ html, body {
 
 /* BUTTONS */
 
-  /* .menu-buttons {
-
-  } */
+.color-box {
+	width: 25px;
+    height: 25px;
+}
 
 /* PONG TITLE */
 

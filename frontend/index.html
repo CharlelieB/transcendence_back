@@ -16,7 +16,9 @@
 	<!-- Title and files -->
 	<title>TRCD</title>
 	<link rel="stylesheet" href="static/style.css">
-	<script src="static/actions.js" defer></script>
+	<script src="static/app.js" defer></script>
+	<script src="static/ui.js" defer></script>
+	<script src="static/game.js" defer></script>
 </head>
 <body>
 	<!-- Modal Customization-->
@@ -24,8 +26,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-				<h1 class="modal-title fs-5">Customize Pong</h1>
-				<!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+					<h1 class="modal-title fs-5">Customize Pong</h1>
 				</div>
 				<div class="modal-body">
 					<div class="custom-modal-body">
@@ -33,17 +34,63 @@
 							<label for="customRange" class="form-label" id="CustomVictoryField">Score required for victory : 5</label>
 							<input type="range" class="form-range" min="0" max="10" step="1" id="CustomVictoryValue">
 						</div>
-						<div class="text-center m-4">
-							Colors
-							<div class="container-custom-colors">
-								<button tabindex="0" class="btn btn-danger example-popover m-3" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Select a color" data-bs-placement="bottom">First racket</button>
-								<button tabindex="1" class="btn btn-warning example-popover m-3" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Select a color" data-bs-placement="bottom">Net</button>
-								<button tabindex="2" class="btn btn-success example-popover m-3" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="Select a color" data-bs-placement="bottom">Second racket</button>
+						<div>
+							Color first racket
+							<div class="container-custom-colors flex-column ms-2">
+								<div class="row d-flex align-items-center">
+									<div class="color-box bg-danger col-2 ms-2"></div>
+									<div class="col-8">
+										<select class="form-select m-2">
+											<option value="1">Blue</option>
+											<option value="2">Grey</option>
+											<option value="3">Green</option>
+											<option value="4" selected>Red</option>
+											<option value="5">Yellow</option>
+											<option value="6">Black</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div>
+							Color second racket
+							<div class="container-custom-colors flex-column ms-2">
+								<div class="row d-flex align-items-center">
+									<div class="color-box bg-warning col-2 ms-2"></div>
+									<div class="col-8">
+										<select class="form-select m-2">
+											<option value="1">Blue</option>
+											<option value="2">Grey</option>
+											<option value="3">Green</option>
+											<option value="4">Red</option>
+											<option value="5" selected>Yellow</option>
+											<option value="6">Black</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div>
+							Color net
+							<div class="container-custom-colors flex-column ms-2">
+								<div class="row d-flex align-items-center">
+									<div class="color-box bg-success col-2 ms-2"></div>
+									<div class="col-8">
+										<select class="form-select m-2">
+											<option value="1" selected>Blue</option>
+											<option value="2">Grey</option>
+											<option value="3" selected>Green</option>
+											<option value="4">Red</option>
+											<option value="5">Yellow</option>
+											<option value="6">Black</option>
+										</select>
+									</div>
+								</div>
 							</div>
 						</div>
 						<div>
 							Racket size
-							<select class="form-select">
+							<select class="form-select m-2">
 								<option value="1" >Small</option>
 								<option value="2" selected>Regular</option>
 								<option value="3">Large</option>
@@ -51,7 +98,7 @@
 						</div>
 						<div>
 							Number of balls
-							<div class="btn-group-horizontal container-ball-nb">
+							<div class="btn-group-horizontal d-flex justify-content-start container-ball-nb">
 								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb1" checked>
 								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb1">1</label>
 								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb2">
