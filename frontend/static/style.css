@@ -3,58 +3,64 @@ html, body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
-  }
+}
 
 /* CONTAINERS */
 
-  .container-full-height {
+.container-full-height {
 	min-height: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	/* background-color: black; */
-  }
+}
 
-  .container-customButton {
-
+.container-customButton {
 	width : 100%;
 	justify-content: end;
-  }
+}
 
-  .container-custom-colors {
+.container-custom-colors {
 	display: flex;
 	justify-content: center;
-  }
+}
 
-  .container-ball-nb {
+.container-ball-nb {
 	display: flex;
 	justify-content: center;
-  }
+}
 
-  .container-menu {
+.container-menu {
 	flex: 1; /* Fill remaining vertical space */
 	display: flex;
 	justify-content: center;
 	align-items: center;
-  }
+}
 
-  .container-connection {
+.container-connection {
 	display: flex;
 	flex : 1;
 	justify-content: center;
 	align-items: center;
 	max-width: 400;
-  }
+}
 
-  .container-title {
+.container-title {
 	padding: 1rem 1rem;
 	width: 100%;
-  }
+}
 
-  .scrollable-container {
+.scrollable-container {
 	max-height: 300px;
 	overflow-y: auto;
-  }
+}
+
+.container-2fa {
+	flex : 1;
+	justify-content: center;
+	align-items: center;
+}
+
 
 /* BUTTONS */
 
@@ -65,10 +71,10 @@ html, body {
 
 /* PONG TITLE */
 
-  .big-title {
+.big-title {
 	font-family: "JetBrains Mono", sans-serif;
 	font-size: 180;
 	font-weight: 200;
 	font-style: normal;
-  }
+}
 

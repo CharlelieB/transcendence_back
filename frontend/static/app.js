@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		{
 			ReplaceElement("buttonsContainer", "playerConnection");
 			document.getElementById("loginBackButton").classList.add("d-none");
+			document.getElementById("containerCustomButton").classList.add("d-none");
 		}
 		return response.json()
 	})
@@ -228,7 +229,22 @@ function userLogin() {
 		window.accessToken = data.access_token;
 		hostId = data.id;
 		hostConnected = true;
-		ReplaceElement("playerConnection", "buttonsContainer");
+		makeAuthenticatedRequest("/api/user/", {method: 'GET'})
+		.then(response => {
+			if(!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			return response.json();
+		})
+		.then(data => {
+			if(data.is_two_factor_enabled) {
+				handle2FA();
+			}
+			else {
+				ReplaceElement("playerConnection", "buttonsContainer");
+				document.getElementById("containerCustomButton").classList.remove("d-none");
+			}
+		})
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -275,30 +291,19 @@ function userRegistration() {
 	})
 }
 
-//////////// SOCIAL BUTTON ////////////
-
-function getFriendsList(data) {
-	const followList = {
-		user_ids : data.following
-	};
-	const followListContainer = document.getElementById('followList');
-
-	return makeAuthenticatedRequest("/api/users/ids/", {
-		method : "POST",
-		body : JSON.stringify(followList)
-	}).then(response => {
+function handle2FA() {
+	ReplaceElement("playerConnection", "2FAview");
+	makeAuthenticatedRequest("/api/2fa/create/", {method: 'GET'})
+	.then(response => {
 		if(!response.ok) {
 			throw new Error('Network response was not ok');
 		}
 		return response.json();
-	}).then(JSONdata => {
-		console.log(data);
-		const usernames = JSONdata.map(user => user.username);
-		var responseHTML = "<div>";
-		for(let i = 0; i < usernames.length; i++) {
-			responseHTML = responseHTML + usernames[i] + "</div><div>";
-		}
-		responseHTML = responseHTML + "</div>";
-		followListContainer.innerHTML = responseHTML;
+	}).then(data => {
+		console.log(data.qr_code);
+		document.getElementById('QRcodeContainer').innerHTML = "<img src=\"data:image/png;base64," + data.qr_code + "\" alt=\"QR Code\">";
+	})
+	.catch(error => {
+		console.error('There was a problem with the fetch operation:', error);
 	})
 }
