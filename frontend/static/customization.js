@@ -81,26 +81,26 @@ function setSquareColors()
 }
 
 function getRacketSize(size) {
-	if (size === "Small") {
+	if (size === "small") {
 		return (0);
 	}
-	else if (size === "Regular") {
+	else if (size === "regular") {
 		return (1);
 	}
-	else if (size === "Large") {
+	else if (size === "large") {
 		return (2);
 	}
 }
 
 function setRacketSize(value) {
 	if (value === "0") {
-		return ("Small");
+		return ("small");
 	}
 	else if (value === "1") {
-		return ("Regular");
+		return ("regular");
 	}
 	else if (value === "2") {
-		return ("Large");
+		return ("large");
 	}
 }
 

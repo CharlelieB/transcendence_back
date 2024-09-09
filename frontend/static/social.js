@@ -29,7 +29,7 @@ function getFriendsList(data) {
 	};
 	const followListContainer = document.getElementById('followList');
 
-	return makeAuthenticatedRequest("/api/users/ids/", {
+	makeAuthenticatedRequest("/api/users/ids/", {
 		method : "POST",
 		body : JSON.stringify(followList)
 	}).then(response => {
@@ -40,13 +40,27 @@ function getFriendsList(data) {
 	}).then(JSONdata => {
 		console.log(data);
 		const usernames = JSONdata.map(user => user.username);
-		var responseHTML = "<div>";
+		const userIds = JSONdata.map(user => user.id);
+		var responseHTML = "";
 		for(let i = 0; i < usernames.length; i++) {
-			responseHTML = responseHTML + usernames[i] + "</div><div>";
+			responseHTML = responseHTML + "<div class=\"row m-2\" id=\"friendContainer" + userIds[i] + "\"> \
+			<div class=\"h5 col-auto d-flex align-items-center\">" + usernames[i] + "</div> \
+			<div class=\"col d-flex justify-content-end\"> \
+				<button class=\"btn btn-danger unfollow-button\" data-user-id=\""+ userIds[i] + "\">X</button>\
+			</div> \
+			</div>";
 		}
-		responseHTML = responseHTML + "</div>";
 		followListContainer.innerHTML = responseHTML;
-	})
+		const unfollowButtons = document.querySelectorAll(".unfollow-button");
+		unfollowButtons.forEach(button => {
+			button.addEventListener('click', (event) => {
+				const userId = event.target.getAttribute('data-user-id');
+				unfollowUser(userId);
+				document.getElementById("friendContainer" + userId).classList.add("d-none");
+
+			});
+		});
+	});
 }
 
 // GET USERS //
@@ -109,10 +123,9 @@ function getUserList() {
     });
 }
 
-// FOLLOW USER
+// FOLLOW/UNFOLLOW USER
 
 function followUser(userId) {
-	console.log("Trying to follow user with id :", userId);
 	makeAuthenticatedRequest("/api/follow/" + userId + "/", {method: "POST"})
 	.then(response => {
 		if (!response.ok) {
@@ -127,6 +140,23 @@ function followUser(userId) {
 		console.error("There was an issue with the fetch operation: ", error);
 	})
 }
+
+function unfollowUser(userId) {
+	makeAuthenticatedRequest("/api/unfollow/" + userId + "/", {method: "POST"})
+	.then(response => {
+		if (!response.ok) {
+			throw new Error ('Network response was not ok');
+		}
+		return response.json();
+	})
+	.then(data => {
+		console.log("User unfollowed successfully : ", data);
+	})
+	.catch(error => {
+		console.error("There was an issue with the fetch operation: ", error);
+	})
+}
+
 
 // USER STATS
 
