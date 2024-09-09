@@ -280,7 +280,7 @@ function userRegistration() {
 		}
 		return response.json();
 	}).then(data => {
-		window.accessToken = data.access;
+		window.accessToken = data.access_token;
 		hostId = data.id;
 		hostConnected = true;
 		ReplaceElement("playerConnection", "buttonsContainer");

@@ -77,7 +77,14 @@ function getUserList() {
 			//userListContainer.innerText = usernames.length; // Display usernames, one per line
 			for (let i = 0; i < usernames.length; i++) {
 				if (!(userIds[i] === hostId || friendsList.includes(userIds[i]))) {
-					responseHTML = responseHTML + "<div class=\"row m-2\"> <div class=\"h5 col-auto\">" + usernames[i] + "</div> <div class=\"col d-flex justify-content-end\"> <button class=\"btn btn-primary follow-button\" data-user-id=\"" + userIds[i] + "\">Follow</button> </div> </div>"
+					responseHTML = responseHTML +
+					"<div class=\"row m-2\"> \
+						<div class=\"h5 col-auto\">" + usernames[i] + "</div> \
+						<div class=\"col d-flex justify-content-end\"> \
+							<button class=\"btn btn-primary follow-button\" data-user-id=\"" + userIds[i] + "\" id=\"followButton" + userIds[i] + "\">Follow</button> \
+						</div> \
+					</div>"
+
 				}
 			};
 			userListContainer.innerHTML = "<div>" + responseHTML + "</div>";
@@ -86,6 +93,11 @@ function getUserList() {
 			followButtons.forEach(button => {
 				button.addEventListener('click', (event) => {
 					const userId = event.target.getAttribute('data-user-id');
+					const followButton = document.getElementById("followButton" + userId);
+					followButton.classList.remove("btn-primary");
+					followButton.classList.add("btn-outline-primary");
+					followButton.innerText = "Followed";
+					followButton.disabled = true;
 					followUser(userId);
 				});
 			});
