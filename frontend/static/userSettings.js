@@ -67,3 +67,17 @@ switch2FA.addEventListener("change", () => {
 		makeAuthenticatedRequest("/api/2fa/deactivate/", {method: 'POST'});
 	}
 })
+
+// UPLOAD PHOTO
+
+function uploadImage() {
+	const fileInput = document.getElementById('fileInput');
+
+	fileInput.click();
+	//const file = event.target.files[0];
+	if (file) {
+		//NEED TO CHECK THE DIMENSIONS
+	}
+	// UPLOAD THE FILE TO THE BACK
+	//RELOAD THE DRAWER
+}
