@@ -155,8 +155,8 @@
 						<div class="flex-column">
 							<div class="row m-2">
 								<div class="form-check form-switch">
-									<input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-									<label class="form-check-label" for="flexSwitchCheckDefault">2 factor authentication</label>
+									<input class="form-check-input" type="checkbox" role="switch" id="switch2FA">
+									<label class="form-check-label" for="switch2FA">2 factor authentication</label>
 								</div>
 							</div>
 							<div class="row m-1">
@@ -297,7 +297,7 @@
 									<h5 id="userNameContainer" class="card-title">Bobby Brian</h5>
 								</div>
 								<div class="col d-flex justify-content-end">
-									<button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#userSettingsModal">
+									<button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#userSettingsModal" onclick="check2fa()">
 										<i class="bi bi-gear"></i>
 									</button>
 								</div>

@@ -1,3 +1,17 @@
+const switch2FA = document.getElementById("switch2FA");
+
+function check2fa() {
+	makeAuthenticatedRequest("/api/user/", {method: 'GET'})
+	.then(response => {
+		return response.json();
+	})
+	.then(data => {
+		if (data.is_two_factor_enabled) {
+			switch2FA.checked = true;
+		}
+	})
+}
+
 function changeUsername() {
 	let newUserName = document.getElementById("usernameChangeInput").value;
 	let errorContainer = document.getElementById("changeUsernameErrorContainer");
@@ -41,3 +55,15 @@ function changePassword() {
 		document.getElementById("passwordChangeButton").classList.remove('d-flex');
 	}
 }
+
+
+switch2FA.addEventListener("change", () => {
+	if(switch2FA.checked) {
+		console.log("activating 2fa");
+		makeAuthenticatedRequest("/api/2fa/activate/", {method: 'POST'});
+	}
+	else {
+		console.log("desactivating 2fa");
+		makeAuthenticatedRequest("/api/2fa/deactivate/", {method: 'POST'});
+	}
+})
