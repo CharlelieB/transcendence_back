@@ -16,7 +16,7 @@ let currentTournament = {
 
 // ADVERSARY CONNECTIONS
 
-async function checkAdversaryCredentials() {
+function checkAdversaryCredentials() {
 	email = document.getElementById("emailInput").value;
 	password = document.getElementById("passwordInput").value;
 
@@ -41,7 +41,6 @@ async function checkAdversaryCredentials() {
 	.then(data => {
 		currentMatch.idPlayer2 = data.id;
 		currentTournament.idPlayers.push(data.id);
-		// tempAdversaryId = data.id;
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -75,10 +74,8 @@ async function createAdversaryCredentials () {
 		return response.json();
 	})
 	.then(data => {
-		console.log("all good for the registration of player " + playerIndex);
-		console.log("player id : " + data.id);
-		tempAdversaryId = data.id;
-		return data.id;
+		currentMatch.idPlayer2 = data.id;
+		currentTournament.idPlayers.push(data.id);
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -115,8 +112,7 @@ function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner)
 function addPointPlayer1() {
 	currentMatch.scorePlayer1++;
 	document.getElementById("scorePlayer1").innerText = currentMatch.scorePlayer1;
-	if (currentMatch.scorePlayer1 === pointsForVictory)	{
-		console.log("right before recordMatch host id : " + currentMatch.idPlayer1 + " adversary id : " + currentMatch.idPlayer2);
+	if (currentMatch.scorePlayer1 === customData.customVictoryPoints)	{
 		recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
@@ -127,7 +123,7 @@ function addPointPlayer1() {
 function addPointPlayer2() {
 	currentMatch.scorePlayer2++;
 	document.getElementById("scorePlayer2").innerText = currentMatch.scorePlayer2;
-	if(currentMatch.scorePlayer2 === pointsForVictory) {
+	if(currentMatch.scorePlayer2 === customData.customVictoryPoints) {
 		recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;

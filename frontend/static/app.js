@@ -5,7 +5,6 @@ let hostId = 0;
 let playerIndex = 2;
 let playerNumber = 1;
 let gamesNb = 1;
-let tempAdversaryId = 0;
 
 //Tournament of 8 : 7 games
 //Tournament of 6 : 6 games
@@ -51,8 +50,14 @@ document.addEventListener('DOMContentLoaded', function() {
 	.then(data => {
 		if (data.access_token) {
 			hostConnected = true;
-
 			window.accessToken = data.access_token;
+			makeAuthenticatedRequest("/api/user/", {method: 'GET'})
+			.then(response => {
+				return response.json();
+			})
+			.then(data => {
+				hostId = data.id;
+			})
 			console.log(window.accessToken);
 			console.log('Access token saved');
 		} else {
@@ -151,15 +156,14 @@ async function submitUserForm() {
 			userLogin();
 		}
 		else {
-			await checkAdversaryCredentials();
-			console.log("player index : " + playerIndex + " player number : " + playerNumber);
+			checkAdversaryCredentials();
 			if (playerNumber === 2) {
+				currentMatch.idPlayer1 = hostId;
 				DisplayGame();
 			}
 			else {
 				if (playerIndex < playerNumber) {
 					playerIndex++;
-					currentTournament.idPlayers.push(tempAdversaryId);
 					document.getElementById("userForm").reset();
 					document.getElementById("connectionErrorMessage").classList.add("d-none");
 					document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
@@ -180,16 +184,12 @@ async function submitUserForm() {
 		else {
 			await createAdversaryCredentials();
 			if (playerNumber === 2) {
-				console.log("Displaying the game");
-				console.log("host id : " + hostId + " adversary id :" + tempAdversaryId);
 				currentMatch.idPlayer1 = hostId;
-				currentMatch.idPlayer2 = tempAdversaryId;
 				DisplayGame();
 			}
 			else {
 				if (playerIndex <= playerNumber) {
 					playerIndex++;
-					currentTournament.idPlayers.push(tempAdversaryId);
 					document.getElementById("userForm").reset();
 					document.getElementById("connectionErrorMessage").classList.add("d-none");
 					document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";

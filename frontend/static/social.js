@@ -164,14 +164,67 @@ function getUserStats()
 {
 	console.log("Getting User stats for ", hostId);
 	makeAuthenticatedRequest("/api/user-stats/" + hostId + "/", {method: 'GET'})
+	// makeAuthenticatedRequest("/api/games/matches/user/", {method: 'GET'})
 	.then(response => {
 		if(!response.ok) {
 			throw new Error ('Network response was not ok');
 		}
 		return response.json();
-	}).then(JSONdata => {
-		console.log(JSONdata);
+	}).then(data => {
+		console.log(data);
+		drawCanvas(data.wins, data.losses);
+		document.getElementById("gamesPlayedField").innerText = "Games played : " + data.games_played;
+		document.getElementById("victoryField").innerText = "Victories : " + data.wins;
+		document.getElementById("lossesField").innerText = "Losses : " + data.losses;
 	}).catch(error => {
 		console.error("There was an issue with the fetch operation: ", error);
 	})
+}
+
+function drawCanvas(wins, losses) {
+	const total = wins + losses;
+	const colors = ['#4CAF50', '#FF5733']; // Green and orange
+	const canvas = document.getElementById('myPieChart');
+	const ctx = canvas.getContext('2d');
+	const centerX = canvas.width / 2;
+	const centerY = canvas.height / 2;
+
+	if (total === 0) {
+		const radius = 50;  // Adjust the radius of the circle
+
+		// Draw the circle
+		ctx.beginPath();
+		ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+		ctx.fillStyle = '#d3d3d3';  // Light grey color for the circle
+		ctx.fill();
+		// Adding the text
+		ctx.font = '15px Arial';    // Font style and size
+		ctx.fillStyle = '#000';     // Text color
+		ctx.textAlign = 'center';   // Center align text
+		ctx.textBaseline = 'middle'; // Vertical align text
+		ctx.fillText('No User Data', centerX, centerY);
+		return ;
+	}
+
+	const radius = Math.min(canvas.width / 2, canvas.height / 2);
+
+	// Calculate angles for both values
+	const sliceAngle1 = (wins / total) * 2 * Math.PI;
+	const sliceAngle2 = (losses / total) * 2 * Math.PI;
+
+	// Draw first slice (value1)
+	ctx.beginPath();
+	ctx.moveTo(centerX, centerY);
+	ctx.arc(centerX, centerY, radius, 0, sliceAngle1);
+	ctx.closePath();
+	ctx.fillStyle = colors[0];
+	ctx.fill();
+
+	// Draw second slice (value2)
+	ctx.beginPath();
+	ctx.moveTo(centerX, centerY);
+	ctx.arc(centerX, centerY, radius, sliceAngle1, sliceAngle1 + sliceAngle2);
+	ctx.closePath();
+	ctx.fillStyle = colors[1];
+	ctx.fill();
 }
