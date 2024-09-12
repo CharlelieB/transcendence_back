@@ -16,39 +16,38 @@ let currentTournament = {
 
 // ADVERSARY CONNECTIONS
 
-function checkAdversaryCredentials() {	
+async function checkAdversaryCredentials() {
 	email = document.getElementById("emailInput").value;
 	password = document.getElementById("passwordInput").value;
 
 	console.log(email);
 	console.log(password);
 
-	const data = {
+	const input = {
 		email: email,
 		password: password
 	};
 
-	makeAuthenticatedRequest("/api/guest-login/", {
+	let response = await makeAuthenticatedRequest("/api/guest-login/", {
 		method: 'POST',
-		body: JSON.stringify(data)
-	})
-	.then(response => {
-		if(!response.ok) {
-			throw new Error('Email or password is incorrect');
-		}
-		return response.json();
-	})
-	.then(data => {
+		body: JSON.stringify(input)
+	});
+	if (!response.ok) {
+		errorMessageContainer.innerText = "Email or password incorect"
+		return false;
+	}
+	let data = await response.json();
+	if (data) {
 		if(data.id === hostId) {
-			throw new Error('Host user allready connected')
+			errorMessageContainer.innerText = "Host user allready connected";
+			return false;
 		}
-		currentMatch.idPlayer2 = data.id;
-		currentTournament.idPlayers.push(data.id);
-	})
-	.catch(error => {
-		errorMessageContainer.innerText = error.message;
-		throw error;
-	})
+		else {
+			currentMatch.idPlayer2 = data.id;
+			currentTournament.idPlayers.push(data.id);
+			return true;
+		}
+	}
 }
 
 async function createAdversaryCredentials () {
@@ -56,7 +55,7 @@ async function createAdversaryCredentials () {
 	password = document.getElementById('passwordInput').value;
 	passwordComfirmation = document.getElementById('passwordConfirmationInput').value;
 
-	const data = {
+	const input = {
 		email: email,
 		username: email,
 		password: password
@@ -64,25 +63,39 @@ async function createAdversaryCredentials () {
 	if (password !== passwordComfirmation)
 	{
 		errorMessageContainer.innerText = "The passwords don't match";
-		return;
+		return false;
 	}
-	makeUnauthenticatedRequest("/api/register/", {
+	let response = await makeUnauthenticatedRequest("/api/register/", {
 		method: 'POST',
-		body: JSON.stringify(data)
-	}).then(response => {
-		if(!response.ok) {
-			throw new Error('Network response was not ok');
-		}
-		return response.json();
-	})
-	.then(data => {
+		body: JSON.stringify(input)
+	});
+	if (!response.ok) {
+		errorMessageContainer.innerText = "This user is allready registered, you can connect";
+		return false;
+	}
+	let data = await response.json();
+	if (data) {
 		currentMatch.idPlayer2 = data.id;
 		currentTournament.idPlayers.push(data.id);
-	})
-	.catch(error => {
-		console.error('There was a problem with the fetch operation:', error);
-		errorMessageContainer.innerText = "This user doesn't exist, please create an account"
-	})
+		return true;
+	}
+
+
+
+//	.then(response => {
+//		if(!response.ok) {
+//			throw new Error('Network response was not ok');
+//		}
+//		return response.json();
+//	})
+//	.then(data => {
+//		currentMatch.idPlayer2 = data.id;
+//		currentTournament.idPlayers.push(data.id);
+//	})
+//	.catch(error => {
+//		console.error('There was a problem with the fetch operation:', error);
+//		errorMessageContainer.innerText = "This user doesn't exist, please create an account"
+//	})
 }
 
 // MATCH & TOURNAMENT RECORDS

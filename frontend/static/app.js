@@ -76,9 +76,8 @@ document.addEventListener('DOMContentLoaded', function() {
 function makeUnauthenticatedRequest(url, options = {}) {
 
 	const csrfToken = getCookie('csrftoken');
-	if (!csrfToken) {
+	if (!csrfToken && url !== "/api/login/") {
 		console.error('CSRF token is missing. Cannot refresh token.');
-		return Promise.reject('CSRF token is missing');
 	}
 
 	options.headers = options.headers || {};
@@ -156,14 +155,12 @@ async function submitUserForm() {
 			userLogin();
 		}
 		else {
-			try {
-				checkAdversaryCredentials();
-			}
-			catch (error) {
-				console.log("heresouefg");
+			let ret = await checkAdversaryCredentials();
+			if (ret === false) {
+				console.log("successfully aborted adversary login");
 				return ;
 			}
-			if (playerNumber === 2) {
+			else if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
 				DisplayGame();
 			}
@@ -188,8 +185,12 @@ async function submitUserForm() {
 			userRegistration();
 		}
 		else {
-			await createAdversaryCredentials();
-			if (playerNumber === 2) {
+			let ret = await createAdversaryCredentials();
+			if (ret === false) {
+				console.
+				return ;
+			}
+			else if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
 				DisplayGame();
 			}

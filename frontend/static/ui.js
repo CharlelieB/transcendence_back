@@ -38,7 +38,7 @@ function DisplayTournamentOptions() {
  {
 	playerNumber = playerNb;
 	heading = document.getElementById("loginTitle");
-
+	errorMessageContainer.innerText = "";
 
 	ResetMenuButtons();
 	ReplaceElement("buttonsContainer", "playerConnection");

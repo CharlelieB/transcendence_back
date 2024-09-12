@@ -136,6 +136,7 @@ function followUser(userId) {
 	})
 	.then(data => {
 		console.log("User followed successfully : ", data);
+		displaySocialDrawer();
 	})
 	.catch(error => {
 		console.error("There was an issue with the fetch operation: ", error);
@@ -152,6 +153,7 @@ function unfollowUser(userId) {
 	})
 	.then(data => {
 		console.log("User unfollowed successfully : ", data);
+		displaySocialDrawer();
 	})
 	.catch(error => {
 		console.error("There was an issue with the fetch operation: ", error);
@@ -177,6 +179,8 @@ function getUserStats()
 		document.getElementById("victoryField").innerText = "Victories : " + data.wins;
 		document.getElementById("lossesField").innerText = "Losses : " + data.losses;
 	}).catch(error => {
+		document.getElementById("statsErrorContainer").innerText = "No stats are recorded for this user";
+		document.getElementById("statsContainer").classList.add('d-none');
 		console.error("There was an issue with the fetch operation: ", error);
 	});
 	getMatchList();
