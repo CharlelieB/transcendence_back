@@ -57,10 +57,17 @@ function changePassword() {
 }
 
 
-switch2FA.addEventListener("change", () => {
+switch2FA.addEventListener("change", async () => {
 	if(switch2FA.checked) {
 		console.log("activating 2fa");
-		makeAuthenticatedRequest("/api/2fa/activate/", {method: 'POST'});
+		makeAuthenticatedRequest("/api/2fa/activate/", {method: 'POST'})
+		.then(async () => {
+			let response = await makeAuthenticatedRequest("/api/2fa/create/", {method: 'GET'});
+			let data = await response.json();
+			if (data) {
+				document.getElementById('QRcodeContainer').innerHTML = "<img src=\"data:image/png;base64," + data.qr_code + "\" alt=\"QR Code\">";
+			}
+		})
 	}
 	else {
 		console.log("desactivating 2fa");
