@@ -16,6 +16,7 @@ function displaySocialDrawer() {
 		document.getElementById("userEmailContainer").innerText = data.email;
 		document.getElementById("profilePic").innerHTML = "<img src=\"http://localhost:8000" + data.avatar + "\" class=\"img-thumbnail\">";
 		getFriendsList(data);
+		getUserStats();
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -164,7 +165,6 @@ function getUserStats()
 {
 	console.log("Getting User stats for ", hostId);
 	makeAuthenticatedRequest("/api/user-stats/" + hostId + "/", {method: 'GET'})
-	// makeAuthenticatedRequest("/api/games/matches/user/", {method: 'GET'})
 	.then(response => {
 		if(!response.ok) {
 			throw new Error ('Network response was not ok');
@@ -178,7 +178,8 @@ function getUserStats()
 		document.getElementById("lossesField").innerText = "Losses : " + data.losses;
 	}).catch(error => {
 		console.error("There was an issue with the fetch operation: ", error);
-	})
+	});
+	getMatchList();
 }
 
 function drawCanvas(wins, losses) {
@@ -227,4 +228,45 @@ function drawCanvas(wins, losses) {
 	ctx.closePath();
 	ctx.fillStyle = colors[1];
 	ctx.fill();
+}
+
+let tmpName
+
+async function getPlayerNames(ids) {
+	let response = await makeAuthenticatedRequest("/api/users/ids/", {
+		method: 'POST',
+		body: JSON.stringify(ids)
+	});
+	let data = await response.json();
+
+	return ([data[0].username, data[1].username]);
+}
+
+function getMatchList() {
+	const matchesHistoryContainer = document.getElementById("matchesHistoryContainer");
+	let matchesListHTML = "";
+	makeAuthenticatedRequest("/api/games/matches/user/", {method: 'GET'})
+	.then(response => {
+		if(!response.ok) {
+			throw new Error ('Network response was not ok');
+		}
+		return response.json();
+	}).then(async data => {
+		for(let i = 0; i < data.length;i++) {
+			const date = data[i].created_at.substring(0, 10);
+			const hour = data[i].created_at.substring(11, 16);
+			const idList = {user_ids: [data[i].player1, data[i].player2]};
+			const names = await getPlayerNames(idList);
+			matchesListHTML = matchesListHTML + "<div class=\"card mt-3\" style=\"width: 18rem;\"> \
+								<div class=\"card-body\"> \
+									<h5 class=\"card-title text-center\">" + names[0] + " VS " + names[1] + "</h5> \
+									<h1 class=\"card-text text-center\">" + data[i].player1_score + " - " + data[i].player2_score + "</h1> \
+									<p class=\"card-text text-center\">" + date + " at " + hour + "</p> \
+								</div> \
+							</div>"
+		}
+		matchesHistoryContainer.innerHTML = matchesListHTML;
+	}).catch(error => {
+		console.error("There was an issue with the fetch operation: ", error);
+	})
 }

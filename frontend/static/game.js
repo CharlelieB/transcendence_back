@@ -16,7 +16,7 @@ let currentTournament = {
 
 // ADVERSARY CONNECTIONS
 
-function checkAdversaryCredentials() {
+function checkAdversaryCredentials() {	
 	email = document.getElementById("emailInput").value;
 	password = document.getElementById("passwordInput").value;
 
@@ -34,18 +34,20 @@ function checkAdversaryCredentials() {
 	})
 	.then(response => {
 		if(!response.ok) {
-			throw new Error('Network response was not ok');
+			throw new Error('Email or password is incorrect');
 		}
 		return response.json();
 	})
 	.then(data => {
+		if(data.id === hostId) {
+			throw new Error('Host user allready connected')
+		}
 		currentMatch.idPlayer2 = data.id;
 		currentTournament.idPlayers.push(data.id);
 	})
 	.catch(error => {
-		console.error('There was a problem with the fetch operation:', error);
-		errorMessageContainer.innerText = "This user doesn't exist, please create an account"
-		return Promise.reject(error);
+		errorMessageContainer.innerText = error.message;
+		throw error;
 	})
 }
 
@@ -94,6 +96,7 @@ function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner)
 		winner : idWinner
 	};
 
+	console.log("recording match for " + idPlayer1 + " and " + idPlayer2);
 	makeAuthenticatedRequest('/api/games/matches/create/', {
 		method: 'POST',
 		body: JSON.stringify(data)

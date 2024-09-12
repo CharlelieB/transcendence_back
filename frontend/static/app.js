@@ -156,7 +156,13 @@ async function submitUserForm() {
 			userLogin();
 		}
 		else {
-			checkAdversaryCredentials();
+			try {
+				checkAdversaryCredentials();
+			}
+			catch (error) {
+				console.log("heresouefg");
+				return ;
+			}
 			if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
 				DisplayGame();
