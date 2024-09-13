@@ -83,8 +83,9 @@ class LoginView(GenericAPIView):
         password = serializer.validated_data["password"]
 
         user = authenticate(email=email, password=password)
-
         if user is not None:
+            if user.is_two_factor_enabled:
+                return Response({'detail': 'L\'authentification à deux facteurs est activée.'}, status=status.HTTP_400_BAD_REQUEST)
             tokens = get_user_tokens(user)
             res = response.Response()
             res.set_cookie(
@@ -463,28 +464,60 @@ class TOTPVerifySerializer(serializers.Serializer):
 )
 @extend_schema(tags=['Two-Factor Authentication'])
 class TOTPVerifyView(APIView):
-    """
-    API pour vérifier et activer un appareil TOTP pour un utilisateur.
-    """
-    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = LoginSerializer
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
-    def post(self, request, format=None):
-        serializer = TOTPVerifySerializer(data=request.data)
-        
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        login_serializer = LoginSerializer(data=request.data)
+        login_serializer.is_valid(raise_exception=True)
 
-        user = request.user
+        email = login_serializer.validated_data["email"]
+        password = login_serializer.validated_data["password"]
 
-        if not user.is_two_factor_enabled:
-            return Response({'detail': 'L\'authentification à deux facteurs n\'est pas activée.'}, status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(email=email, password=password)
+        if user is None:
+            raise rest_exceptions.AuthenticationFailed("Email ou mot de passe incorrect!")
 
-        token = serializer.validated_data.get('token')
-        device = TOTPDevice.objects.filter(user=user, confirmed=False).first()
-        
-        if device and device.verify_token(token):  
-            return Response({'message': 'Appareil TOTP vérifié avec succès.'}, status=status.HTTP_200_OK)
-        return Response({'detail': 'Code TOTP invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+        if user.is_two_factor_enabled:
+            totp_serializer = TOTPVerifySerializer(data=request.data)
+            if not totp_serializer.is_valid():
+                return Response(totp_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            token = totp_serializer.validated_data.get('token')
+            device = TOTPDevice.objects.filter(user=user, confirmed=False).first()
+            
+            if not device or not device.verify_token(token):
+                return Response({'detail': 'Code TOTP invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        tokens = get_user_tokens(user)
+        res = Response()
+
+        res.set_cookie(
+            key=settings.SIMPLE_JWT['AUTH_COOKIE'],
+            value=tokens["access_token"],
+            expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+            secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+            httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+        )
+
+        res.set_cookie(
+            key=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'],
+            value=tokens["refresh_token"],
+            expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
+            secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+            httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+        )
+
+        res.data = {
+            'id': user.id,
+            'access_token': tokens["access_token"],
+            'refresh_token': tokens["refresh_token"],
+        }
+
+        res["X-CSRFToken"] = csrf.get_token(request)
+        return res
 
 @extend_schema(tags=['Two-Factor Authentication'])
 class ActivateTwoFactorView(views.APIView):
