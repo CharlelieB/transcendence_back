@@ -41,9 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	.then (response => {
 		if (!response.ok)
 		{
-			ReplaceElement("buttonsContainer", "playerConnection");
 			document.getElementById("loginBackButton").classList.add("d-none");
-			document.getElementById("containerCustomButton").classList.add("d-none");
+			document.getElementById("playerConnection").classList.remove("d-none");
 		}
 		return response.json()
 	})
@@ -58,15 +57,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			.then(data => {
 				hostId = data.id;
 			})
-			console.log(window.accessToken);
-			console.log('Access token saved');
+			ReplaceElement("containerEmpty", "buttonsContainer");
+			document.getElementById("containerCustomButton").classList.remove('d-none');
 		} else {
 			console.error("access token not saved");
 		}
-	})
-	.catch(error => {
-		ReplaceElement("buttonsContainer", "playerConnection");
-		document.getElementById("loginBackButton").classList.add("d-none");
 	})
  });
 
@@ -228,33 +223,25 @@ function userLogin() {
 	})
 	.then(response => {
 		if(!response.ok) {
-			throw new Error('Network response was not ok');
+			if (response.status === 400) {
+				display2FA();
+				throw new Error("2FA activated");
+			}
+			else {
+				throw new Error('Network response was not ok');
+			}
 		}
 		return response.json();
 	})
 	.then(data => {
+		console.log("on essaye d'aller la");
 		window.accessToken = data.access_token;
 		hostId = data.id;
 		hostConnected = true;
-		makeAuthenticatedRequest("/api/user/", {method: 'GET'})
-		.then(response => {
-			if(!response.ok) {
-				throw new Error('Network response was not ok');
-			}
-			return response.json();
-		})
-		.then(data => {
-			if(data.is_two_factor_enabled) {
-				handle2FA();
-			}
-			else {
-				ReplaceElement("playerConnection", "buttonsContainer");
-				document.getElementById("containerCustomButton").classList.remove("d-none");
-			}
-		})
+		ReplaceElement("playerConnection", "buttonsContainer");
+		document.getElementById("containerCustomButton").classList.remove("d-none");
 	})
 	.catch(error => {
-		console.error('There was a problem with the fetch operation:', error);
 		errorMessageContainer.innerText = "Email or password incorect"
 	})
 }
@@ -299,9 +286,22 @@ function userRegistration() {
 }
 
 async function verify2FA() {
-	
-	let response = await makeUnauthenticatedRequest("/api/2fa/verify", {
+	email = document.getElementById('emailInput').value;
+	password = document.getElementById('passwordInput').value;
+	token = document.getElementById('2FAinput').value;
+
+	input = {
+		email: email,
+		password: password,
+		token : token,
+	};
+
+	console.log(email + " " + password);
+	let response = await makeAuthenticatedRequest("/api/2fa/verify/", {
 		method: 'POST',
-		body
-	})
+		body: JSON.stringify(input)
+	});
+	let data = await response.json();
+
+	console.log(data);
 }

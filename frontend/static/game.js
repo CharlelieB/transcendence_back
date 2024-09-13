@@ -11,7 +11,9 @@ let currentTournament = {
 	idPlayers : [],
 	winner : 0,
 	name : "",
-	gameType : ""
+	gameType : "",
+	numberOfPlayers : 0,
+	gamesPlayed : 0
 };
 
 // ADVERSARY CONNECTIONS

@@ -81,3 +81,8 @@ canvas {
 	font-weight: 200;
 	font-style: normal;
 }
+
+.emptyContainer {
+	display: flex;
+	flex : 1;
+}

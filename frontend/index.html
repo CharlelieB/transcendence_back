@@ -214,11 +214,12 @@
 	<!-- Base Container -->
 	<div id="baseContainer" class="container-full-height">
 		<!-- Customization button -->
-		<div id="containerCustomButton" class="container-customButton p-3">
+		<div id="containerEmpty" class="emptyContainer"></div>
+		<div id="containerCustomButton" class="container-customButton p-3 d-none">
 			<button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#customizationModal" onclick=getCustomizationSettings()>Game customization</button>
 		</div>
 		<!-- Main menu buttons -->
-		<div id="buttonsContainer" class="container-menu flex-column mt-5 pt-5 d-flex">
+		<div id="buttonsContainer" class="container-menu flex-column mt-5 pt-5 d-flex d-none">
 				<div id="testContainer"></div>
 				<!-- Quick play buttons -->
 				<div>

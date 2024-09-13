@@ -103,21 +103,8 @@ function resetUserSettingsButtons() {
 }
 
 
-function handle2FA() {
+function display2FA() {
 	ReplaceElement("playerConnection", "2FAview");
-	//makeAuthenticatedRequest("/api/2fa/create/", {method: 'GET'})
-	//.then(response => {
-	//	if(!response.ok) {
-	//		throw new Error('Network response was not ok');
-	//	}
-	//	return response.json();
-	//}).then(data => {
-	//	console.log(data.qr_code);
-	//	document.getElementById('QRcodeContainer').innerHTML = "<img src=\"data:image/png;base64," + data.qr_code + "\" alt=\"QR Code\">";
-	//})
-	//.catch(error => {
-	//	console.error('There was a problem with the fetch operation:', error);
-	//})
 }
 
 

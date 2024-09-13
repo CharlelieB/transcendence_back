@@ -72,6 +72,7 @@ switch2FA.addEventListener("change", async () => {
 	else {
 		console.log("desactivating 2fa");
 		makeAuthenticatedRequest("/api/2fa/deactivate/", {method: 'POST'});
+		document.getElementById('QRcodeContainer').innerHTML = "";
 	}
 })
 
