@@ -40,6 +40,10 @@ function DisplayTournamentOptions() {
 	heading = document.getElementById("loginTitle");
 	errorMessageContainer.innerText = "";
 
+	if(playerNumber > 2) {
+		currentTournament.active = true;
+		currentTournament.numberOfPlayers = playerNumber;
+	}
 	ResetMenuButtons();
 	ReplaceElement("buttonsContainer", "playerConnection");
 	document.getElementById("loginBackButton").classList.remove("d-none");
@@ -72,7 +76,7 @@ function backButtonEOG() {
 	document.getElementById("containerTitle").classList.remove("d-none");
 	ReplaceElement("endOfGame", "buttonsContainer");
 	playerIndex = 2;
-	currentTournament.idPlayers.reset();
+	currentTournament.idPlayers = [];
 }
 
 function replayButtonEOG() {
@@ -105,6 +109,14 @@ function resetUserSettingsButtons() {
 
 function display2FA() {
 	ReplaceElement("playerConnection", "2FAview");
+}
+
+function displayMatchInfo() {
+	const currentPlayer1 = currentTournament.idPlayers[currentTournament.gamesPlayed * 2];
+	const currentPlayer2 = currentTournament.idPlayers[(currentTournament.gamesPlayed * 2) + 1];
+
+	const content = "<h3 class=\"text-center\">" + currentPlayer1 + " VS " + currentPlayer2 + "</h3>";
+	document.getElementById("matchInfoContainer").innerHTML = content;
 }
 
 

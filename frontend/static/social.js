@@ -1,5 +1,7 @@
 //////////// SOCIAL BUTTON ////////////
 
+let tmpFriendStatsId = 0;
+
 // Display User name, Stats, and follow
 
 function displaySocialDrawer() {
@@ -16,7 +18,7 @@ function displaySocialDrawer() {
 		document.getElementById("userEmailContainer").innerText = data.email;
 		document.getElementById("profilePic").innerHTML = "<img src=\"http://localhost:8000" + data.avatar + "\" class=\"img-thumbnail\">";
 		getFriendsList(data);
-		getUserStats();
+		// getUserStats();
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -47,18 +49,19 @@ function getFriendsList(data) {
 			responseHTML = responseHTML + "<div class=\"row m-2\" id=\"friendContainer" + userIds[i] + "\"> \
 			<div class=\"h5 col-auto d-flex align-items-center\">" + usernames[i] + "</div> \
 			<div class=\"col d-flex justify-content-end\"> \
-				<button class=\"btn btn-danger unfollow-button\" data-user-id=\""+ userIds[i] + "\">X</button>\
+				<button class=\"btn btn-outline-dark friend-stats-button\" data-bs-toggle=\"modal\"\
+				data-bs-target=\"#friendModal\" data-user-id=\""+ userIds[i] + "\"> \
+				<i class=\"bi bi-three-dots\"></i></button>\
 			</div> \
 			</div>";
 		}
 		followListContainer.innerHTML = responseHTML;
-		const unfollowButtons = document.querySelectorAll(".unfollow-button");
-		unfollowButtons.forEach(button => {
+		const friendsButtons = document.querySelectorAll(".friend-stats-button");
+		friendsButtons.forEach(button => {
 			button.addEventListener('click', (event) => {
-				const userId = event.target.getAttribute('data-user-id');
-				unfollowUser(userId);
-				document.getElementById("friendContainer" + userId).classList.add("d-none");
-
+				console.log(event.currentTarget.getAttribute('data-user-id'));
+				tmpFriendStatsId = event.currentTarget.getAttribute('data-user-id');
+				getFriendsStats(tmpFriendStatsId);
 			});
 		});
 	});
@@ -143,8 +146,9 @@ function followUser(userId) {
 	})
 }
 
-function unfollowUser(userId) {
-	makeAuthenticatedRequest("/api/unfollow/" + userId + "/", {method: "POST"})
+function unfollowUser() {
+	console.log("unfollowing " + tmpFriendStatsId);
+	makeAuthenticatedRequest("/api/unfollow/" + tmpFriendStatsId + "/", {method: "POST"})
 	.then(response => {
 		if (!response.ok) {
 			throw new Error ('Network response was not ok');
@@ -165,7 +169,6 @@ function unfollowUser(userId) {
 
 function getUserStats()
 {
-	console.log("Getting User stats for ", hostId);
 	makeAuthenticatedRequest("/api/user-stats/" + hostId + "/", {method: 'GET'})
 	.then(response => {
 		if(!response.ok) {
@@ -173,8 +176,8 @@ function getUserStats()
 		}
 		return response.json();
 	}).then(data => {
-		console.log(data);
-		drawCanvas(data.wins, data.losses);
+		console.log("on est la");
+		drawCanvas(data.wins, data.losses, "myPieChart");
 		document.getElementById("gamesPlayedField").innerText = "Games played : " + data.games_played;
 		document.getElementById("victoryField").innerText = "Victories : " + data.wins;
 		document.getElementById("lossesField").innerText = "Losses : " + data.losses;
@@ -186,13 +189,34 @@ function getUserStats()
 	getMatchList();
 }
 
-function drawCanvas(wins, losses) {
+function getFriendsStats(userId) {
+	makeAuthenticatedRequest("/api/user-stats/" + userId + "/", {method: 'GET'})
+	.then(response => {
+		if (!response.ok) {
+			throw new Error ("Network response was not ok");
+		}
+		return response.json();
+	}).then(data => {
+		drawCanvas(data.wins, data.losses, "friendPieChart");
+		document.getElementById("friendGamesPlayedField").innerText = "Games played : " + data.games_played;
+		document.getElementById("friendVictoryField").innerText = "Victories : " + data.wins;
+		document.getElementById("friendLossesField").innerText = "Losses : " + data.losses;
+	}).catch(error => {
+		document.getElementById("friendsStatsContainer").innerText = "No stats are recorded for this user";
+		console.error("There was an issue with the fetch operation: ", error);
+	});
+}
+
+function drawCanvas(wins, losses, chartId) {
 	const total = wins + losses;
 	const colors = ['#4CAF50', '#FF5733']; // Green and orange
-	const canvas = document.getElementById('myPieChart');
+	const canvas = document.getElementById(chartId);
 	const ctx = canvas.getContext('2d');
 	const centerX = canvas.width / 2;
 	const centerY = canvas.height / 2;
+
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	if (total === 0) {
 		const radius = 50;  // Adjust the radius of the circle
@@ -232,6 +256,7 @@ function drawCanvas(wins, losses) {
 	ctx.closePath();
 	ctx.fillStyle = colors[1];
 	ctx.fill();
+	console.log("finished drawing canva");
 }
 
 let tmpName

@@ -83,11 +83,13 @@ function makeUnauthenticatedRequest(url, options = {}) {
 
 	return fetch(url, options)
 	.then(response => {
-		if (response.status === 401) {
-				console.log("error 401");
-			}
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
 			return response;
-	});
+	}).catch(error => {
+		console.error("Api error : ", error);
+	})
 }
 
 function makeAuthenticatedRequest(url, options = {}) {
@@ -111,11 +113,18 @@ function makeAuthenticatedRequest(url, options = {}) {
 			console.log("Refreshing token");
 			return refreshToken().then(() => {
 				options.headers['Authorization'] = `Bearer ${window.accessToken}`;
-				return fetch(url, options);
+				fetch(url, options)
+				.then(response => {
+					if (!response.ok) {
+						throw new Error("Network response was not ok");
+					}
+				})
 			});
 		}
 		return response;
-	});
+	}).catch(error => {
+		console.error("Api Error : ", error);
+	})
 }
 
 // REFRESH
@@ -167,8 +176,10 @@ async function submitUserForm() {
 					document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
 				}
 				else {
+					playerIndex = 0;
 					currentTournament.idPlayers.push(hostId);
 					console.log(currentTournament.idPlayers);
+					displayMatchInfo();
 					DisplayGame();
 				}
 			}
@@ -297,11 +308,18 @@ async function verify2FA() {
 	};
 
 	console.log(email + " " + password);
-	let response = await makeAuthenticatedRequest("/api/2fa/verify/", {
+	let response = await makeUnauthenticatedRequest("/api/2fa/verify/", {
 		method: 'POST',
 		body: JSON.stringify(input)
 	});
+	if (!response.ok) {
+		errorMessageContainer = "Wrong token";
+		return ;
+	}
 	let data = await response.json();
+	hostId = data.id;
+	ReplaceElement("2FAview", "buttonsContainer");
+	document.getElementById("containerCustomButton").classList.remove('d-none');
 
-	console.log(data);
+	console.log("2fa verificated for " + data.id);
 }

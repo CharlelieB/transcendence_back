@@ -8,9 +8,9 @@ let currentMatch = {
 };
 
 let currentTournament = {
+	active: false,
 	idPlayers : [],
 	winner : 0,
-	name : "",
 	gameType : "",
 	numberOfPlayers : 0,
 	gamesPlayed : 0
@@ -81,28 +81,26 @@ async function createAdversaryCredentials () {
 		currentTournament.idPlayers.push(data.id);
 		return true;
 	}
-
-
-
-//	.then(response => {
-//		if(!response.ok) {
-//			throw new Error('Network response was not ok');
-//		}
-//		return response.json();
-//	})
-//	.then(data => {
-//		currentMatch.idPlayer2 = data.id;
-//		currentTournament.idPlayers.push(data.id);
-//	})
-//	.catch(error => {
-//		console.error('There was a problem with the fetch operation:', error);
-//		errorMessageContainer.innerText = "This user doesn't exist, please create an account"
-//	})
 }
 
 // MATCH & TOURNAMENT RECORDS
 
+function RecordWin(winner) {
+makeAuthenticatedRequest("/api/wins/" + winner + "/", {method : 'POST'});
+}
+
+function RecordLoss(data) {
+	if (data.player1_score > data.player2_score) {
+		makeAuthenticatedRequest("/api/losses/" + data.player2 + "/", {method: 'POST'});
+	}
+	else {
+		makeAuthenticatedRequest("/api/losses/" + data.player1 + "/", {method : 'POST'});
+	}
+
+}
+
 function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner) {
+
 	const data = {
 		player1 : idPlayer1,
 		player2 : idPlayer2,
@@ -123,6 +121,8 @@ function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner)
 	}).catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
 	})
+	RecordWin(data.winner);
+	RecordLoss(data);
 }
 
 // GAME VIEW
@@ -131,10 +131,13 @@ function addPointPlayer1() {
 	currentMatch.scorePlayer1++;
 	document.getElementById("scorePlayer1").innerText = currentMatch.scorePlayer1;
 	if (currentMatch.scorePlayer1 === customData.customVictoryPoints)	{
+		console.log(customData.customVictoryPoints);
 		recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
-		DisplayWinnerMenu();
+		if (!currentTournament.active) {
+			DisplayWinnerMenu();
+		}
 	}
 }
 
@@ -147,4 +150,10 @@ function addPointPlayer2() {
 		currentMatch.scorePlayer2 = 0;
 		DisplayWinnerMenu();
 	}
+}
+
+// TOURNAMENT
+
+function prepareTournament(playerNb) {
+
 }

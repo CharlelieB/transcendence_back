@@ -114,6 +114,9 @@
 								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb5">5</label>
 							</div>
 						</div>
+						<div class="d-flex justify-content-center mt-2">
+							<button type="button" class="btn btn-outline-primary" onclick="restoreCustomizationSettings()">Restore to default</button>
+						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -207,6 +210,36 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetUserSettingsButtons()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal Friends Stats -->
+	<div class="modal fade" id="friendModal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+				<h1 class="modal-title fs-5">Follow player(s)</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="custom-modal-body">
+						<div id="statsErrorContainer" class="d-flex flex-column"></div>
+						<div id="friendsStatsContainer">
+							<div class="col">
+								<canvas id="friendPieChart" width="100" height="100"></canvas>
+							</div>
+							<div class="col-auto d-flex flex-column justify-content-center">
+								<div id="friendGamesPlayedField"></div>
+								<div id="friendVictoryField"></div>
+								<div id="friendLossesField"></div>
+							</div>
+						</div>
+						<button class="btn btn-danger mt-2" onclick="unfollowUser()">Unfollow</button>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>
@@ -333,7 +366,7 @@
 
 							<button class="nav-link active" id="nav-channel-tab" data-bs-toggle="tab" data-bs-target="#nav-friends" type="button" role="tab" aria-controls="nav-channel" aria-selected="true">Friends</button>
 
-							<button class="nav-link" id="nav-priv-tab" data-bs-toggle="tab" data-bs-target="#nav-stats" type="button" role="tab" aria-controls="nav-private-message" aria-selected="false">Game Statistics</button>
+							<button class="nav-link" id="nav-priv-tab" data-bs-toggle="tab" data-bs-target="#nav-stats" type="button" role="tab" aria-controls="nav-private-message" aria-selected="false" onclick="getUserStats()">Game Statistics</button>
 
 						</div>
 					</nav>
@@ -345,7 +378,7 @@
 								<h2>Friends list</h2>
 							</div>
 							<div class="col d-flex justify-content-end">
-								<button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#followModal"  onclick="getUserList()">
+								<button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#followModal"  onclick="getUserList()">
 									<i class="bi bi-person-add"></i>
 								</button>
 							</div>
@@ -377,6 +410,7 @@
 
 	</div>
 	<div id="gameContainer" class="flex-column d-none">
+		<div id="matchInfoContainer"></div>
 		<div class="row">
 			<div class="col">
 				<button class="btn btn-primary" onclick="addPointPlayer1()">Add point</button>

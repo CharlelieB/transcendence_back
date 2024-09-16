@@ -3,7 +3,7 @@ let customData = {
 	colorRacket1 : 3,
 	colorRacket2 : 4,
 	colorNet : 2,
-	sizeRacket : "Regular",
+	sizeRacket : "regular",
 	nbBalls : 1
 };
 
@@ -34,11 +34,9 @@ function getCustomizationSettings() {
 		customColorRacket1.value = data.color_1;
 		customColorRacket2.value = data.color_2;
 		customColorNet.value = data.color_filet;
-		setSquareColors();
 		customRacketSize.value = getRacketSize(data.size_raquette);
 		customBallsNb = data.nb_balls;
-		selectBallsNbRadioButton();
-		customVictoryScoreField.innerHTML = "Score required for victory : " + customScoreValue.value;
+		updateCustomModalUI();
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -60,6 +58,7 @@ function updateCustomizationSettings() {
 		body : JSON.stringify(data)
 	})
 	.then(response => {
+		updateCustomModalUI();
 		if(!response.ok) {
 			throw new Error('Network response was not ok');
 		}
@@ -68,6 +67,24 @@ function updateCustomizationSettings() {
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
 	})
+}
+
+function restoreCustomizationSettings() {
+	customScoreValue.value = 5;
+	customColorRacket1.value = 3;
+	customColorRacket2.value = 4;
+	customColorNet.value = 2;
+	customRacketSize.value = getRacketSize("regular");
+	customBallsNb = 1;
+
+	updateCustomizationSettings();
+	updateCustomModalUI();
+}
+
+function updateCustomModalUI() {
+	setSquareColors();
+	selectBallsNbRadioButton();
+	customVictoryScoreField.innerHTML = "Score required for victory : " + customScoreValue.value;
 }
 
 function setSquareColors()
