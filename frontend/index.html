@@ -101,18 +101,12 @@
 							</select>
 						</div>
 						<div>
-							Number of balls
+							Map
 							<div class="btn-group-horizontal d-flex justify-content-start container-ball-nb">
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb1" onclick="updateBallsNumber(1)">
-								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb1">1</label>
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb2" onclick="updateBallsNumber(2)">
-								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb2">2</label>
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb3" onclick="updateBallsNumber(3)">
-								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb3">3</label>
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb4" onclick="updateBallsNumber(4)">
-								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb4">4</label>
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb5" onclick="updateBallsNumber(5)">
-								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb5">5</label>
+								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb0" onclick="updateMapNumber(0)">
+								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb0">Classic</label>
+								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb1" onclick="updateMapNumber(1)">
+								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb1">Tron Grid</label>
 							</div>
 						</div>
 						<div class="d-flex justify-content-center mt-2">
@@ -413,23 +407,15 @@
 	<!-- Game container -->
 	<div id="gameContainer" class="flex-column d-none">
 		<div id="matchInfoContainer"></div>
+		<div id="matchInfoSubtitle"></div>
 		<canvas id="canvas-id" width = "1000" height = "500"></canvas>
-	</div>
-	<!-- End of game container -->
-	<div id="endOfGame" class="d-none">
-		<div class="game-menu">
-			<div class="row">
-				<h2 id="matchWinnerInput"></h2>
-				<h4 id="winnerMessage"></h4>
+		<div id="EOGButtons" class="row mt-3 d-none">
+			<div class="col-auto">
+				<button class="btn btn-primary" onclick="backButtonEOG()">Back to menu</button>
 			</div>
-			<div class="row">
-				<div class="col-auto">
-					<button class="btn btn-primary" onclick="backButtonEOG()">Back to menu</button>
-				</div>
-				<div class="col">
-					<button id="replayButton" class="btn btn-danger" onclick="replayButtonEOG()">Replay</button>
-					<button id="nextGameButton" class="btn btn-danger d-none">Next Game</button>
-				</div>
+			<div class="col">
+				<button id="replayButton" class="btn btn-danger" onclick="replayButtonEOG()">Replay</button>
+				<button id="nextGameButton" class="btn btn-danger d-none">Next Game</button>
 			</div>
 		</div>
 	</div>

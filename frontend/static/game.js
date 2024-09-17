@@ -1,4 +1,5 @@
 /*-----2D-----*/
+var init = false;
 var bot = document.getElementById("botGameStart");
 //var pvp = document.getElementById("pvp-id");
 var canvas = document.getElementById("canvas-id");
@@ -584,6 +585,7 @@ function gameLoop(currentTime)
 		displayResult(false);
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
+		displayEOGMenu();
 		//Display buttons
 			//Restart
 			//Back
@@ -622,6 +624,7 @@ function gameLoopPvp(currentTime)
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
+		displayEOGMenu();
 	}
 }
 
@@ -651,26 +654,39 @@ function initDeltaTime(currentTime)
 
 function rmStartNode()
 {
+	grid3D = [];
+	ball3D = [];
+	padel3D = [];
+	currentMatch.bot = true;
 	winnerScore = document.getElementById("customVictoryValue").value;
-	DisplayGameBot();
-	create3Dgrid(map);
+	create3Dgrid(customMapNb);
+	console.log(xBall + " z : " + zBall);
+	console.log(xAntagonist);
 	create3Dpadel();
 	create3Dball();
+	DisplayGameBot();
 	initDeltaTime();
 }
 
 function rmStartNodePvp()
 {
-	winnerScore = document.getElementById("customVictoryValue").value;
-	DisplayGame();
-	globaleScale /= 1.2;
-	zGridOffset *= 1.25;
-	yGridOffset *= 1.7;
-	MID_WIDTH /= 2;
-	create3Dgrid(map);
-	create3DgridPvp(map);
+	grid3D = [];
+	ball3D = [];
+	padel3D = [];
+	globaleScale = 310 / 1.2;
+	zGridOffset = 6 * 1.25;
+	yGridOffset = 4.2 * 1.7;
+	MID_WIDTH = canvas.width / 4;
+	console.log(xBall + " z : " + zBall);
+	//zBall = 0;
+	//xBall = 2;
 	create3Dpadel();
 	create3Dball();
+	create3Dgrid(customMapNb);
+	create3DgridPvp(customMapNb);
+	currentMatch.bot = false;
+	winnerScore = document.getElementById("customVictoryValue").value;
+	DisplayGame();
 	initDeltaTimePvp();
 }
 /*----------Main----------*/

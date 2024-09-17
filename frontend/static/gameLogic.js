@@ -4,7 +4,8 @@ let currentMatch = {
 	idPlayer1 : 0,
 	idPlayer2 : 0,
 	scorePlayer1 : 0,
-	scorePlayer2 : 0
+	scorePlayer2 : 0,
+	bot : false
 };
 
 let currentTournament = {
@@ -135,7 +136,7 @@ function addPointPlayer1() {
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 			currentMatch.scorePlayer1 = 0;
 			currentMatch.scorePlayer2 = 0;
-			DisplayWinnerMenu();
+			displayEOGMenu();
 		}
 		else {
 			console.log("inside end of tournament game");
