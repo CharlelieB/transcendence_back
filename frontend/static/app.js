@@ -38,7 +38,7 @@ function validateEmail(email) {
 
 document.addEventListener('DOMContentLoaded', async function() {
 	let response = await makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'})
-	if (response === 1)
+	if (response === 1 || (!response.ok))
 	{
 		document.getElementById("loginBackButton").classList.add("d-none");
 		document.getElementById("playerConnection").classList.remove("d-none");
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 function makeUnauthenticatedRequest(url, options = {}) {
 
 	const csrfToken = getCookie('csrftoken');
-	if (!csrfToken) {
+	if (!csrfToken  && url !== "/api/login/") {
 		console.error('CSRF token is missing. Cannot refresh token.');
 		return 1;
 	}
@@ -91,7 +91,7 @@ function makeUnauthenticatedRequest(url, options = {}) {
 function makeAuthenticatedRequest(url, options = {}) {
 
 	const csrfToken = getCookie('csrftoken');
-	if (!csrfToken && url !== "/api/login/") {
+	if (!csrfToken) {
 		console.error('CSRF token is missing. Cannot refresh token.');
 		return 1;
 	}
@@ -293,11 +293,11 @@ function userLogin() {
 		return response.json();
 	})
 	.then(data => {
-		console.log("on essaye d'aller la");
 		window.accessToken = data.access_token;
 		hostId = data.id;
 		hostConnected = true;
 		ReplaceElement("playerConnection", "buttonsContainer");
+		document.getElementById("containerEmpty").classList.add("d-none");
 		document.getElementById("containerCustomButton").classList.remove("d-none");
 	})
 	.catch(error => {
