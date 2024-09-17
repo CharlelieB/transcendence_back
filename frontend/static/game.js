@@ -663,6 +663,8 @@ function rmStartNode()
 	xPadelPlayer = 0;
 	xAntagonist = 0;
 	zVelocity = ballSpeed;
+	currentMatch.scorePlayer1 = 0;
+	currentMatch.scorePlayer2 = 0;
 	currentMatch.bot = true;
 	winnerScore = document.getElementById("customVictoryValue").value;
 	create3Dgrid(customMapNb);
@@ -684,7 +686,9 @@ function rmStartNodePvp()
 	zBall = zPadel;
 	zBallPvp = zAntagonist;
 	xBall = 0;
-	zVelocity = ballSpeed;	
+	zVelocity = ballSpeed;
+	currentMatch.scorePlayer1 = 0;
+	currentMatch.scorePlayer2 = 0;
 	xPadelPlayer = 0;
 	xAntagonist = 0;
 	create3Dpadel();
