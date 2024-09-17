@@ -1,12 +1,3 @@
-let customData = {
-	customVictoryPoints : 5,
-	colorRacket1 : 3,
-	colorRacket2 : 4,
-	colorNet : 2,
-	sizeRacket : "regular",
-	nbBalls : 1
-};
-
 // CUSTOMIZATION
 
 const bgClassList = ["bg-primary", "bg-secondary", "bg-success", "bg-danger", "bg-warning", "bg-dark"];

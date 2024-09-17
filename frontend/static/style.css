@@ -93,3 +93,27 @@ canvas {
 	justify-content: center;
 	align-items: center;
 }
+
+/* GAME STYLES */
+
+#bot-id
+{
+	font-size: 20px;
+}
+
+#pvp-id
+{
+	font-size: 20px;
+}
+
+#canvas-id
+{
+	background-color : black;
+}
+
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('fonts/PressStart2P-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

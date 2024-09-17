@@ -65,6 +65,13 @@ function DisplayGame()
 	ReplaceElement("playerConnection", "gameContainer");
 }
 
+function DisplayGameBot()
+{
+	document.getElementById("containerCustomButton").classList.add("d-none");
+	document.getElementById("containerTitle").classList.add("d-none");
+	ReplaceElement("buttonsContainer", "gameContainer");
+}
+
 function DisplayWinnerMenu() {
 	document.getElementById("scorePlayer1").innerText = 0;
 	document.getElementById("scorePlayer2").innerText = 0;

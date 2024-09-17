@@ -71,8 +71,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function makeUnauthenticatedRequest(url, options = {}) {
 
 	const csrfToken = getCookie('csrftoken');
-	if (!csrfToken && url !== "/api/login/") {
+	if (!csrfToken) {
 		console.error('CSRF token is missing. Cannot refresh token.');
+		return Promise.reject('CSRF token is missing');
 	}
 
 	options.headers = options.headers || {};
@@ -83,19 +84,17 @@ function makeUnauthenticatedRequest(url, options = {}) {
 
 	return fetch(url, options)
 	.then(response => {
-		if (!response.ok) {
-			throw new Error("Network response was not ok");
-		}
+		if (response.status === 401) {
+				console.log("error 401");
+			}
 			return response;
-	}).catch(error => {
-		console.error("Api error : ", error);
-	})
+	});
 }
 
 function makeAuthenticatedRequest(url, options = {}) {
 
 	const csrfToken = getCookie('csrftoken');
-	if (!csrfToken) {
+	if (!csrfToken && url !== "/api/login/") {
 		console.error('CSRF token is missing. Cannot refresh token.');
 		return Promise.reject('CSRF token is missing');
 	}
@@ -113,19 +112,71 @@ function makeAuthenticatedRequest(url, options = {}) {
 			console.log("Refreshing token");
 			return refreshToken().then(() => {
 				options.headers['Authorization'] = `Bearer ${window.accessToken}`;
-				fetch(url, options)
-				.then(response => {
-					if (!response.ok) {
-						throw new Error("Network response was not ok");
-					}
-				})
+				return fetch(url, options);
 			});
 		}
 		return response;
-	}).catch(error => {
-		console.error("Api Error : ", error);
-	})
+	});
 }
+
+//function makeUnauthenticatedRequest(url, options = {}) {
+
+//	const csrfToken = getCookie('csrftoken');
+//	if (!csrfToken && url !== "/api/login/") {
+//		console.error('CSRF token is missing. Cannot refresh token.');
+//	}
+
+//	options.headers = options.headers || {};
+//	options.headers['Accept'] = 'application/json';
+//	options.headers['Content-Type'] = 'application/json';
+//	options.headers['X-CSRFToken'] = csrfToken;
+//	options.credentials = 'include';
+
+//	return fetch(url, options)
+//	.then(response => {
+//		if (!response.ok) {
+//			throw new Error("Network response was not ok");
+//		}
+//			return response;
+//	}).catch(error => {
+//		console.error("Api error : ", error);
+//	})
+//}
+
+//function makeAuthenticatedRequest(url, options = {}) {
+
+//	const csrfToken = getCookie('csrftoken');
+//	if (!csrfToken) {
+//		console.error('CSRF token is missing. Cannot refresh token.');
+//		return Promise.reject('CSRF token is missing');
+//	}
+
+//	options.headers = options.headers || {};
+//	options.headers['Authorization'] = `Bearer ${window.accessToken}`;
+//	options.headers['Accept'] = 'application/json';
+//	options.headers['Content-Type'] = 'application/json';
+//	options.headers['X-CSRFToken'] = csrfToken;
+//	options.credentials = 'include';
+
+//	return fetch(url, options)
+//	.then(response => {
+//		if (response.status === 401) {
+//			console.log("Refreshing token");
+//			return refreshToken().then(() => {
+//				options.headers['Authorization'] = `Bearer ${window.accessToken}`;
+//				fetch(url, options)
+//				.then(response => {
+//					if (!response.ok) {
+//						throw new Error("Network response was not ok");
+//					}
+//				})
+//			});
+//		}
+//		return response;
+//	}).catch(error => {
+//		console.error("Api Error : ", error);
+//	})
+//}
 
 // REFRESH
 

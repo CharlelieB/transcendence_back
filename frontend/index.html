@@ -18,10 +18,11 @@
 	<link rel="stylesheet" href="static/style.css">
 	<script src="static/app.js" defer></script>
 	<script src="static/ui.js" defer></script>
-	<script src="static/game.js" defer></script>
 	<script src="static/social.js" defer></script>
 	<script src="static/customization.js" defer></script>
 	<script src="static/userSettings.js" defer></script>
+	<script src="static/gameLogic.js" defer></script>
+	<script src="static/game.js" defer></script>
 </head>
 <body>
 	<!-- Modal Customization-->
@@ -35,7 +36,7 @@
 					<div class="custom-modal-body">
 						<div>
 							<label for="customRange" class="form-label" id="customVictoryField">Score required for victory : 5</label>
-							<input type="range" class="form-range" min="0" max="10" step="1" id="customVictoryValue">
+							<input type="range" class="form-range" min="1" max="10" step="1" id="customVictoryValue">
 						</div>
 						<div>
 							Color first racket
@@ -120,7 +121,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="getCustomizationSettings()">Close</button>
 					<button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="updateCustomizationSettings()">Save changes</button>
 				</div>
 			</div>
@@ -259,7 +260,7 @@
 					<button id="quickPlay" class="btn btn-outline-warning m-1 d-flex" onclick="DisplayQuickPlayOptions()">Quick Play</button>
 					<div id="quickPlayOptions" class="d-none">
 						<button class="btn btn-outline-warning m-1" onclick="DisplayPlayerConnection(2)">1v1</button>
-						<button class="btn btn-outline-warning m-1">Bot</button>
+						<button id="botGameStart" class="btn btn-outline-warning m-1">Bot</button>
 					</div>
 				</div>
 				<!-- Tournament buttons -->
@@ -411,23 +412,7 @@
 	</div>
 	<div id="gameContainer" class="flex-column d-none">
 		<div id="matchInfoContainer"></div>
-		<div class="row">
-			<div class="col">
-				<button class="btn btn-primary" onclick="addPointPlayer1()">Add point</button>
-			</div>
-			<div class="col">
-				<button class="btn btn-danger" onclick="addPointPlayer2()">Add point</button>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col">
-				<h1 id="scorePlayer1">0</h1>
-			</div>
-			<div class="col">
-				<h1 id="scorePlayer2">0</h1>
-			</div>
-		</div>
-
+		<canvas id="canvas-id" width = "1000" height = "500"></canvas>
 	</div>
 	<div id="endOfGame" class="d-none">
 		<div class="game-menu">
