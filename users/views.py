@@ -370,9 +370,6 @@ class UserStatsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, user_id):
-        if request.user.id != user_id:
-            return Response({"detail": "Non autorisé à consulter les statistiques de cet utilisateur."}, status=status.HTTP_403_FORBIDDEN)
-
         user_stats = get_object_or_404(UserStats, user__id=user_id)
         serializer = UserStatsSerializer(user_stats)
         return Response(serializer.data, status=status.HTTP_200_OK)
