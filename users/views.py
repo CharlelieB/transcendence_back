@@ -86,6 +86,8 @@ class LoginView(GenericAPIView):
         if user is not None:
             if user.is_two_factor_enabled:
                 return Response({'detail': 'L\'authentification à deux facteurs est activée.'}, status=status.HTTP_400_BAD_REQUEST)
+            user.is_connect = True
+            user.save()
             tokens = get_user_tokens(user)
             res = response.Response()
             res.set_cookie(
@@ -176,7 +178,9 @@ class LogoutView(APIView):
             res.delete_cookie("X-CSRFToken")
             res.delete_cookie("csrftoken")
             res["X-CSRFToken"]=None
-            
+            user = request.user
+            user.is_connect = False
+            user.save()
             return res
         except:
             raise rest_exceptions.ParseError("Invalid token")
@@ -488,7 +492,8 @@ class TOTPVerifyView(APIView):
             
             if not device or not device.verify_token(token):
                 return Response({'detail': 'Code TOTP invalide.'}, status=status.HTTP_400_BAD_REQUEST)
-
+        user.is_connect = True
+        user.save()
         tokens = get_user_tokens(user)
         res = Response()
 
