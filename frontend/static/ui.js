@@ -111,12 +111,33 @@ function display2FA() {
 	ReplaceElement("playerConnection", "2FAview");
 }
 
-function displayMatchInfo() {
+async function displayMatchInfo() {
 	const currentPlayer1 = currentTournament.idPlayers[currentTournament.gamesPlayed * 2];
 	const currentPlayer2 = currentTournament.idPlayers[(currentTournament.gamesPlayed * 2) + 1];
 
-	const content = "<h3 class=\"text-center\">" + currentPlayer1 + " VS " + currentPlayer2 + "</h3>";
+	const input = {
+		user_ids: [currentPlayer1, currentPlayer2]
+	}
+	let response = await makeAuthenticatedRequest("/api/users/ids/", {
+		method: 'POST',
+		body: JSON.stringify(input)
+	});
+	let data = await response.json();
+	const usernames = data.map(user => user.username);
+	const content = "<h3 class=\"text-center\">" + usernames[0] + " VS " + usernames[1] + "</h3>";
 	document.getElementById("matchInfoContainer").innerHTML = content;
+}
+
+async function DisplayTournamentView(winnerId) {
+	console.log("apwdj");
+	ReplaceElement("gameContainer", "endOfGame");
+	let response = await makeAuthenticatedRequest("/api/user/" + winnerId + "/", {method: 'GET'});
+	let data = await response.json();
+	console.log("here : " + data.username);
+	document.getElementById('matchWinnerInput').innerText = "Victory for " + data.username;
+	document.getElementById('winnerMessage').innerText = "You are moving to the next round";
+	document.getElementById('replayButton').classList.add('d-none');
+	document.getElementById('nextGameButton').classList.remove('d-none');
 }
 
 

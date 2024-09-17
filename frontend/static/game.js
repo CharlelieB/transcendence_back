@@ -131,12 +131,18 @@ function addPointPlayer1() {
 	currentMatch.scorePlayer1++;
 	document.getElementById("scorePlayer1").innerText = currentMatch.scorePlayer1;
 	if (currentMatch.scorePlayer1 === customData.customVictoryPoints)	{
-		console.log(customData.customVictoryPoints);
-		recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
-		currentMatch.scorePlayer1 = 0;
-		currentMatch.scorePlayer2 = 0;
 		if (!currentTournament.active) {
+			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
+			currentMatch.scorePlayer1 = 0;
+			currentMatch.scorePlayer2 = 0;
 			DisplayWinnerMenu();
+		}
+		else {
+			console.log("inside end of tournament game");
+			currentTournament.gamesPlayed++;
+			currentMatch.scorePlayer1 = 0;
+			currentMatch.scorePlayer2 = 0;
+			DisplayTournamentView(currentMatch.idPlayer1);
 		}
 	}
 }
@@ -154,6 +160,6 @@ function addPointPlayer2() {
 
 // TOURNAMENT
 
-function prepareTournament(playerNb) {
-
+function displayNextTournamentGame() {
+	displayMatchInfo();
 }

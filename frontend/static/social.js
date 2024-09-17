@@ -41,7 +41,6 @@ function getFriendsList(data) {
 		}
 		return response.json();
 	}).then(JSONdata => {
-		console.log(data);
 		const usernames = JSONdata.map(user => user.username);
 		const userIds = JSONdata.map(user => user.id);
 		var responseHTML = "";

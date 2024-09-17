@@ -430,8 +430,21 @@
 
 	</div>
 	<div id="endOfGame" class="d-none">
-		<button class="btn btn-primary" onclick="backButtonEOG()">Back to menu</button>
-		<button class="btn btn-danger" onclick="replayButtonEOG()">Replay</button>
+		<div class="game-menu">
+			<div class="row">
+				<h2 id="matchWinnerInput"></h2>
+				<h4 id="winnerMessage"></h4>
+			</div>
+			<div class="row">
+				<div class="col-auto">
+					<button class="btn btn-primary" onclick="backButtonEOG()">Back to menu</button>
+				</div>
+				<div class="col">
+					<button id="replayButton" class="btn btn-danger" onclick="replayButtonEOG()">Replay</button>
+					<button id="nextGameButton" class="btn btn-danger d-none">Next Game</button>
+				</div>
+			</div>
+		</div>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 	integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

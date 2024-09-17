@@ -86,3 +86,10 @@ canvas {
 	display: flex;
 	flex : 1;
 }
+
+.game-menu {
+	display: flex;
+	flex: 1;
+	justify-content: center;
+	align-items: center;
+}
