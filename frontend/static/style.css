@@ -109,6 +109,14 @@ canvas {
 #canvas-id
 {
 	background-color : black;
+	border-radius: 25px;
+}
+
+#gameContainer {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full viewport height */
 }
 
 @font-face {

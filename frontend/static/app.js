@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 function makeUnauthenticatedRequest(url, options = {}) {
 
 	const csrfToken = getCookie('csrftoken');
-	if (!csrfToken  && url !== "/api/login/") {
+	if (!csrfToken  && (url !== "/api/login/" || url !== "/api/register/")) {
 		console.error('CSRF token is missing. Cannot refresh token.');
 		return 1;
 	}
