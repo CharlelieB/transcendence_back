@@ -38,7 +38,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_two_factor_enabled = models.BooleanField(default=False)  # Nouveau champ
-
+    is_connect = models.BooleanField(default=False)
     objects = UserProfileManager()
 
     USERNAME_FIELD = 'email'
