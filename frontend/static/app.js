@@ -36,33 +36,30 @@ function validateEmail(email) {
 
 /////    FIRST CONNECTION EVENT LISTENER /////
 
-document.addEventListener('DOMContentLoaded', function() {
-	makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'})
-	.then (response => {
-		if (!response.ok)
-		{
-			document.getElementById("loginBackButton").classList.add("d-none");
-			document.getElementById("playerConnection").classList.remove("d-none");
-		}
-		return response.json()
-	})
-	.then(data => {
-		if (data.access_token) {
-			hostConnected = true;
-			window.accessToken = data.access_token;
-			makeAuthenticatedRequest("/api/user/", {method: 'GET'})
-			.then(response => {
-				return response.json();
-			})
-			.then(data => {
-				hostId = data.id;
-			})
-			ReplaceElement("containerEmpty", "buttonsContainer");
-			document.getElementById("containerCustomButton").classList.remove('d-none');
-		} else {
-			console.error("access token not saved");
-		}
-	})
+document.addEventListener('DOMContentLoaded', async function() {
+	let response = await makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'})
+	if (response === 1)
+	{
+		document.getElementById("loginBackButton").classList.add("d-none");
+		document.getElementById("playerConnection").classList.remove("d-none");
+		return ;
+	}
+	let data = await response.json();
+	if (data.access_token) {
+		hostConnected = true;
+		window.accessToken = data.access_token;
+		makeAuthenticatedRequest("/api/user/", {method: 'GET'})
+		.then(response => {
+			return response.json();
+		})
+		.then(data => {
+			hostId = data.id;
+		})
+		ReplaceElement("containerEmpty", "buttonsContainer");
+		document.getElementById("containerCustomButton").classList.remove('d-none');
+	} else {
+		console.error("access token not saved");
+	}
  });
 
 
@@ -73,7 +70,7 @@ function makeUnauthenticatedRequest(url, options = {}) {
 	const csrfToken = getCookie('csrftoken');
 	if (!csrfToken) {
 		console.error('CSRF token is missing. Cannot refresh token.');
-		return Promise.reject('CSRF token is missing');
+		return 1;
 	}
 
 	options.headers = options.headers || {};
@@ -96,7 +93,7 @@ function makeAuthenticatedRequest(url, options = {}) {
 	const csrfToken = getCookie('csrftoken');
 	if (!csrfToken && url !== "/api/login/") {
 		console.error('CSRF token is missing. Cannot refresh token.');
-		return Promise.reject('CSRF token is missing');
+		return 1;
 	}
 
 	options.headers = options.headers || {};

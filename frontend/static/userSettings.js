@@ -82,10 +82,13 @@ function uploadImage() {
 	const fileInput = document.getElementById('fileInput');
 
 	fileInput.click();
-	//const file = event.target.files[0];
-	if (file) {
-		//NEED TO CHECK THE DIMENSIONS
+	fileInput.onchange = () => {
+ 		const selectedFile = fileInput.files[0];
+ 		console.log(selectedFile);
 	}
+	//if (file) {
+		//NEED TO CHECK THE DIMENSIONS
+	//}
 	// UPLOAD THE FILE TO THE BACK
 	//RELOAD THE DRAWER
 }
