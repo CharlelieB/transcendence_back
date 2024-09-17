@@ -337,6 +337,8 @@ function userRegistration() {
 		hostId = data.id;
 		hostConnected = true;
 		ReplaceElement("playerConnection", "buttonsContainer");
+		document.getElementById("containerEmpty").classList.add("d-none");
+		document.getElementById("containerCustomButton").classList.remove("d-none");
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
