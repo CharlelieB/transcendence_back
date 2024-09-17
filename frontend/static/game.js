@@ -47,8 +47,8 @@ var zVelocity = 0.2;
 /*-----Input-----*/
 var keysPressed = {};
 /*-----Score-----*/
-var playerScore = 0;
-var antagonistScore = 0;
+//var playerScore = 0;
+//var antagonistScore = 0;
 var winnerScore = 5;
 /*-----SYNC-----*/
 var lastTime = 0;
@@ -442,8 +442,8 @@ function updateBallPosition(rebound)
     if (zBall >= ZMAX + 0.5 || zBall <= ZMIN - 0.5)
 	{
         // Inverser la direction sur Z si on atteint les bords arrière
-		playerScore += 1 * (zVelocity > 0);
-		antagonistScore += 1 * (zVelocity < 0);
+		currentMatch.scorePlayer1 += 1 * (zVelocity > 0);
+		currentMatch.scorePlayer2 += 1 * (zVelocity < 0);
 		zVelocity = -zVelocity;
 		zBall = ZMAX / 2;
 		xBall = 0;
@@ -531,10 +531,10 @@ function displayScorePvp() {
     context.fillStyle = "white"; // Couleur du texte
 
     // Afficher le score du joueur à gauche
-    context.fillText("PLAYER: " + playerScore, canvas.width / 2 - 300, 50);
+    context.fillText("PLAYER: " + currentMatch.scorePlayer1, canvas.width / 2 - 300, 50);
 
     // Afficher le score de l'antagoniste à droite
-    context.fillText("ANTAGONIST: " + antagonistScore, canvas.width / 2 + 50, 50);
+    context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, canvas.width / 2 + 50, 50);
 }
 
 function displayScore() {
@@ -543,22 +543,21 @@ function displayScore() {
     context.fillStyle = "white"; // Couleur du texte
 
     // Afficher le score du joueur à gauche
-    context.fillText("PLAYER: " + playerScore, MID_WIDTH - 300, 50);
+    context.fillText("PLAYER: " + currentMatch.scorePlayer1, MID_WIDTH - 300, 50);
 
     // Afficher le score de l'antagoniste à droite
-    context.fillText("ANTAGONIST: " + antagonistScore, MID_WIDTH + 50, 50);
+    context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, MID_WIDTH + 50, 50);
 }
 
-function displayResult() {
+function displayResult(splitScreenActivated) {
     // Définir la police et l'alignement pour le score
     context.font = "20px 'Press Start 2P'";// "40px Arial";
     context.fillStyle = "white"; // Couleur du texte
 
-    // Afficher le gagnant.
-	if (playerScore > antagonistScore)
-		context.fillText("PLAYER Won!", MID_WIDTH + 100, 50);
+	if (splitScreenActivated)
+		context.fillText("GAME OVER", (MID_WIDTH * 2) - 100 , 50);
 	else
-		context.fillText("ANTAGONIST Won!", MID_WIDTH + 100, 50);
+		context.fillText("GAME OVER", MID_WIDTH - 100, 50);
 }
 
 /*Game loop*/
@@ -576,13 +575,19 @@ function gameLoop(currentTime)
 	drawBall();
 	drawPadel(255, 255, 255);
 	context.putImageData(imageData, 0, 0);
-	if (antagonistScore != winnerScore && playerScore != winnerScore)
+	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
 		displayScore();
 		requestAnimationFrame(gameLoop);
 	}
-	else
-		displayResult();
+	else {
+		displayResult(false);
+		currentMatch.scorePlayer1 = 0;
+		currentMatch.scorePlayer2 = 0;
+		//Display buttons
+			//Restart
+			//Back
+	}
 }
 
 function gameLoopPvp(currentTime)
@@ -604,13 +609,20 @@ function gameLoopPvp(currentTime)
 	drawBallPvp();
 	drawPadelPvp(255, 255, 255);
 	context.putImageData(imageData, 0, 0);
-	if (antagonistScore != winnerScore && playerScore != winnerScore)
+	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
 		displayScorePvp();
 		requestAnimationFrame(gameLoopPvp);
 	}
-	else
-		displayResult();
+	else {
+		displayResult(true);
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
+			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
+		else
+			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+		currentMatch.scorePlayer1 = 0;
+		currentMatch.scorePlayer2 = 0;
+	}
 }
 
 /*initDeltaTime*/
@@ -650,6 +662,7 @@ function rmStartNode()
 function rmStartNodePvp()
 {
 	winnerScore = document.getElementById("customVictoryValue").value;
+	DisplayGame();
 	globaleScale /= 1.2;
 	zGridOffset *= 1.25;
 	yGridOffset *= 1.7;

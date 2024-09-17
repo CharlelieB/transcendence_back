@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 		})
 		ReplaceElement("containerEmpty", "buttonsContainer");
 		document.getElementById("containerCustomButton").classList.remove('d-none');
+		getCustomizationSettings();
 	} else {
 		console.error("access token not saved");
 	}
@@ -68,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 function makeUnauthenticatedRequest(url, options = {}) {
 
 	const csrfToken = getCookie('csrftoken');
-	if (!csrfToken  && (url !== "/api/login/" || url !== "/api/register/")) {
+	if (!csrfToken  && (url !== "/api/login/" && url !== "/api/register/")) {
 		console.error('CSRF token is missing. Cannot refresh token.');
 		return 1;
 	}
@@ -214,7 +215,7 @@ async function submitUserForm() {
 			}
 			else if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
-				DisplayGame();
+				rmStartNodePvp();
 			}
 			else {
 				if (playerIndex < playerNumber) {
@@ -246,7 +247,7 @@ async function submitUserForm() {
 			}
 			else if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
-				DisplayGame();
+				rmStartNodePvp();
 			}
 			else {
 				if (playerIndex <= playerNumber) {

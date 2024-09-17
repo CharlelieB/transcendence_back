@@ -55,6 +55,7 @@ function DisplayTournamentOptions() {
 function BackButtonConnection()
 {
 	playerIndex = 2;
+	currentTournament.active = false;
 	ReplaceElement("playerConnection", "buttonsContainer");
 }
 
