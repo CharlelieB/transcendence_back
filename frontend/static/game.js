@@ -1,7 +1,6 @@
 /*-----2D-----*/
 var init = false;
 var bot = document.getElementById("botGameStart");
-//var pvp = document.getElementById("pvp-id");
 var canvas = document.getElementById("canvas-id");
 var context = canvas.getContext("2d");
 var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -278,6 +277,7 @@ function create3DgridPvp(map)
 
 function create3Dgrid(map)
 {
+	gridColorBuffer.fill(0);	
 	make3Dgrid();
 
 	if (map)
@@ -447,12 +447,10 @@ function updateBallPosition(rebound)
 		currentMatch.scorePlayer2 += 1 * (zVelocity < 0);
 		zVelocity = -zVelocity;
 		zBall = ZMAX / 2;
+		zBallPvp = zBall + 1;
 		xBall = 0;
-		zBallPvp = ZMAX / 2;
-		xBallPvp = 0;
 		xVelocity = Math.random() * 0.5 - 0.25;
 		xVelocity /= 3.5;
-
     }
     else if (zBall <= zPadel && zBall >= ZMIN + 0.5 && zVelocity < 0)//Collision avec le paddle joueur
 	{
@@ -632,9 +630,8 @@ function gameLoopPvp(currentTime)
 
 function initDeltaTimePvp(currentTime)
 {
-	++skipFirstCall;
 	lastTime = currentTime;
-	if (skipFirstCall < 2)
+	if (currentTime === undefined)
 		requestAnimationFrame(initDeltaTimePvp);
 	else
 		requestAnimationFrame(gameLoopPvp);
@@ -642,9 +639,8 @@ function initDeltaTimePvp(currentTime)
 
 function initDeltaTime(currentTime)
 {
-	++skipFirstCall;
 	lastTime = currentTime;
-	if (skipFirstCall < 2)
+	if (currentTime === undefined)
 		requestAnimationFrame(initDeltaTime);
 	else
 		requestAnimationFrame(gameLoop);
@@ -657,11 +653,21 @@ function rmStartNode()
 	grid3D = [];
 	ball3D = [];
 	padel3D = [];
+	globaleScale = 310;
+	zGridOffset = 6;
+	yGridOffset = 4.2;
+	MID_WIDTH = canvas.width / 2;
+	zBall = zPadel;
+	zBallPvp = zAntagonist;
+	xBall = 0;
+	xPadelPlayer = 0;
+	xAntagonist = 0;
+	zVelocity = ballSpeed;
+	currentMatch.scorePlayer1 = 0;
+	currentMatch.scorePlayer2 = 0;
 	currentMatch.bot = true;
 	winnerScore = document.getElementById("customVictoryValue").value;
 	create3Dgrid(customMapNb);
-	console.log(xBall + " z : " + zBall);
-	console.log(xAntagonist);
 	create3Dpadel();
 	create3Dball();
 	DisplayGameBot();
@@ -677,9 +683,14 @@ function rmStartNodePvp()
 	zGridOffset = 6 * 1.25;
 	yGridOffset = 4.2 * 1.7;
 	MID_WIDTH = canvas.width / 4;
-	console.log(xBall + " z : " + zBall);
-	//zBall = 0;
-	//xBall = 2;
+	zBall = zPadel;
+	zBallPvp = zAntagonist;
+	xBall = 0;
+	zVelocity = ballSpeed;
+	currentMatch.scorePlayer1 = 0;
+	currentMatch.scorePlayer2 = 0;
+	xPadelPlayer = 0;
+	xAntagonist = 0;
 	create3Dpadel();
 	create3Dball();
 	create3Dgrid(customMapNb);
