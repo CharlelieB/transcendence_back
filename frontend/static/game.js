@@ -35,6 +35,7 @@ var MID_HEIGHT = canvas.height / 2;
 var grid3D = [];
 var padel3D = [];
 var ball3D = [];
+var obstacle3D = [];
 /*-----Limites Terrain-----*/
 var ZMAX = 22;
 var ZMIN = 1;
@@ -56,7 +57,12 @@ var deltaTime = 0;
 var primeDeltaTime = 17;
 var skipFirstCall = 0;
 /*-----Map-----*/
-var map = 1;
+//var map = 1
+/*-----Obstacle-----*/
+var obstacleWidth = 0.5;
+var obstacleHeight = 0.2;
+var obstacleSize = 4;
+
 
 /*-----------Functions----------*/
 /*Display*/
@@ -149,6 +155,21 @@ function make3Dgrid()
 	}
 }
 
+function create3Dobstacle(pvp)
+{
+	obstacle3D.push({x: -obstacleWidth, y: obstacleHeight, z: -obstacleSize});
+	obstacle3D.push({x: obstacleWidth, y: obstacleHeight, z: -obstacleSize});
+	obstacle3D.push({x: obstacleWidth, y: -obstacleHeight, z: -obstacleSize});
+	obstacle3D.push({x: -obstacleWidth, y: -obstacleHeight, z: -obstacleSize});
+	obstacle3D.push({x: -obstacleWidth, y: obstacleHeight, z: obstacleSize});
+	obstacle3D.push({x: obstacleWidth, y: obstacleHeight, z: obstacleSize});
+	obstacle3D.push({x: obstacleWidth, y: -obstacleHeight, z: obstacleSize});
+	obstacle3D.push({x: -obstacleWidth, y: -obstacleHeight, z: obstacleSize});
+	drawObstacle();
+	if (pvp == 1)
+		drawObstaclePvp();
+}
+
 function create3Dpadel()
 {
 	padel3D.push({x: -padelWidth, y: padelHeight});
@@ -170,6 +191,29 @@ function create3Dball()
 }
 
 /*Projection*/
+
+function projectObstacleLine(i, j, xB, zB, xOff, r, g , b)
+{
+	let x= 0;
+	let y = 0;
+	let x0 = 0;
+	let y0 = 0;
+	let x1 = 0;
+	let y1 = 0;
+
+	x = ((obstacle3D[i].x + xB) / (obstacle3D[i].z + zB + zGridOffset)) * globaleScale;
+	y = ((obstacle3D[i].y + yGridOffset - obstacleHeight) / (obstacle3D[i].z + zB + zGridOffset)) * globaleScale;
+	x0 = Math.floor(x + xOff);
+	y0 = Math.floor(y + MID_HEIGHT);
+	x = ((obstacle3D[j].x + xB) / (obstacle3D[j].z + zB + zGridOffset)) * globaleScale;
+	y = ((obstacle3D[j].y + yGridOffset - obstacleHeight) / (obstacle3D[j].z + zB + zGridOffset)) * globaleScale;
+	x1 = Math.floor(x + xOff);
+	y1 = Math.floor(y + MID_HEIGHT);
+	if ((x0 > 0 && x0 < canvas.width && y0 > 0 && y0 < canvas.height
+			&& x1 > 0 && x1 < canvas.width && y1 > 0 && y1 < canvas.height))
+			drawLineDDA(gridColorBuffer, x0, y0, x1, y1, r, g , b, 255);
+}
+
 function projectBallLine(i, j, xB, zB, xOff, r, g , b)
 {
 	let x= 0;
@@ -297,6 +341,89 @@ function create3Dgrid(map)
 	}
 }
 
+function drawObstaclePvp()
+{
+	let x0 = 0;
+	let y0 = 0;
+	let x1 = 0;
+	let y1 = 0;
+	let r = 0;
+	let g = 255;
+	let b = 255;
+
+	projectObstacleLine(0, 1, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(1, 2, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(2, 3, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(3, 0, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+
+	projectObstacleLine(4, 5, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(5, 6, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(6, 7, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(7, 4, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+
+	projectObstacleLine(4, 0, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(5, 1, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(6, 2, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(7, 3, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+
+	
+	projectObstacleLine(0, 1, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(1, 2, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(2, 3, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(3, 0, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+
+	projectObstacleLine(4, 5, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(5, 6, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(6, 7, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(7, 4, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+
+	projectObstacleLine(4, 0, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(5, 1, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(6, 2, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+	projectObstacleLine(7, 3, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
+}
+
+function drawObstacle()
+{
+	let x0 = 0;
+	let y0 = 0;
+	let x1 = 0;
+	let y1 = 0;
+	let r = 0;
+	let g = 255;
+	let b = 255;
+
+	projectObstacleLine(0, 1, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(1, 2, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(2, 3, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(3, 0, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+
+	projectObstacleLine(4, 5, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(5, 6, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(6, 7, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(7, 4, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+
+	projectObstacleLine(4, 0, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(5, 1, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(6, 2, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(7, 3, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+
+	
+	projectObstacleLine(0, 1, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(1, 2, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(2, 3, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(3, 0, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+
+	projectObstacleLine(4, 5, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(5, 6, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(6, 7, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(7, 4, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+
+	projectObstacleLine(4, 0, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(5, 1, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(6, 2, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+	projectObstacleLine(7, 3, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
+}
 
 function drawBallPvp()
 {
@@ -452,6 +579,23 @@ function updateBallPosition(rebound)
 		xVelocity = Math.random() * 0.5 - 0.25;
 		xVelocity /= 3.5;
     }
+	
+    // Vérifier les collision avec les obstacles.
+	if (customMapNb && (zBall <= ZMAX / 2 + obstacleSize && zBall >= ZMAX / 2 - obstacleSize)
+		&& (xBall <= XMAX / 2 + obstacleWidth && xBall >= XMAX / 2 - obstacleWidth))
+	{
+		xVelocity = -xVelocity;
+		if ((Math.abs(zBall - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity < 0) || (Math.abs(zBall - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity > 0))
+			zVelocity = -zVelocity;
+	}
+	if (customMapNb && (zBall <= ZMAX / 2 + obstacleSize && zBall >= ZMAX / 2 - obstacleSize)
+		&& (xBall <= -XMAX / 2 + obstacleWidth && xBall >= -XMAX / 2 - obstacleWidth))
+	{
+		xVelocity = -xVelocity;
+		if ((Math.abs(zBall - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity < 0) || (Math.abs(zBall - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity > 0))
+			zVelocity = -zVelocity;
+	}
+
     else if (zBall <= zPadel && zBall >= ZMIN + 0.5 && zVelocity < 0)//Collision avec le paddle joueur
 	{
         if ((xBall > xPadelPlayer - padelWidth || xBall + ballSize > xPadelPlayer - padelWidth)
@@ -653,6 +797,7 @@ function rmStartNode()
 	grid3D = [];
 	ball3D = [];
 	padel3D = [];
+	obstacle3D = [];
 	globaleScale = 310;
 	zGridOffset = 6;
 	yGridOffset = 4.2;
@@ -670,6 +815,8 @@ function rmStartNode()
 	create3Dgrid(customMapNb);
 	create3Dpadel();
 	create3Dball();
+	if (customMapNb)
+		create3Dobstacle(0);
 	DisplayGameBot();
 	initDeltaTime();
 }
@@ -679,6 +826,7 @@ function rmStartNodePvp()
 	grid3D = [];
 	ball3D = [];
 	padel3D = [];
+	obstacle3D = [];
 	globaleScale = 310 / 1.2;
 	zGridOffset = 6 * 1.25;
 	yGridOffset = 4.2 * 1.7;
@@ -694,7 +842,9 @@ function rmStartNodePvp()
 	create3Dpadel();
 	create3Dball();
 	create3Dgrid(customMapNb);
-	create3DgridPvp(customMapNb);
+	create3DgridPvp(customMapNb);	
+	if (customMapNb)
+		create3Dobstacle(1);
 	currentMatch.bot = false;
 	winnerScore = document.getElementById("customVictoryValue").value;
 	DisplayGame();
