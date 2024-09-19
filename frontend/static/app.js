@@ -10,7 +10,6 @@ let gamesNb = 1;
 //Tournament of 6 : 6 games
 //Tournament of 4 : 3 games
 
-
 ///// GENERIC FUNCTION /////
 
 function getCookie(name) {
@@ -37,7 +36,7 @@ function validateEmail(email) {
 /////    FIRST CONNECTION EVENT LISTENER /////
 
 document.addEventListener('DOMContentLoaded', async function() {
-	let response = await makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'})
+	let response = await makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'});
 	if (response === 1 || (!response.ok))
 	{
 		document.getElementById("loginBackButton").classList.add("d-none");
@@ -58,23 +57,11 @@ document.addEventListener('DOMContentLoaded', async function() {
 		ReplaceElement("containerEmpty", "buttonsContainer");
 		document.getElementById("containerCustomButton").classList.remove('d-none');
 		getCustomizationSettings();
-		let input = { is_connect: true };
-		makeAuthenticatedRequest("/api/user/", {
-			method: 'PUT',
-			body: JSON.stringify(input)
-		});
+		makeAuthenticatedRequest("/api/login/", {method: 'POST'});
 	} else {
 		console.error("access token not saved");
 	}
  });
-
-window.addEventListener('beforeunload', function (event) {
-	console.log("logging out user");
-	makeAuthenticatedRequest("/api/logout/", {method: 'PUT'});
-	// let data = await response.json();
-	console.log(data);
-	event.preventDefault();
-});
 
 /////        API CALLS      //////
 
@@ -149,6 +136,13 @@ function refreshToken()
 		console.error('Error refreshing token:', error);
 		return Promise.reject(error);
 	});
+}
+
+// LOGOUT
+
+function disconnect() {
+	makeAuthenticatedRequest("/api/logout/", {method: 'POST'});
+	backToConnexion();
 }
 
 // LOGIN & REGISTER
@@ -300,6 +294,7 @@ function userRegistration() {
 		ReplaceElement("playerConnection", "buttonsContainer");
 		document.getElementById("containerEmpty").classList.add("d-none");
 		document.getElementById("containerCustomButton").classList.remove("d-none");
+		makeUnauthenticatedRequest("/api/login/", {method: 'POST'});
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -332,10 +327,10 @@ async function verify2FA() {
 	ReplaceElement("2FAview", "buttonsContainer");
 	document.getElementById("containerEmpty").classList.add('d-none');
 	document.getElementById("containerCustomButton").classList.remove('d-none');
-	let input = {is_connect: true};
+	let input2 = {is_connect: true};
 	makeAuthenticatedRequest("/api/user/", {
 		method: 'PUT',
-		body: JSON.stringify(input)
+		body: JSON.stringify(input2)
 	});
 	console.log("2fa verificated for " + data.id);
 }

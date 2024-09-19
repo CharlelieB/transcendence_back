@@ -93,7 +93,12 @@ canvas {
 	justify-content: center;
 	align-items: center;
 }
-
+/* .loginCircle {
+	width: 2px;
+	height: 10px;
+	border-radius: 50%;
+	background-color: #ff0000;
+} */
 /* GAME STYLES */
 
 #bot-id
