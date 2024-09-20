@@ -1,11 +1,86 @@
+/*-----Wave effect-----*/
+var effectEnabled = false; //true; //false;
+var lightWave = true; //true; //false;
+var lightIntensity = 1; //default lightIntensity = 1;
+
 /*-----2D-----*/
 var init = false;
+
+// Obtention de mes deux canvas
 var bot = document.getElementById("botGameStart");
 var canvas = document.getElementById("canvas-id");
-var context = canvas.getContext("2d");
-var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-var colorBuffer = imageData.data;
-var gridColorBuffer = new Uint8ClampedArray(canvas.width * canvas.height * 4);
+const canvas_ = document.getElementById("canvas-2d");
+const context = canvas_.getContext("2d");
+
+/***************************************************************************************/
+// Initialisation du renderer avec le canvas 3D
+const renderer = new THREE.WebGLRenderer({ canvas });
+renderer.setSize(canvas.width, canvas.height);
+
+// Création des buffers
+const colorBuffer = new Uint8Array(canvas.width * canvas.height * 4);
+const gridColorBuffer = new Uint8ClampedArray(canvas.width * canvas.height * 4);
+
+// Création des textures à partir des buffers
+const colorTexture = new THREE.DataTexture(colorBuffer, canvas.width, canvas.height, THREE.RGBAFormat);
+const gridTexture = new THREE.DataTexture(gridColorBuffer, canvas.width, canvas.height, THREE.RGBAFormat);
+colorTexture.needsUpdate = true;
+gridTexture.needsUpdate = true;
+
+//Creation du shader de mon 'ecran'.
+const material = new THREE.ShaderMaterial({
+    uniforms: {
+        colorMap: { value: colorTexture },
+        time: { value: 0.0 },  // Ajout de l'uniform pour l'animation
+        effectEnabled: { value: effectEnabled }, // Pour activer ou désactiver l'effet de vagues
+        lightIntensity: { value: lightIntensity } // Uniform pour la brillance
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D colorMap;
+      uniform bool effectEnabled; // Uniform pour activer ou désactiver l'effet de vagues
+      uniform float time; // Uniform pour le temps
+      uniform float lightIntensity; // Uniform pour simuler la brillance
+      varying vec2 vUv;
+
+      void main() {
+        vec2 uv = vUv;
+
+        // Ajout d'une distorsion dynamique
+        if (effectEnabled) {
+          uv.x += sin(uv.y * 10.0 + time * 5.0) * 0.02; // Déplacement en vague sur l'axe X
+          uv.y += sin(uv.x * 10.0 + time * 3.0) * 0.02; // Déplacement en vague sur l'axe Y
+        }
+
+        vec4 color = texture(colorMap, uv);
+
+        // Simuler la brillance en augmentant l'intensité lumineuse
+        color.rgb *= lightIntensity;
+
+        gl_FragColor = color;
+      }
+    `
+});
+
+// Création d'une géométrie pleine écran
+const geometry = new THREE.PlaneGeometry(2, 2);
+const mesh = new THREE.Mesh(geometry, material);
+mesh.rotation.z = Math.PI;
+
+// Création d'une scène et ajout du mesh
+const scene = new THREE.Scene();
+scene.add(mesh);
+
+// Ajout d'une caméra orthographique (pleine écran)
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+/***************************************************************************************/
 var BUFFER_SIZE = canvas.width * canvas.height * 4;
 var RED_SIDE_SIZE = canvas.width / 2;
 var GREEN_SIDE_SIZE = canvas.width;
@@ -61,7 +136,7 @@ var skipFirstCall = 0;
 /*-----Obstacle-----*/
 var obstacleWidth = 0.5;
 var obstacleHeight = 0.2;
-var obstacleSize = 4;
+var obstacleSize = 3;
 
 
 /*-----------Functions----------*/
@@ -640,12 +715,12 @@ function updatePaddlePosition()
 	}
     if (keysPressed["ArrowLeft"])
 	{
-        xPadelPlayer -= padelSpeed * deltaTime;
+        xPadelPlayer += padelSpeed * deltaTime;
         if (xPadelPlayer < XMIN - 1) xPadelPlayer = XMIN - 1;
     }
     if (keysPressed["ArrowRight"])
 	{
-        xPadelPlayer += padelSpeed * deltaTime;
+        xPadelPlayer -= padelSpeed * deltaTime;
         if (xPadelPlayer > XMAX + 1) xPadelPlayer = XMAX + 1;
     }
 }
@@ -654,22 +729,22 @@ function updatePaddlePositionPvp()
 {
 	if (keysPressed["ArrowLeft"])
 	{
-        xAntagonist -= padelSpeed * deltaTime;
+        xAntagonist += padelSpeed * deltaTime;
         if (xAntagonist < XMIN - 1) xAntagonist = XMIN - 1;
     }
     if (keysPressed["ArrowRight"])
 	{
-        xAntagonist += padelSpeed * deltaTime;
+        xAntagonist -= padelSpeed * deltaTime;
         if (xAntagonist > XMAX + 1) xAntagonist = XMAX + 1;
     }
     if (keysPressed["t"])
 	{
-        xPadelPlayer -= padelSpeed * deltaTime;
+        xPadelPlayer += padelSpeed * deltaTime;
         if (xPadelPlayer < XMIN - 1) xPadelPlayer = XMIN - 1;
     }
     if (keysPressed["y"])
 	{
-        xPadelPlayer += padelSpeed * deltaTime;
+        xPadelPlayer -= padelSpeed * deltaTime;
         if (xPadelPlayer > XMAX + 1) xPadelPlayer = XMAX + 1;
     }
 }
@@ -714,16 +789,24 @@ function gameLoop(currentTime)
 {
 	deltaTime = (currentTime - lastTime) / primeDeltaTime;
 	lastTime = currentTime;
+
+	/*map display*/	
 	context.clearRect(0, 0, canvas.width, canvas.height);
-	imageData = context.createImageData(canvas.width, canvas.height);
-	colorBuffer = imageData.data;
+	renderer.clear();
 	colorBuffer.set(gridColorBuffer);
+
 	updatePaddlePosition();
 	updateBallPosition(2.5);
 	drawAntagonist(255, 255, 255);
 	drawBall();
 	drawPadel(255, 255, 255);
-	context.putImageData(imageData, 0, 0);
+
+	material.uniforms.time.value = currentTime * 0.001;
+	if (lightWave)
+		material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
+	colorTexture.needsUpdate = true;
+	renderer.render(scene, camera);
+
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
 		displayScore();
@@ -744,10 +827,12 @@ function gameLoopPvp(currentTime)
 {
 	deltaTime = (currentTime - lastTime) / primeDeltaTime;
 	lastTime = currentTime;
+
+	/*map display*/	
 	context.clearRect(0, 0, canvas.width, canvas.height);
-	imageData = context.createImageData(canvas.width, canvas.height);
-	colorBuffer = imageData.data;
+	renderer.clear();
 	colorBuffer.set(gridColorBuffer);
+
 	updatePaddlePositionPvp();
 	updateBallPosition(4);
 	/*Player*/
@@ -758,7 +843,13 @@ function gameLoopPvp(currentTime)
 	drawAntagonistPvp(255, 255, 255);
 	drawBallPvp();
 	drawPadelPvp(255, 255, 255);
-	context.putImageData(imageData, 0, 0);
+	
+	material.uniforms.time.value = currentTime * 0.001;
+	if (lightWave)
+		material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
+	colorTexture.needsUpdate = true;
+	renderer.render(scene, camera);
+
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
 		displayScorePvp();
@@ -777,7 +868,6 @@ function gameLoopPvp(currentTime)
 }
 
 /*initDeltaTime*/
-
 function initDeltaTimePvp(currentTime)
 {
 	lastTime = currentTime;
