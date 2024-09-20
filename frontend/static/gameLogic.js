@@ -5,13 +5,16 @@ let currentMatch = {
 	idPlayer2 : 0,
 	scorePlayer1 : 0,
 	scorePlayer2 : 0,
-	bot : false
+	bot : false,
+	usernamePlayer1 : "",
+	usernamePlayer2 : ""
 };
 
 let currentTournament = {
 	active: false,
 	idPlayers : [],
-	winner : 0,
+	idWinners : [],
+	scoreDifferences : [],
 	gameType : "",
 	numberOfPlayers : 0,
 	gamesPlayed : 0
@@ -163,4 +166,82 @@ function addPointPlayer2() {
 
 function displayNextTournamentGame() {
 	displayMatchInfo();
+}
+
+function setCurrentMatch() {
+	if (isFirstRound()) {
+		currentMatch.idPlayer1 = currentTournament.idPlayers[0 + (2 * currentTournament.gamesPlayed)];
+		currentMatch.idPlayer2 = currentTournament.idPlayers[1 + (2 * currentTournament.gamesPlayed)];
+	}
+	else {
+		currentMatch.idPlayer1 = currentTournament.idWinners[0];
+		currentMatch.idPlayer2 = currentTournament.idWinners[1];
+	}
+}
+
+function isFirstRound() {
+	if(currentTournament.numberOfPlayers === 4 && currentTournament.gamesPlayed < 2)
+		return true;
+	if(currentTournament.numberOfPlayers === 6 && currentTournament.gamesPlayed < 3)
+		return true;
+	if(currentTournament.numberOfPlayers === 8 && currentTournament.gamesPlayed < 4)
+		return true;
+}
+
+async function getMatchUsernames() {
+	let response;
+	if (currentMatch.bot)
+	{
+		response = await makeAuthenticatedRequest("/api/user/" + hostId, {method: 'GET'});
+	}
+	else {
+		response = await makeAuthenticatedRequest("/api/users/ids/", {
+		method: 'GET',
+		body: JSON.stringify({user_ids: [currentMatch.idPlayer1, currentMatch.idPlayer2]})
+		});
+	}
+	let data = await response.json();
+	console.log("inside Display score : " + data);
+	currentMatch.usernamePlayer1 = data[0].username;
+	if (!currentMatch.bot)
+		currentMatch.usernamePlayer2 = data[1].username;
+}
+
+function getNextTournamentMatch() {
+	if (isFirstRound()) {
+		idPlayer1 = currentTournament.idPlayers[currentTournament.gamesPlayed * 2];
+		idPlayer2 = currentTournament.idPlayers[currentTournament.gamesPlayed * 2];
+	}
+	else {
+		idPlayer1 = currentTournament.idPlayers[currentTournament.idWinners[0]];
+		idPlayer2 = currentTournament.idPlayers[currentTournament.idWinners[1]];
+	}
+}
+
+function displayScore() {
+
+    // Définir la police et l'alignement pour le score
+    context.font = "20px 'Press Start 2P'";// "40px Arial";
+    context.fillStyle = "white"; // Couleur du texte
+
+    // Afficher le score du joueur à gauche
+    context.fillText(currentMatch.usernamePlayer1 + " : " + currentMatch.scorePlayer1, MID_WIDTH - 300, 50);
+
+    // Afficher le score de l'antagoniste à droite
+    context.fillText(currentMatch.usernamePlayer2 + " : " + currentMatch.scorePlayer2, MID_WIDTH + 50, 50);
+}
+
+function displayResult(winner) {
+	document.getElementById("matchInfoContainer").innerHTML = "<h1>Victory for " + winner + "</h1>";
+	if (currentTournament.active) {
+		currentTournament.idWinners.push();
+	}
+    // // Définir la police et l'alignement pour le score
+    // context.font = "20px 'Press Start 2P'";// "40px Arial";
+    // context.fillStyle = "white"; // Couleur du texte
+
+	// if (splitScreenActivated)
+	// 	context.fillText("GAME OVER", (MID_WIDTH * 2) - 100 , 50);
+	// else
+	// 	context.fillText("GAME OVER", MID_WIDTH - 100, 50);
 }

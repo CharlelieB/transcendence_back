@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 		ReplaceElement("containerEmpty", "buttonsContainer");
 		document.getElementById("containerCustomButton").classList.remove('d-none');
 		getCustomizationSettings();
-		makeAuthenticatedRequest("/api/login/", {method: 'POST'});
 	} else {
 		console.error("access token not saved");
 	}
@@ -156,7 +155,7 @@ async function submitUserForm() {
 		else {
 			let ret = await checkAdversaryCredentials();
 			if (ret === false) {
-				console.log("successfully aborted adversary login");
+				console.log("No user with these credentials");
 				return ;
 			}
 			else if (playerNumber === 2) {
@@ -176,6 +175,8 @@ async function submitUserForm() {
 					console.log(currentTournament.idPlayers);
 					displayMatchInfo();
 					DisplayGame();
+					rmStartNodePvp();
+					setCurrentMatch();
 				}
 			}
 		}
@@ -187,11 +188,7 @@ async function submitUserForm() {
 		}
 		else {
 			let ret = await createAdversaryCredentials();
-			if (ret === false) {
-				console.
-				return ;
-			}
-			else if (playerNumber === 2) {
+			if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
 				rmStartNodePvp();
 			}
@@ -205,6 +202,7 @@ async function submitUserForm() {
 				else {
 					currentTournament.idPlayers.push(hostId);
 					DisplayGame();
+					rmStartNodePvp();
 				}
 			}
 		}

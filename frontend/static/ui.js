@@ -75,6 +75,12 @@ function DisplayGameBot()
 
 function displayEOGMenu() {
 	document.getElementById("EOGButtons").classList.remove('d-none');
+	if (currentTournament.active) {
+		if (currentTournament.idWinners.length === 1)
+			document.getElementById("tournamentEndView").classList.remove('d-none');
+		document.getElementById("replayButton").classList.add('d-none');
+		document.getElementById("nextGameButton").classList.remove('d-none');
+	}
 }
 
 function backButtonEOG() {
@@ -156,6 +162,12 @@ function backToConnexion() {
 	var dismissDrawerButton = document.getElementById('dismissDrawer'); // Replace with your offcanvas element ID
 	dismissDrawerButton.click();
 	hostConnected = false;
+}
+
+function displayNextGame() {
+	document.getElementById('EOGButtons').classList.add('d-none');
+	getNextTournamentMatch();
+	rmStartNodePvp();
 }
 
 ////// Event Listenner for Account Creation

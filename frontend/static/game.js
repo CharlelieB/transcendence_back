@@ -277,7 +277,7 @@ function create3DgridPvp(map)
 
 function create3Dgrid(map)
 {
-	gridColorBuffer.fill(0);	
+	gridColorBuffer.fill(0);
 	make3Dgrid();
 
 	if (map)
@@ -530,33 +530,10 @@ function displayScorePvp() {
     context.fillStyle = "white"; // Couleur du texte
 
     // Afficher le score du joueur à gauche
-    context.fillText("PLAYER: " + currentMatch.scorePlayer1, canvas.width / 2 - 300, 50);
-
+    context.fillText(currentMatch.usernamePlayer1 + " : " + currentMatch.scorePlayer1, canvas.width / 2 - 300, 50);
     // Afficher le score de l'antagoniste à droite
-    context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, canvas.width / 2 + 50, 50);
-}
+    context.fillText(currentMatch.usernamePlayer2 + " : " + currentMatch.scorePlayer2, canvas.width / 2 + 50, 50);
 
-function displayScore() {
-    // Définir la police et l'alignement pour le score
-    context.font = "20px 'Press Start 2P'";// "40px Arial";
-    context.fillStyle = "white"; // Couleur du texte
-
-    // Afficher le score du joueur à gauche
-    context.fillText("PLAYER: " + currentMatch.scorePlayer1, MID_WIDTH - 300, 50);
-
-    // Afficher le score de l'antagoniste à droite
-    context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, MID_WIDTH + 50, 50);
-}
-
-function displayResult(splitScreenActivated) {
-    // Définir la police et l'alignement pour le score
-    context.font = "20px 'Press Start 2P'";// "40px Arial";
-    context.fillStyle = "white"; // Couleur du texte
-
-	if (splitScreenActivated)
-		context.fillText("GAME OVER", (MID_WIDTH * 2) - 100 , 50);
-	else
-		context.fillText("GAME OVER", MID_WIDTH - 100, 50);
 }
 
 /*Game loop*/
@@ -573,6 +550,7 @@ function gameLoop(currentTime)
 	drawAntagonist(255, 255, 255);
 	drawBall();
 	drawPadel(255, 255, 255);
+	getMatchUsernames();
 	context.putImageData(imageData, 0, 0);
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
@@ -580,13 +558,13 @@ function gameLoop(currentTime)
 		requestAnimationFrame(gameLoop);
 	}
 	else {
-		displayResult(false);
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
+			displayResult(currentMatch.usernamePlayer1);
+		else
+			displayResult(currentMatch.usernamePlayer2);
+		displayEOGMenu();
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
-		displayEOGMenu();
-		//Display buttons
-			//Restart
-			//Back
 	}
 }
 
@@ -615,11 +593,14 @@ function gameLoopPvp(currentTime)
 		requestAnimationFrame(gameLoopPvp);
 	}
 	else {
-		displayResult(true);
-		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
+			displayResult(currentMatch.usernamePlayer1);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
-		else
+		}
+		else {
+			displayResult(currentMatch.usernamePlayer2);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+		}
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
