@@ -586,14 +586,20 @@ function updateBallPosition(rebound)
 	{
 		xVelocity = -xVelocity;
 		if ((Math.abs(zBall - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity < 0) || (Math.abs(zBall - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity > 0))
+		{
 			zVelocity = -zVelocity;
+			xVelocity = -xVelocity;
+		}
 	}
 	if (customMapNb && (zBall <= ZMAX / 2 + obstacleSize && zBall >= ZMAX / 2 - obstacleSize)
 		&& (xBall <= -XMAX / 2 + obstacleWidth && xBall >= -XMAX / 2 - obstacleWidth))
 	{
 		xVelocity = -xVelocity;
-		if ((Math.abs(zBall - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity < 0) || (Math.abs(zBall - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity > 0))
+		if ((Math.abs(zBall - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity < 0) || (Math.abs(zBall - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity > 0))	
+		{
 			zVelocity = -zVelocity;
+			xVelocity = -xVelocity;
+		}
 	}
 
     else if (zBall <= zPadel && zBall >= ZMIN + 0.5 && zVelocity < 0)//Collision avec le paddle joueur
