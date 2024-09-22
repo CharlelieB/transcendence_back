@@ -706,46 +706,54 @@ function updatePaddlePosition()
 	if (xBall > xAntagonist)
 	{
 		xAntagonist += padelSpeed * deltaTime;
-        if (xPadelPlayer < XMIN - 1) xPadelPlayer = XMIN - 1;
+        if (xPadelPlayer <= XMIN - 1)
+			xPadelPlayer = XMIN - 1;
 	}
 	if (xBall < xAntagonist)
 	{
 		xAntagonist -= padelSpeed * deltaTime;
-        if (xPadelPlayer > XMAX + 1) xPadelPlayer = XMAX + 1;
+        if (xPadelPlayer >= XMAX + 1)
+			xPadelPlayer = XMAX + 1;
 	}
     if (keysPressed["ArrowLeft"])
 	{
         xPadelPlayer += padelSpeed * deltaTime;
-        if (xPadelPlayer < XMIN - 1) xPadelPlayer = XMIN - 1;
+        if (xPadelPlayer <= XMIN - 1)
+			xPadelPlayer = XMIN - 1;
     }
     if (keysPressed["ArrowRight"])
 	{
         xPadelPlayer -= padelSpeed * deltaTime;
-        if (xPadelPlayer > XMAX + 1) xPadelPlayer = XMAX + 1;
+        if (xPadelPlayer >= XMAX + 1)
+			xPadelPlayer = XMAX + 1;
     }
 }
 
 function updatePaddlePositionPvp()
 {
-	if (keysPressed["ArrowLeft"])
-	{
-        xAntagonist += padelSpeed * deltaTime;
-        if (xAntagonist < XMIN - 1) xAntagonist = XMIN - 1;
-    }
-    if (keysPressed["ArrowRight"])
-	{
-        xAntagonist -= padelSpeed * deltaTime;
-        if (xAntagonist > XMAX + 1) xAntagonist = XMAX + 1;
-    }
     if (keysPressed["t"])
 	{
-        xPadelPlayer += padelSpeed * deltaTime;
-        if (xPadelPlayer < XMIN - 1) xPadelPlayer = XMIN - 1;
+        xAntagonist += padelSpeed * deltaTime;
+        if (xAntagonist >= XMAX + 1)
+			xAntagonist = XMAX + 1;
     }
     if (keysPressed["y"])
 	{
+        xAntagonist -= padelSpeed * deltaTime;
+        if (xAntagonist <= XMIN - 1)
+			xAntagonist = XMIN - 1;
+    }
+	if (keysPressed["ArrowLeft"])
+	{
+        xPadelPlayer += padelSpeed * deltaTime;
+        if (xPadelPlayer >= XMAX + 1)
+			xPadelPlayer = XMAX + 1;
+    }
+    if (keysPressed["ArrowRight"])
+	{
         xPadelPlayer -= padelSpeed * deltaTime;
-        if (xPadelPlayer > XMAX + 1) xPadelPlayer = XMAX + 1;
+        if (xPadelPlayer <= XMIN - 1)
+			xPadelPlayer = XMIN - 1;
     }
 }
 
