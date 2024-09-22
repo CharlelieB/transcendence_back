@@ -652,7 +652,7 @@ function updateBallPosition(rebound)
 		zBallPvp = zBall + 1;
 		xBall = 0;
 		xVelocity = Math.random() * 0.5 - 0.25;
-		xVelocity /= 3.5;
+		xVelocity /= 7;
     }
 	
     // Vérifier les collision avec les obstacles.
