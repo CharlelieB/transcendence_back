@@ -14,6 +14,18 @@ function ReplaceElement(elementToHideId, elementToShowId)
 	}
 }
 
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        // Get references to the buttons
+        const button1 = document.getElementById('submitButton');
+        const button2 = document.getElementById('nextGameButton');
+
+        // Trigger the click event on the buttons
+        if (button1) button1.click();
+        if (button2) button2.click();
+    }
+});
+
 /////    FUNCTIONS TO DISPLAY HTML ELEMENTS /////
 
 //       OTHER DISPLAYING FUNCTIONS
