@@ -78,13 +78,6 @@ function DisplayGame()
 	ReplaceElement("playerConnection", "gameContainer");
 }
 
-function DisplayGameBot()
-{
-	document.getElementById("containerCustomButton").classList.add("d-none");
-	document.getElementById("containerTitle").classList.add("d-none");
-	ReplaceElement("buttonsContainer", "gameContainer");
-}
-
 function displayEOGMenu() {
 	document.getElementById("EOGButtons").classList.remove('d-none');
 	if (currentTournament.active) {
@@ -140,24 +133,9 @@ function display2FA() {
 }
 
 async function displayMatchInfo() {
-	const currentPlayer1 = currentTournament.idPlayers[currentTournament.gamesPlayed * 2];
-	const currentPlayer2 = currentTournament.idPlayers[(currentTournament.gamesPlayed * 2) + 1];
-
-	const input = {
-		user_ids: [currentPlayer1, currentPlayer2]
-	}
-	let response = await makeAuthenticatedRequest("/api/users/ids/", {
-		method: 'POST',
-		body: JSON.stringify(input)
-	});
-	let data = await response.json();
-	console.log("Testing Display Match");
-	console.log(data);
-	const usernames = data.map(user => user.username);
-	console.log("The usernames Array");
-	console.log(usernames);
-	const content = "<h3 class=\"text-center\">" + usernames[0] + " VS " + usernames[1] + "</h3>";
-	document.getElementById("matchInfoContainer").innerHTML = content;
+	//Appeler la fonction qui permet de recup les names des listes de matchs
+	//const content = "<h3 class=\"text-center\">" + usernames[0] + " VS " + usernames[1] + "</h3>";
+	//document.getElementById("matchInfoContainer").innerHTML = content;
 }
 
 async function DisplayTournamentView(winnerId) {

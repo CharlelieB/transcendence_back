@@ -129,44 +129,7 @@ function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner)
 	RecordLoss(data);
 }
 
-// GAME VIEW
-
-function addPointPlayer1() {
-	currentMatch.scorePlayer1++;
-	document.getElementById("scorePlayer1").innerText = currentMatch.scorePlayer1;
-	if (currentMatch.scorePlayer1 === customData.customVictoryPoints)	{
-		if (!currentTournament.active) {
-			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
-			currentMatch.scorePlayer1 = 0;
-			currentMatch.scorePlayer2 = 0;
-			displayEOGMenu();
-		}
-		else {
-			console.log("inside end of tournament game");
-			currentTournament.gamesPlayed++;
-			currentMatch.scorePlayer1 = 0;
-			currentMatch.scorePlayer2 = 0;
-			DisplayTournamentView(currentMatch.idPlayer1);
-		}
-	}
-}
-
-function addPointPlayer2() {
-	currentMatch.scorePlayer2++;
-	document.getElementById("scorePlayer2").innerText = currentMatch.scorePlayer2;
-	if(currentMatch.scorePlayer2 === customData.customVictoryPoints) {
-		recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
-		currentMatch.scorePlayer1 = 0;
-		currentMatch.scorePlayer2 = 0;
-		DisplayWinnerMenu();
-	}
-}
-
 // TOURNAMENT
-
-function displayNextTournamentGame() {
-	displayMatchInfo();
-}
 
 function setCurrentMatch() {
 	if (isFirstRound()) {
@@ -186,25 +149,6 @@ function isFirstRound() {
 		return true;
 	if(currentTournament.numberOfPlayers === 8 && currentTournament.gamesPlayed < 4)
 		return true;
-}
-
-async function getMatchUsernames() {
-	let response;
-	if (currentMatch.bot)
-	{
-		response = await makeAuthenticatedRequest("/api/user/" + hostId, {method: 'GET'});
-	}
-	else {
-		response = await makeAuthenticatedRequest("/api/users/ids/", {
-		method: 'GET',
-		body: JSON.stringify({user_ids: [currentMatch.idPlayer1, currentMatch.idPlayer2]})
-		});
-	}
-	let data = await response.json();
-	console.log("inside Display score : " + data);
-	currentMatch.usernamePlayer1 = data[0].username;
-	if (!currentMatch.bot)
-		currentMatch.usernamePlayer2 = data[1].username;
 }
 
 function getNextTournamentMatch() {

@@ -160,7 +160,6 @@ async function submitUserForm() {
 			}
 			else if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
-				displayMatchInfo();
 				rmStartNodePvp();
 			}
 			else {
@@ -174,8 +173,6 @@ async function submitUserForm() {
 					playerIndex = 0;
 					currentTournament.idPlayers.push(hostId);
 					console.log(currentTournament.idPlayers);
-					displayMatchInfo();
-					DisplayGame();
 					rmStartNodePvp();
 					setCurrentMatch();
 				}
@@ -191,7 +188,6 @@ async function submitUserForm() {
 			let ret = await createAdversaryCredentials();
 			if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
-				displayMatchInfo();
 				rmStartNodePvp();
 			}
 			else {
@@ -203,7 +199,6 @@ async function submitUserForm() {
 				}
 				else {
 					currentTournament.idPlayers.push(hostId);
-					DisplayGame();
 					rmStartNodePvp();
 				}
 			}

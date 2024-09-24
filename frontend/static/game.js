@@ -1,6 +1,5 @@
 /*-----2D-----*/
 var init = false;
-var bot = document.getElementById("botGameStart");
 var canvas = document.getElementById("canvas-id");
 var context = canvas.getContext("2d");
 var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -550,7 +549,6 @@ function gameLoop(currentTime)
 	drawAntagonist(255, 255, 255);
 	drawBall();
 	drawPadel(255, 255, 255);
-	getMatchUsernames();
 	context.putImageData(imageData, 0, 0);
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
@@ -647,11 +645,14 @@ function rmStartNode()
 	currentMatch.scorePlayer1 = 0;
 	currentMatch.scorePlayer2 = 0;
 	currentMatch.bot = true;
+	currentMatch.idPlayer1 = 0;
 	winnerScore = document.getElementById("customVictoryValue").value;
 	create3Dgrid(customMapNb);
 	create3Dpadel();
 	create3Dball();
-	DisplayGameBot();
+	//displayMatchInfo();
+	// Create a special function for BOT GAMES
+	DisplayGame();
 	initDeltaTime();
 }
 
@@ -678,6 +679,7 @@ function rmStartNodePvp()
 	create3DgridPvp(customMapNb);
 	currentMatch.bot = false;
 	winnerScore = document.getElementById("customVictoryValue").value;
+	displayMatchInfo();
 	DisplayGame();
 	initDeltaTimePvp();
 }
@@ -690,5 +692,3 @@ document.addEventListener('keydown', function(event){
 document.addEventListener('keyup', function(event) {
     keysPressed[event.key] = false;
 })
-bot.onclick = rmStartNode;
-//pvp.onclick = rmStartNodePvp;
