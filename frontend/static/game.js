@@ -1,5 +1,5 @@
 /*------Game Switch-----*/
-var breakout = false;
+var breakout = true;
 
 /*-----Wave effect-----*/
 var effectEnabled = false; //true; //false;
@@ -1275,6 +1275,10 @@ function gameLoopBreakout(currentTime)
 	}
 	else {
 		//displayResult(false);
+		//canvas.classList.add('d-none');
+		//document.getElementById('canva_score').classList.remove('d-none');
+		//document.getElementById('canva_score').classList.add('d-flex');
+
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
