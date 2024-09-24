@@ -160,6 +160,7 @@ async function submitUserForm() {
 			}
 			else if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
+				displayMatchInfo();
 				rmStartNodePvp();
 			}
 			else {
@@ -190,6 +191,7 @@ async function submitUserForm() {
 			let ret = await createAdversaryCredentials();
 			if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
+				displayMatchInfo();
 				rmStartNodePvp();
 			}
 			else {

@@ -151,7 +151,11 @@ async function displayMatchInfo() {
 		body: JSON.stringify(input)
 	});
 	let data = await response.json();
+	console.log("Testing Display Match");
+	console.log(data);
 	const usernames = data.map(user => user.username);
+	console.log("The usernames Array");
+	console.log(usernames);
 	const content = "<h3 class=\"text-center\">" + usernames[0] + " VS " + usernames[1] + "</h3>";
 	document.getElementById("matchInfoContainer").innerHTML = content;
 }
