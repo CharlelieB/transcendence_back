@@ -108,18 +108,18 @@ canvas {
 
 #canvas-id
 {
-    position: absolute;
-    top: 0;
-    left: 0;
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
     z-index: 1;
 	border-radius: 25px;
 }
 
 #canvas-2d
 {
- 	position: absolute;
-    top: 0;
-    left: 0;
+ 	/*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
     z-index: 2;
     pointer-events: none; /* Le texte n'empêche pas l'interaction avec le canevas 3D */
 	border-radius: 25px;

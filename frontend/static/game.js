@@ -1,5 +1,5 @@
 /*------Game Switch-----*/
-var breakout = true;
+var breakout = false;
 
 /*-----Wave effect-----*/
 var effectEnabled = false; //true; //false;
@@ -12,8 +12,8 @@ var init = false;
 // Obtention de mes deux canvas
 var bot = document.getElementById("botGameStart");
 var canvas = document.getElementById("canvas-id");
-const canvas_ = document.getElementById("canvas-2d");
-const context = canvas_.getContext("2d");
+//const canvas_ = document.getElementById("canvas-2d");
+//const context = canvas_.getContext("2d");
 
 /***************************************************************************************/
 // Initialisation du renderer avec le canvas 3D
@@ -108,7 +108,7 @@ var ballScaler = 1; //experimental.
 /*Screen Space*/
 var MID_WIDTH = canvas.width / 2;
 var MID_WIDTHPvp = (canvas.width / 4) * 3;
-var MID_HEIGHT = canvas.height / 2;
+var MID_HEIGHT = canvas.height / 3;
 /*Model Space*/
 var grid3D = [];
 var padel3D = [];
@@ -260,7 +260,7 @@ function createBrickWall2()
 	brickWall2.push({x: 2 + XMAX/2 , z: ZMAX / 2 - obstacleSize + 3.5});
 	brickWall2.push({x: 2 + XMAX/2 , z: ZMAX / 2 - obstacleSize + 4.5});
 	brickWall2.push({x: 2 + XMAX/2 , z: ZMAX / 2 - obstacleSize + 5.5});
-	
+
 	brickWall2.push({x: -2 - XMAX/2 , z: ZMAX / 2 - obstacleSize + 0.5});
 	brickWall2.push({x: -2 - XMAX/2 , z: ZMAX / 2 - obstacleSize + 1.5});
 	brickWall2.push({x: -2 - XMAX/2 , z: ZMAX / 2 - obstacleSize + 2.5});
@@ -291,7 +291,7 @@ function createBrickWall()
 	brickWall.push({x: 2 + XMAX/2 , z: ZMAX / 2 - obstacleSize + 3.5});
 	brickWall.push({x: 2 + XMAX/2 , z: ZMAX / 2 - obstacleSize + 4.5});
 	brickWall.push({x: 2 + XMAX/2 , z: ZMAX / 2 - obstacleSize + 5.5});
-	
+
 	brickWall.push({x: -2 - XMAX/2 , z: ZMAX / 2 - obstacleSize + 0.5});
 	brickWall.push({x: -2 - XMAX/2 , z: ZMAX / 2 - obstacleSize + 1.5});
 	brickWall.push({x: -2 - XMAX/2 , z: ZMAX / 2 - obstacleSize + 2.5});
@@ -528,7 +528,7 @@ function create3DgridPvp(map)
 
 function create3Dgrid(map)
 {
-	gridColorBuffer.fill(0);	
+	gridColorBuffer.fill(0);
 	make3Dgrid();
 
 	if (map)
@@ -653,7 +653,7 @@ function drawObstaclePvpBreakout()
 	projectObstacleLine(6, 2, XMAX/2, ZMAX/2, MID_WIDTHPvp, r, g , b);
 	projectObstacleLine(7, 3, XMAX/2, ZMAX/2, MID_WIDTHPvp, r, g , b);
 
-	
+
 	projectObstacleLine(0, 1, -XMAX/2, ZMAX/2, MID_WIDTHPvp, r, g , b);
 	projectObstacleLine(1, 2, -XMAX/2, ZMAX/2, MID_WIDTHPvp, r, g , b);
 	projectObstacleLine(2, 3, -XMAX/2, ZMAX/2, MID_WIDTHPvp, r, g , b);
@@ -695,7 +695,7 @@ function drawObstaclePvp()
 	projectObstacleLine(6, 2, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
 	projectObstacleLine(7, 3, XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
 
-	
+
 	projectObstacleLine(0, 1, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
 	projectObstacleLine(1, 2, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
 	projectObstacleLine(2, 3, -XMAX/2, ZMAX/2 + 1, MID_WIDTHPvp, r, g , b);
@@ -737,7 +737,7 @@ function drawObstacle()
 	projectObstacleLine(6, 2, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
 	projectObstacleLine(7, 3, XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
 
-	
+
 	projectObstacleLine(0, 1, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
 	projectObstacleLine(1, 2, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
 	projectObstacleLine(2, 3, -XMAX/2, ZMAX/2, MID_WIDTH, r, g , b);
@@ -918,7 +918,7 @@ function updateBallPositionBreakout(rebound)
 	if (xBall > XMAX)
 		xBall = XMAX;
 	if (xBall < XMIN)
-		xBall = XMIN;    
+		xBall = XMIN;
 	zBall += zVelocity;
 	if (zBall > ZMAX + 0.5)
 		zBall = ZMAX + 0.5;
@@ -976,7 +976,7 @@ function updateBallPositionBreakout(rebound)
 				xVelocity = -xVelocity;
 			}
 			brickWall.splice(i,1);
-		}	
+		}
 	}
 	for (let i = 0; i < brickWall2.length; ++i)
 	{
@@ -990,7 +990,7 @@ function updateBallPositionBreakout(rebound)
 				xVelocity2 = -xVelocity2;
 			}
 			brickWall2.splice(i,1);
-		}	
+		}
 	}
     // Vérifier les collision avec les obstacles.
 	if (customMapNb && (zBall <= ZMAX / 2 + obstacleSize && zBall >= ZMAX / 2 - obstacleSize)
@@ -1007,7 +1007,7 @@ function updateBallPositionBreakout(rebound)
 		&& (xBall <= -XMAX / 2 + obstacleWidth && xBall >= -XMAX / 2 - obstacleWidth))
 	{
 		xVelocity = -xVelocity;
-		if ((Math.abs(zBall - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity < 0) || (Math.abs(zBall - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity > 0))	
+		if ((Math.abs(zBall - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity < 0) || (Math.abs(zBall - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity > 0))
 		{
 			zVelocity = -zVelocity;
 			xVelocity = -xVelocity;
@@ -1028,7 +1028,7 @@ function updateBallPositionBreakout(rebound)
 		&& (xBall2 <= -XMAX / 2 + obstacleWidth && xBall2 >= -XMAX / 2 - obstacleWidth))
 	{
 		xVelocity2 = -xVelocity2;
-		if ((Math.abs(zBall2 - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity2 < 0) || (Math.abs(zBall2 - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity2 > 0))	
+		if ((Math.abs(zBall2 - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity2 < 0) || (Math.abs(zBall2 - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity2 > 0))
 		{
 			zVelocity2 = -zVelocity2;
 			xVelocity2 = -xVelocity2;
@@ -1098,7 +1098,7 @@ function updateBallPosition(rebound)
 		xVelocity = Math.random() * 0.5 - 0.25;
 		xVelocity /= 7;
     }
-		
+
     // Vérifier les collision avec les obstacles.
 	if (customMapNb && (zBall <= ZMAX / 2 + obstacleSize && zBall >= ZMAX / 2 - obstacleSize)
 		&& (xBall <= XMAX / 2 + obstacleWidth && xBall >= XMAX / 2 - obstacleWidth))
@@ -1114,7 +1114,7 @@ function updateBallPosition(rebound)
 		&& (xBall <= -XMAX / 2 + obstacleWidth && xBall >= -XMAX / 2 - obstacleWidth))
 	{
 		xVelocity = -xVelocity;
-		if ((Math.abs(zBall - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity < 0) || (Math.abs(zBall - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity > 0))	
+		if ((Math.abs(zBall - (ZMAX / 2 + obstacleSize)) <= 0.5 && zVelocity < 0) || (Math.abs(zBall - (ZMAX / 2 - obstacleSize)) <= 0.5 && zVelocity > 0))
 		{
 			zVelocity = -zVelocity;
 			xVelocity = -xVelocity;
@@ -1221,28 +1221,28 @@ function displayScorePvp() {
     context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, canvas.width / 2 - 300, 50);
 }
 
-function displayScore() {
-    // Définir la police et l'alignement pour le score
-    context.font = "20px 'Press Start 2P'";// "40px Arial";
-    context.fillStyle = "white"; // Couleur du texte
+//function displayScore() {
+//    // Définir la police et l'alignement pour le score
+//    context.font = "20px 'Press Start 2P'";// "40px Arial";
+//    context.fillStyle = "white"; // Couleur du texte
 
-    // Afficher le score du joueur à gauche
-    context.fillText("PLAYER: " + currentMatch.scorePlayer1, MID_WIDTH + 50, 50);
+//    // Afficher le score du joueur à gauche
+//    context.fillText("PLAYER: " + currentMatch.scorePlayer1, MID_WIDTH + 50, 50);
 
-    // Afficher le score de l'antagoniste à droite
-    context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, MID_WIDTH - 300, 50);
-}
+//    // Afficher le score de l'antagoniste à droite
+//    context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, MID_WIDTH - 300, 50);
+//}
 
-function displayResult(splitScreenActivated) {
-    // Définir la police et l'alignement pour le score
-    context.font = "20px 'Press Start 2P'";// "40px Arial";
-    context.fillStyle = "white"; // Couleur du texte
+//function displayResult(splitScreenActivated) {
+//    // Définir la police et l'alignement pour le score
+//    context.font = "20px 'Press Start 2P'";// "40px Arial";
+//    context.fillStyle = "white"; // Couleur du texte
 
-	if (splitScreenActivated)
-		context.fillText("THE GAME IS OVER", (MID_WIDTH * 2) - 180 , 50);
-	else
-		context.fillText("THE GAME IS OVER", MID_WIDTH - 180, 50);
-}
+//	if (splitScreenActivated)
+//		context.fillText("THE GAME IS OVER", (MID_WIDTH * 2) - 180 , 50);
+//	else
+//		context.fillText("THE GAME IS OVER", MID_WIDTH - 180, 50);
+//}
 
 /*Game Lopp Breakout*/
 function gameLoopBreakout(currentTime)
@@ -1250,8 +1250,8 @@ function gameLoopBreakout(currentTime)
 	deltaTime = (currentTime - lastTime) / primeDeltaTime;
 	lastTime = currentTime;
 
-	/*map display*/	
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	/*map display*/
+	//context.clearRect(0, 0, canvas.width, canvas.height);
 	renderer.clear();
 	colorBuffer.set(gridColorBuffer);
 
@@ -1270,11 +1270,11 @@ function gameLoopBreakout(currentTime)
 
 	if (brickWall.length) //TODO;
 	{
-		displayScore();
+		//displayScore();
 		requestAnimationFrame(gameLoopBreakout);
 	}
 	else {
-		displayResult(false);
+		//displayResult(false);
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
@@ -1289,8 +1289,8 @@ function gameLoopPvpBreakout(currentTime)
 	deltaTime = (currentTime - lastTime) / primeDeltaTime;
 	lastTime = currentTime;
 
-	/*map display*/	
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	/*map display*/
+	//context.clearRect(0, 0, canvas.width, canvas.height);
 	renderer.clear();
 	colorBuffer.set(gridColorBuffer);
 
@@ -1304,7 +1304,7 @@ function gameLoopPvpBreakout(currentTime)
 	drawBrickWall2();
 	drawBall2();
 	drawPadel2(255, 255, 255);
-	
+
 	material.uniforms.time.value = currentTime * 0.001;
 	if (lightWave)
 		material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
@@ -1313,11 +1313,11 @@ function gameLoopPvpBreakout(currentTime)
 
 	if (brickWall.length && brickWall2.length) //TODO:
 	{
-		displayScorePvp();
+		//displayScorePvp();
 		requestAnimationFrame(gameLoopPvpBreakout);
 	}
 	else {
-		displayResult(true);
+		//displayResult(true);
 		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 		else
@@ -1334,8 +1334,8 @@ function gameLoop(currentTime)
 	deltaTime = (currentTime - lastTime) / primeDeltaTime;
 	lastTime = currentTime;
 
-	/*map display*/	
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	/*map display*/
+	//context.clearRect(0, 0, canvas.width, canvas.height);
 	renderer.clear();
 	colorBuffer.set(gridColorBuffer);
 
@@ -1353,17 +1353,14 @@ function gameLoop(currentTime)
 
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
-		displayScore();
+		//displayScore();
 		requestAnimationFrame(gameLoop);
 	}
 	else {
-		displayResult(false);
+		//displayResult(false);
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
-		//Display buttons
-			//Restart
-			//Back
 	}
 }
 
@@ -1372,8 +1369,8 @@ function gameLoopPvp(currentTime)
 	deltaTime = (currentTime - lastTime) / primeDeltaTime;
 	lastTime = currentTime;
 
-	/*map display*/	
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	/*map display*/
+	//context.clearRect(0, 0, canvas.width, canvas.height);
 	renderer.clear();
 	colorBuffer.set(gridColorBuffer);
 
@@ -1387,7 +1384,7 @@ function gameLoopPvp(currentTime)
 	drawAntagonistPvp(255, 255, 255);
 	drawBallPvp();
 	drawPadelPvp(255, 255, 255);
-	
+
 	material.uniforms.time.value = currentTime * 0.001;
 	if (lightWave)
 		material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
@@ -1396,11 +1393,11 @@ function gameLoopPvp(currentTime)
 
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
-		displayScorePvp();
+		//displayScorePvp();
 		requestAnimationFrame(gameLoopPvp);
 	}
 	else {
-		displayResult(true);
+		//displayResult(true);
 		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 		else
@@ -1503,7 +1500,7 @@ function rmStartNodePvp()
 	zBallPvp = zAntagonist;
 	xBall = 0;
 	xBall2 = 0;
-	zVelocity = ballSpeed;	
+	zVelocity = ballSpeed;
 	xVelocity = 0.01;
 	zVelocity2 = ballSpeed;
 	xVelocity2 = 0.01;
@@ -1521,7 +1518,7 @@ function rmStartNodePvp()
 	create3Dball();
 	create3Dball2();
 	create3Dgrid(customMapNb);
-	create3DgridPvp(customMapNb);	
+	create3DgridPvp(customMapNb);
 	if (customMapNb)
 		create3Dobstacle(1, breakout);
 	create3Dbrick();
