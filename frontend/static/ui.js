@@ -55,6 +55,7 @@ function DisplayTournamentOptions() {
 function BackButtonConnection()
 {
 	playerIndex = 2;
+	currentTournament.active = false;
 	ReplaceElement("playerConnection", "buttonsContainer");
 }
 
@@ -72,22 +73,24 @@ function DisplayGameBot()
 	ReplaceElement("buttonsContainer", "gameContainer");
 }
 
-function DisplayWinnerMenu() {
-	document.getElementById("scorePlayer1").innerText = 0;
-	document.getElementById("scorePlayer2").innerText = 0;
-	ReplaceElement("gameContainer", "endOfGame");
+function displayEOGMenu() {
+	document.getElementById("EOGButtons").classList.remove('d-none');
 }
 
 function backButtonEOG() {
+	ReplaceElement("gameContainer", "buttonsContainer");
 	document.getElementById("containerCustomButton").classList.remove("d-none");
 	document.getElementById("containerTitle").classList.remove("d-none");
-	ReplaceElement("endOfGame", "buttonsContainer");
 	playerIndex = 2;
 	currentTournament.idPlayers = [];
 }
 
 function replayButtonEOG() {
-	ReplaceElement("endOfGame", "gameContainer");
+	document.getElementById("EOGButtons").classList.add('d-none');
+	if (currentMatch.bot)
+		rmStartNode();
+	else
+		rmStartNodePvp();
 }
 
 function displayChangeUsernameField() {
@@ -147,6 +150,13 @@ async function DisplayTournamentView(winnerId) {
 	document.getElementById('nextGameButton').classList.remove('d-none');
 }
 
+function backToConnexion() {
+	ReplaceElement('buttonsContainer', 'playerConnection');
+	document.getElementById('containerCustomButton').classList.add('d-none');
+	var dismissDrawerButton = document.getElementById('dismissDrawer'); // Replace with your offcanvas element ID
+	dismissDrawerButton.click();
+	hostConnected = false;
+}
 
 ////// Event Listenner for Account Creation
 

@@ -101,7 +101,6 @@ function getUserList() {
 							<button class=\"btn btn-primary follow-button\" data-user-id=\"" + userIds[i] + "\" id=\"followButton" + userIds[i] + "\">Follow</button> \
 						</div> \
 					</div>"
-
 				}
 			};
 			userListContainer.innerHTML = "<div>" + responseHTML + "</div>";

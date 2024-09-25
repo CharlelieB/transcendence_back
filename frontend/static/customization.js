@@ -10,7 +10,7 @@ const colorBoxRacket2 = document.getElementById('colorBoxRacket2');
 const customColorNet = document.getElementById('formColorNet');
 const colorBoxNet = document.getElementById('colorBoxNet');
 const customRacketSize = document.getElementById('formRacketSize');
-let customBallsNb = 1;
+let customMapNb = 0;
 
 function getCustomizationSettings() {
 	makeAuthenticatedRequest("/api/customization/view/", { method: "GET"})
@@ -26,7 +26,7 @@ function getCustomizationSettings() {
 		customColorRacket2.value = data.color_2;
 		customColorNet.value = data.color_filet;
 		customRacketSize.value = getRacketSize(data.size_raquette);
-		customBallsNb = data.nb_balls;
+		customMapNb = data.nb_balls;
 		updateCustomModalUI();
 	})
 	.catch(error => {
@@ -41,7 +41,7 @@ function updateCustomizationSettings() {
 		color_2 : customColorRacket2.value,
 		color_filet : customColorNet.value,
 		size_raquette : setRacketSize(customRacketSize.value),
-		nb_balls : customBallsNb
+		nb_balls : customMapNb
 	};
 
 	makeAuthenticatedRequest("/api/customization/update/", {
@@ -66,7 +66,7 @@ function restoreCustomizationSettings() {
 	customColorRacket2.value = 4;
 	customColorNet.value = 2;
 	customRacketSize.value = getRacketSize("regular");
-	customBallsNb = 1;
+	customMapNb = 1;
 
 	updateCustomizationSettings();
 	updateCustomModalUI();
@@ -113,12 +113,12 @@ function setRacketSize(value) {
 }
 
 function selectBallsNbRadioButton() {
-	let ballsNbRadioId = "vbtn-ball-nb" + customBallsNb;
-	document.getElementById(ballsNbRadioId).checked = true;
+	let mapNbRadioId = "vbtn-ball-nb" + customMapNb;
+	document.getElementById(mapNbRadioId).checked = true;
 }
 
-function updateBallsNumber(ballsNb) {
-	customBallsNb = ballsNb;
+function updateMapNumber(ballsNb) {
+	customMapNb = ballsNb;
 }
 
 ////// Event Listenner for Score Label

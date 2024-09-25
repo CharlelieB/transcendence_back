@@ -93,7 +93,12 @@ canvas {
 	justify-content: center;
 	align-items: center;
 }
-
+/* .loginCircle {
+	width: 2px;
+	height: 10px;
+	border-radius: 50%;
+	background-color: #ff0000;
+} */
 /* GAME STYLES */
 
 #bot-id
@@ -108,7 +113,20 @@ canvas {
 
 #canvas-id
 {
-	background-color : black;
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    z-index: 1;
+	border-radius: 25px;
+}
+
+#canvas-2d
+{
+ 	/*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    z-index: 2;
+    pointer-events: none; /* Le texte n'empêche pas l'interaction avec le canevas 3D */
 	border-radius: 25px;
 }
 

@@ -10,7 +10,6 @@ let gamesNb = 1;
 //Tournament of 6 : 6 games
 //Tournament of 4 : 3 games
 
-
 ///// GENERIC FUNCTION /////
 
 function getCookie(name) {
@@ -37,7 +36,7 @@ function validateEmail(email) {
 /////    FIRST CONNECTION EVENT LISTENER /////
 
 document.addEventListener('DOMContentLoaded', async function() {
-	let response = await makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'})
+	let response = await makeUnauthenticatedRequest("/api/token/refresh/", {method : 'POST'});
 	if (response === 1 || (!response.ok))
 	{
 		document.getElementById("loginBackButton").classList.add("d-none");
@@ -54,21 +53,22 @@ document.addEventListener('DOMContentLoaded', async function() {
 		})
 		.then(data => {
 			hostId = data.id;
-		})
+		});
 		ReplaceElement("containerEmpty", "buttonsContainer");
 		document.getElementById("containerCustomButton").classList.remove('d-none');
+		getCustomizationSettings();
+		makeAuthenticatedRequest("/api/login/", {method: 'POST'});
 	} else {
 		console.error("access token not saved");
 	}
  });
-
 
 /////        API CALLS      //////
 
 function makeUnauthenticatedRequest(url, options = {}) {
 
 	const csrfToken = getCookie('csrftoken');
-	if (!csrfToken  && (url !== "/api/login/" || url !== "/api/register/")) {
+	if (!csrfToken  && (url !== "/api/login/" && url !== "/api/register/" && url !== "/api/2fa/verify/")) {
 		console.error('CSRF token is missing. Cannot refresh token.');
 		return 1;
 	}
@@ -116,67 +116,7 @@ function makeAuthenticatedRequest(url, options = {}) {
 	});
 }
 
-//function makeUnauthenticatedRequest(url, options = {}) {
-
-//	const csrfToken = getCookie('csrftoken');
-//	if (!csrfToken && url !== "/api/login/") {
-//		console.error('CSRF token is missing. Cannot refresh token.');
-//	}
-
-//	options.headers = options.headers || {};
-//	options.headers['Accept'] = 'application/json';
-//	options.headers['Content-Type'] = 'application/json';
-//	options.headers['X-CSRFToken'] = csrfToken;
-//	options.credentials = 'include';
-
-//	return fetch(url, options)
-//	.then(response => {
-//		if (!response.ok) {
-//			throw new Error("Network response was not ok");
-//		}
-//			return response;
-//	}).catch(error => {
-//		console.error("Api error : ", error);
-//	})
-//}
-
-//function makeAuthenticatedRequest(url, options = {}) {
-
-//	const csrfToken = getCookie('csrftoken');
-//	if (!csrfToken) {
-//		console.error('CSRF token is missing. Cannot refresh token.');
-//		return Promise.reject('CSRF token is missing');
-//	}
-
-//	options.headers = options.headers || {};
-//	options.headers['Authorization'] = `Bearer ${window.accessToken}`;
-//	options.headers['Accept'] = 'application/json';
-//	options.headers['Content-Type'] = 'application/json';
-//	options.headers['X-CSRFToken'] = csrfToken;
-//	options.credentials = 'include';
-
-//	return fetch(url, options)
-//	.then(response => {
-//		if (response.status === 401) {
-//			console.log("Refreshing token");
-//			return refreshToken().then(() => {
-//				options.headers['Authorization'] = `Bearer ${window.accessToken}`;
-//				fetch(url, options)
-//				.then(response => {
-//					if (!response.ok) {
-//						throw new Error("Network response was not ok");
-//					}
-//				})
-//			});
-//		}
-//		return response;
-//	}).catch(error => {
-//		console.error("Api Error : ", error);
-//	})
-//}
-
 // REFRESH
-
 
 function refreshToken()
 {
@@ -198,6 +138,13 @@ function refreshToken()
 	});
 }
 
+// LOGOUT
+
+function disconnect() {
+	makeAuthenticatedRequest("/api/logout/", {method: 'POST'});
+	backToConnexion();
+}
+
 // LOGIN & REGISTER
 
 async function submitUserForm() {
@@ -214,7 +161,7 @@ async function submitUserForm() {
 			}
 			else if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
-				DisplayGame();
+				rmStartNodePvp();
 			}
 			else {
 				if (playerIndex < playerNumber) {
@@ -246,7 +193,7 @@ async function submitUserForm() {
 			}
 			else if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
-				DisplayGame();
+				rmStartNodePvp();
 			}
 			else {
 				if (playerIndex <= playerNumber) {
@@ -297,6 +244,10 @@ function userLogin() {
 		hostId = data.id;
 		hostConnected = true;
 		ReplaceElement("playerConnection", "buttonsContainer");
+		makeAuthenticatedRequest("/api/user/", {
+			method: 'PUT',
+			body: JSON.stringify({is_connect: true})
+		});
 		document.getElementById("containerEmpty").classList.add("d-none");
 		document.getElementById("containerCustomButton").classList.remove("d-none");
 	})
@@ -336,9 +287,14 @@ function userRegistration() {
 		window.accessToken = data.access_token;
 		hostId = data.id;
 		hostConnected = true;
+		makeAuthenticatedRequest("/api/user/", {
+			method: 'PUT',
+			body: JSON.stringify({is_connect: true})
+		});
 		ReplaceElement("playerConnection", "buttonsContainer");
 		document.getElementById("containerEmpty").classList.add("d-none");
 		document.getElementById("containerCustomButton").classList.remove("d-none");
+		makeUnauthenticatedRequest("/api/login/", {method: 'POST'});
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -363,13 +319,18 @@ async function verify2FA() {
 		body: JSON.stringify(input)
 	});
 	if (!response.ok) {
-		errorMessageContainer = "Wrong token";
+		errorMessageContainer.innerText = "Wrong token";
 		return ;
 	}
 	let data = await response.json();
 	hostId = data.id;
 	ReplaceElement("2FAview", "buttonsContainer");
+	document.getElementById("containerEmpty").classList.add('d-none');
 	document.getElementById("containerCustomButton").classList.remove('d-none');
-
+	let input2 = {is_connect: true};
+	makeAuthenticatedRequest("/api/user/", {
+		method: 'PUT',
+		body: JSON.stringify(input2)
+	});
 	console.log("2fa verificated for " + data.id);
 }
