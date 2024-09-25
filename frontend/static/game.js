@@ -128,8 +128,8 @@ var zVelocity = ballSpeed;
 /*-----Input-----*/
 var keysPressed = {};
 /*-----Score-----*/
-//var playerScore = 0;
-//var antagonistScore = 0;
+var playerMalus = 0;
+var player2Malus = 0;
 var winnerScore = 5;
 /*-----SYNC-----*/
 var lastTime = 0;
@@ -1085,6 +1085,12 @@ function updateBallPosition(rebound)
     }
 
     // Vérifier les limites du terrain sur l'axe Z
+	
+    if (zBall <= ZMIN - 0.5)
+		++playerMalus;
+    if (zBall2 <= ZMIN - 0.5)
+		++player2Malus;
+
     if (zBall >= ZMAX + 0.5 || zBall <= ZMIN - 0.5)
 	{
         // Inverser la direction sur Z si on atteint les bords arrière
@@ -1273,13 +1279,12 @@ function gameLoopBreakout(currentTime)
 		requestAnimationFrame(gameLoopBreakout);
 	}
 	else {
+		currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
+		currentMatch.scorePlayer2 = 24 - brickWall.length - player2Malus;
 		//displayResult(false);
 		//canvas.classList.add('d-none');
 		//document.getElementById('canva_score').classList.remove('d-none');
 		//document.getElementById('canva_score').classList.add('d-flex');
-
-		currentMatch.scorePlayer1 = 0;
-		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
 		//Display buttons
 			//Restart
@@ -1320,13 +1325,13 @@ function gameLoopPvpBreakout(currentTime)
 		requestAnimationFrame(gameLoopPvpBreakout);
 	}
 	else {
+		currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
+		currentMatch.scorePlayer2 = 24 - brickWall.length - player2Malus;
 		//displayResult(true);
 		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 		else
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
-		currentMatch.scorePlayer1 = 0;
-		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
 	}
 }
@@ -1361,8 +1366,6 @@ function gameLoop(currentTime)
 	}
 	else {
 		//displayResult(false);
-		currentMatch.scorePlayer1 = 0;
-		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
 	}
 }
@@ -1405,8 +1408,6 @@ function gameLoopPvp(currentTime)
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 		else
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
-		currentMatch.scorePlayer1 = 0;
-		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
 	}
 }
@@ -1542,6 +1543,8 @@ function rmStartNode()
 	xPadelPlayer = 0;
 	xPadelPlayer2 = 0;
 	xAntagonist = 0;
+	playerMalus = 0;
+	player2Malus = 0;
 	currentMatch.scorePlayer1 = 0;
 	currentMatch.scorePlayer2 = 0;
 	currentMatch.bot = true;
@@ -1591,6 +1594,8 @@ function rmStartNodePvp()
 	zBallPvp = zAntagonist;
 	xBall = 0;
 	xBall2 = 0;
+	playerMalus = 0;
+	player2Malus = 0;
 	currentMatch.scorePlayer1 = 0;
 	currentMatch.scorePlayer2 = 0;
 	xPadelPlayer = 0;
