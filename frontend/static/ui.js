@@ -150,6 +150,13 @@ async function DisplayTournamentView(winnerId) {
 	document.getElementById('nextGameButton').classList.remove('d-none');
 }
 
+function backToConnexion() {
+	ReplaceElement('buttonsContainer', 'playerConnection');
+	document.getElementById('containerCustomButton').classList.add('d-none');
+	var dismissDrawerButton = document.getElementById('dismissDrawer'); // Replace with your offcanvas element ID
+	dismissDrawerButton.click();
+	hostConnected = false;
+}
 
 ////// Event Listenner for Account Creation
 

@@ -59,11 +59,44 @@ class RegisterUserView(APIView):
             user = serializer.save()
             UserStats.objects.create(user=user)
             UserCustom.objects.create(user=user)
-            refresh = RefreshToken.for_user(user)
-            access_token = str(refresh.access_token)
+            # refresh = RefreshToken.for_user(user)
+            # access_token = str(refresh.access_token)
+            user.is_connect = True
+            user.save()
+            tokens = get_user_tokens(user)
+            res = response.Response()
 
-            return Response({'id': user.id,'refresh': str(refresh), 'access_token': access_token,}, status=status.HTTP_201_CREATED) 
+            res.set_cookie(
+                key=settings.SIMPLE_JWT['AUTH_COOKIE'],
+                value=tokens["access_token"],
+                expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+                secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+                httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+                samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+            )
 
+            res.set_cookie(
+                key=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'],
+                value=tokens["refresh_token"],
+                expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
+                secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+                httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+                samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+            )
+
+            user_id = user.id
+
+
+            res.data = {
+                'id': user_id,
+                'access_token': tokens["access_token"],
+                'refresh_token': tokens["refresh_token"],
+            }
+
+            res["X-CSRFToken"] = csrf.get_token(request)
+            return res
+            # return Response({'id': user.id,'refresh': str(refresh), 'access_token': access_token,}, status=status.HTTP_201_CREATED) 
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @extend_schema(
@@ -86,6 +119,8 @@ class LoginView(GenericAPIView):
         if user is not None:
             if user.is_two_factor_enabled:
                 return Response({'detail': 'L\'authentification à deux facteurs est activée.'}, status=status.HTTP_400_BAD_REQUEST)
+            user.is_connect = True
+            user.save()
             tokens = get_user_tokens(user)
             res = response.Response()
             res.set_cookie(
@@ -176,7 +211,9 @@ class LogoutView(APIView):
             res.delete_cookie("X-CSRFToken")
             res.delete_cookie("csrftoken")
             res["X-CSRFToken"]=None
-            
+            user = request.user
+            user.is_connect = False
+            user.save()
             return res
         except:
             raise rest_exceptions.ParseError("Invalid token")
@@ -485,7 +522,8 @@ class TOTPVerifyView(APIView):
             
             if not device or not device.verify_token(token):
                 return Response({'detail': 'Code TOTP invalide.'}, status=status.HTTP_400_BAD_REQUEST)
-
+        user.is_connect = True
+        user.save()
         tokens = get_user_tokens(user)
         res = Response()
 
