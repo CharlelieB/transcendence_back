@@ -26,9 +26,6 @@ async function checkAdversaryCredentials() {
 	email = document.getElementById("emailInput").value;
 	password = document.getElementById("passwordInput").value;
 
-	console.log(email);
-	console.log(password);
-
 	const input = {
 		email: email,
 		password: password
@@ -115,7 +112,6 @@ function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner)
 		winner : idWinner
 	};
 
-	console.log("recording match for " + idPlayer1 + " and " + idPlayer2);
 	makeAuthenticatedRequest('/api/games/matches/create/', {
 		method: 'POST',
 		body: JSON.stringify(data)
@@ -123,7 +119,6 @@ function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner)
 		if(!response.ok) {
 			throw new Error('Network response was not ok');
 		}
-		console.log("Match added successfully");
 	}).catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
 	})
@@ -144,9 +139,6 @@ function setCurrentMatch() {
 		currentTournament.idWinners.shift();
 		currentTournament.idWinners.shift();
 	}
-
-	console.log("Match " + currentTournament.gamesPlayed);
-	console.log("player1 : " + currentMatch.idPlayer1 + " player2 : " + currentMatch.idPlayer2);
 }
 
 function isFirstRound() {
@@ -181,7 +173,7 @@ function displayResult(winner, winnerId) {
 	victorField.classList.remove('d-none');
 	if (currentTournament.active) {
 		if (currentTournament.idWinners.length === 0 && currentTournament.gamesPlayed > 0) {
-			victorField.innerHTML = "<h2>Congratulation " + winner + " you won the tournament</h2>";
+			victorField.innerHTML = "<h2>Congratulation " + winner + ", you won the tournament</h2>";
 			return ;
 		}
 		else

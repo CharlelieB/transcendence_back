@@ -58,7 +58,6 @@ function getFriendsList(data) {
 		const friendsButtons = document.querySelectorAll(".friend-stats-button");
 		friendsButtons.forEach(button => {
 			button.addEventListener('click', (event) => {
-				console.log(event.currentTarget.getAttribute('data-user-id'));
 				tmpFriendStatsId = event.currentTarget.getAttribute('data-user-id');
 				getFriendsStats(tmpFriendStatsId);
 			});
@@ -136,7 +135,6 @@ function followUser(userId) {
 		return response.json();
 	})
 	.then(data => {
-		console.log("User followed successfully : ", data);
 		displaySocialDrawer();
 	})
 	.catch(error => {
@@ -145,7 +143,6 @@ function followUser(userId) {
 }
 
 function unfollowUser() {
-	console.log("unfollowing " + tmpFriendStatsId);
 	makeAuthenticatedRequest("/api/unfollow/" + tmpFriendStatsId + "/", {method: "POST"})
 	.then(response => {
 		if (!response.ok) {
@@ -154,7 +151,6 @@ function unfollowUser() {
 		return response.json();
 	})
 	.then(data => {
-		console.log("User unfollowed successfully : ", data);
 		displaySocialDrawer();
 	})
 	.catch(error => {
@@ -174,7 +170,6 @@ function getUserStats()
 		}
 		return response.json();
 	}).then(data => {
-		console.log("on est la");
 		drawCanvas(data.wins, data.losses, "myPieChart");
 		document.getElementById("gamesPlayedField").innerText = "Games played : " + data.games_played;
 		document.getElementById("victoryField").innerText = "Victories : " + data.wins;
@@ -254,7 +249,6 @@ function drawCanvas(wins, losses, chartId) {
 	ctx.closePath();
 	ctx.fillStyle = colors[1];
 	ctx.fill();
-	console.log("finished drawing canva");
 }
 
 let tmpName
@@ -265,7 +259,7 @@ async function getPlayerNames(ids) {
 		body: JSON.stringify(ids)
 	});
 	let data = await response.json();
-	
+
 	return ([data[0].username, data[1].username]);
 }
 

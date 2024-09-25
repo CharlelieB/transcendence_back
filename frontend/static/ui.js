@@ -91,14 +91,19 @@ function displayEOGMenu() {
 			document.getElementById("nextGameButton").classList.remove('d-none');
 
 	}
+	else
+		document.getElementById('replayButton').classList.remove('d-none');
 }
 
 function backButtonEOG() {
 	ReplaceElement("gameContainer", "buttonsContainer");
 	document.getElementById("containerCustomButton").classList.remove("d-none");
 	document.getElementById("containerTitle").classList.remove("d-none");
+	document.getElementById('EOGButtons').classList.add('d-none');
 	playerIndex = 2;
+	currentTournament.active = false;
 	currentTournament.idPlayers = [];
+	currentTournament.idWinners = [];
 	currentTournament.gamesPlayed = 0;
 }
 
@@ -144,6 +149,8 @@ async function displayMatchInfo() {
 	const idList = {user_ids: [currentMatch.idPlayer1, currentMatch.idPlayer2]};
 	const names = await getPlayerNames(idList);
 
+	document.getElementById('matchVictorContainer').classList.add("d-none");
+	document.getElementById('matchInfoContainer').classList.remove('d-none');
 	currentMatch.usernamePlayer1 = names[0];
 	currentMatch.usernamePlayer2 = names[1];
 
@@ -156,11 +163,12 @@ async function displayBotInfo() {
 	let response = await makeAuthenticatedRequest("/api/user/", {method: 'GET'});
 	let data = await response.json();
 
-	console.log(data);
 	currentMatch.usernamePlayer1 = data.username;
 	currentMatch.usernamePlayer2 = "Antagonist";
 	document.getElementById("matchUsername1").innerText = data.username;
 	document.getElementById("matchUsername2").innerText = "Antagonist";
+	document.getElementById('matchInfoContainer').classList.remove('d-none');
+	document.getElementById('matchVictorContainer').classList.add('d-none');
 }
 
 function backToConnexion() {

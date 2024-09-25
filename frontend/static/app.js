@@ -105,7 +105,6 @@ function makeAuthenticatedRequest(url, options = {}) {
 	return fetch(url, options)
 	.then(response => {
 		if (response.status === 401) {
-			console.log("Refreshing token");
 			return refreshToken().then(() => {
 				options.headers['Authorization'] = `Bearer ${window.accessToken}`;
 				return fetch(url, options);
@@ -128,8 +127,6 @@ function refreshToken()
 	})
 	.then(data => {
 		window.accessToken = data.access_token;
-			console.log(window.accessToken);
-			console.log('Access token refreshed');
 	})
 	.catch(error => {
 		console.error('Error refreshing token:', error);
@@ -172,7 +169,6 @@ async function submitUserForm() {
 				else {
 					playerIndex = 0;
 					currentTournament.idPlayers.push(hostId);
-					console.log(currentTournament.idPlayers);
 					setCurrentMatch();
 					rmStartNodePvp();
 				}
@@ -199,6 +195,7 @@ async function submitUserForm() {
 				}
 				else {
 					currentTournament.idPlayers.push(hostId);
+					setCurrentMatch();
 					rmStartNodePvp();
 				}
 			}
@@ -209,9 +206,6 @@ async function submitUserForm() {
 function userLogin() {
 	email = document.getElementById("emailInput").value;
 	password = document.getElementById("passwordInput").value;
-
-	console.log(email);
-	console.log(password);
 
 	const data = {
 		email: email,
@@ -308,7 +302,6 @@ async function verify2FA() {
 		token : token,
 	};
 
-	console.log(email + " " + password);
 	let response = await makeUnauthenticatedRequest("/api/2fa/verify/", {
 		method: 'POST',
 		body: JSON.stringify(input)
@@ -327,5 +320,4 @@ async function verify2FA() {
 		method: 'PUT',
 		body: JSON.stringify(input2)
 	});
-	console.log("2fa verificated for " + data.id);
 }
