@@ -105,6 +105,8 @@ function RecordLoss(data) {
 
 function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner) {
 
+	if(currentTournament.active)
+		return ;
 	const data = {
 		player1 : idPlayer1,
 		player2 : idPlayer2,
@@ -139,7 +141,12 @@ function setCurrentMatch() {
 	else {
 		currentMatch.idPlayer1 = currentTournament.idWinners[0];
 		currentMatch.idPlayer2 = currentTournament.idWinners[1];
+		currentTournament.idWinners.shift();
+		currentTournament.idWinners.shift();
 	}
+
+	console.log("Match " + currentTournament.gamesPlayed);
+	console.log("player1 : " + currentMatch.idPlayer1 + " player2 : " + currentMatch.idPlayer2);
 }
 
 function isFirstRound() {
@@ -151,17 +158,6 @@ function isFirstRound() {
 		return true;
 }
 
-function getNextTournamentMatch() {
-	if (isFirstRound()) {
-		idPlayer1 = currentTournament.idPlayers[currentTournament.gamesPlayed * 2];
-		idPlayer2 = currentTournament.idPlayers[currentTournament.gamesPlayed * 2];
-	}
-	else {
-		idPlayer1 = currentTournament.idPlayers[currentTournament.idWinners[0]];
-		idPlayer2 = currentTournament.idPlayers[currentTournament.idWinners[1]];
-	}
-}
-
 function displayScore() {
 
     // Définir la police et l'alignement pour le score
@@ -170,22 +166,26 @@ function displayScore() {
 
     // Afficher le score du joueur à gauche
     context.fillText(currentMatch.usernamePlayer1 + " : " + currentMatch.scorePlayer1, MID_WIDTH - 300, 50);
+	document.getElementById("matchScore1").innerText = currentMatch.scorePlayer1;
 
     // Afficher le score de l'antagoniste à droite
     context.fillText(currentMatch.usernamePlayer2 + " : " + currentMatch.scorePlayer2, MID_WIDTH + 50, 50);
+	document.getElementById("matchScore2").innerText = currentMatch.scorePlayer2;
 }
 
-function displayResult(winner) {
-	document.getElementById("matchInfoContainer").innerHTML = "<h1>Victory for " + winner + "</h1>";
-	if (currentTournament.active) {
-		currentTournament.idWinners.push();
-	}
-    // // Définir la police et l'alignement pour le score
-    // context.font = "20px 'Press Start 2P'";// "40px Arial";
-    // context.fillStyle = "white"; // Couleur du texte
+function displayResult(winner, winnerId) {
 
-	// if (splitScreenActivated)
-	// 	context.fillText("GAME OVER", (MID_WIDTH * 2) - 100 , 50);
-	// else
-	// 	context.fillText("GAME OVER", MID_WIDTH - 100, 50);
+	const victorField = document.getElementById("matchVictorContainer");
+
+	document.getElementById('matchInfoContainer').classList.add('d-none');
+	victorField.classList.remove('d-none');
+	if (currentTournament.active) {
+		if (currentTournament.idWinners.length === 0 && currentTournament.gamesPlayed > 0) {
+			victorField.innerHTML = "<h2>Congratulation " + winner + " you won the tournament</h2>";
+			return ;
+		}
+		else
+			currentTournament.idWinners.push(winnerId);
+	}
+	victorField.innerHTML = "<h1>Victory for " + winner + "</h1>";
 }

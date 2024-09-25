@@ -523,18 +523,6 @@ function updatePaddlePositionPvp()
     }
 }
 
-function displayScorePvp() {
-    // Définir la police et l'alignement pour le score
-    context.font = "20px 'Press Start 2P'";// "40px Arial";
-    context.fillStyle = "white"; // Couleur du texte
-
-    // Afficher le score du joueur à gauche
-    context.fillText(currentMatch.usernamePlayer1 + " : " + currentMatch.scorePlayer1, canvas.width / 2 - 300, 50);
-    // Afficher le score de l'antagoniste à droite
-    context.fillText(currentMatch.usernamePlayer2 + " : " + currentMatch.scorePlayer2, canvas.width / 2 + 50, 50);
-
-}
-
 /*Game loop*/
 function gameLoop(currentTime)
 {
@@ -550,16 +538,15 @@ function gameLoop(currentTime)
 	drawBall();
 	drawPadel(255, 255, 255);
 	context.putImageData(imageData, 0, 0);
-	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
-	{
+	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore) {
 		displayScore();
 		requestAnimationFrame(gameLoop);
 	}
 	else {
 		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
-			displayResult(currentMatch.usernamePlayer1);
+			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
 		else
-			displayResult(currentMatch.usernamePlayer2);
+			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
 		displayEOGMenu();
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
@@ -587,16 +574,16 @@ function gameLoopPvp(currentTime)
 	context.putImageData(imageData, 0, 0);
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
-		displayScorePvp();
+		displayScore();
 		requestAnimationFrame(gameLoopPvp);
 	}
 	else {
 		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
-			displayResult(currentMatch.usernamePlayer1);
+			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 		}
 		else {
-			displayResult(currentMatch.usernamePlayer2);
+			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
 		}
 		currentMatch.scorePlayer1 = 0;
@@ -645,13 +632,11 @@ function rmStartNode()
 	currentMatch.scorePlayer1 = 0;
 	currentMatch.scorePlayer2 = 0;
 	currentMatch.bot = true;
-	currentMatch.idPlayer1 = 0;
 	winnerScore = document.getElementById("customVictoryValue").value;
 	create3Dgrid(customMapNb);
 	create3Dpadel();
 	create3Dball();
-	//displayMatchInfo();
-	// Create a special function for BOT GAMES
+	displayBotInfo();
 	DisplayGame();
 	initDeltaTime();
 }

@@ -265,7 +265,7 @@ async function getPlayerNames(ids) {
 		body: JSON.stringify(ids)
 	});
 	let data = await response.json();
-
+	
 	return ([data[0].username, data[1].username]);
 }
 

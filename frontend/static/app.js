@@ -173,8 +173,8 @@ async function submitUserForm() {
 					playerIndex = 0;
 					currentTournament.idPlayers.push(hostId);
 					console.log(currentTournament.idPlayers);
-					rmStartNodePvp();
 					setCurrentMatch();
+					rmStartNodePvp();
 				}
 			}
 		}

@@ -75,16 +75,21 @@ function DisplayGame()
 {
 	document.getElementById("containerCustomButton").classList.add("d-none");
 	document.getElementById("containerTitle").classList.add("d-none");
-	ReplaceElement("playerConnection", "gameContainer");
+	if (currentMatch.bot)
+		ReplaceElement("buttonsContainer", "gameContainer");
+	else
+		ReplaceElement("playerConnection", "gameContainer");
 }
 
 function displayEOGMenu() {
 	document.getElementById("EOGButtons").classList.remove('d-none');
 	if (currentTournament.active) {
-		if (currentTournament.idWinners.length === 1)
-			document.getElementById("tournamentEndView").classList.remove('d-none');
 		document.getElementById("replayButton").classList.add('d-none');
-		document.getElementById("nextGameButton").classList.remove('d-none');
+		if (currentTournament.idWinners.length === 0 && currentTournament.gamesPlayed > 0)
+			document.getElementById("nextGameButton").classList.add('d-none');
+		else
+			document.getElementById("nextGameButton").classList.remove('d-none');
+
 	}
 }
 
@@ -94,9 +99,12 @@ function backButtonEOG() {
 	document.getElementById("containerTitle").classList.remove("d-none");
 	playerIndex = 2;
 	currentTournament.idPlayers = [];
+	currentTournament.gamesPlayed = 0;
 }
 
 function replayButtonEOG() {
+	document.getElementById('matchInfoContainer').classList.remove('d-none');
+	document.getElementById('matchVictorContainer').classList.add('d-none');
 	document.getElementById("EOGButtons").classList.add('d-none');
 	if (currentMatch.bot)
 		rmStartNode();
@@ -133,21 +141,26 @@ function display2FA() {
 }
 
 async function displayMatchInfo() {
-	//Appeler la fonction qui permet de recup les names des listes de matchs
-	//const content = "<h3 class=\"text-center\">" + usernames[0] + " VS " + usernames[1] + "</h3>";
-	//document.getElementById("matchInfoContainer").innerHTML = content;
+	const idList = {user_ids: [currentMatch.idPlayer1, currentMatch.idPlayer2]};
+	const names = await getPlayerNames(idList);
+
+	currentMatch.usernamePlayer1 = names[0];
+	currentMatch.usernamePlayer2 = names[1];
+
+	document.getElementById('matchUsername1').innerText = names[0];
+	document.getElementById('matchUsername2').innerText = names[1];
+
 }
 
-async function DisplayTournamentView(winnerId) {
-	console.log("apwdj");
-	ReplaceElement("gameContainer", "endOfGame");
-	let response = await makeAuthenticatedRequest("/api/user/" + winnerId + "/", {method: 'GET'});
+async function displayBotInfo() {
+	let response = await makeAuthenticatedRequest("/api/user/", {method: 'GET'});
 	let data = await response.json();
-	console.log("here : " + data.username);
-	document.getElementById('matchWinnerInput').innerText = "Victory for " + data.username;
-	document.getElementById('winnerMessage').innerText = "You are moving to the next round";
-	document.getElementById('replayButton').classList.add('d-none');
-	document.getElementById('nextGameButton').classList.remove('d-none');
+
+	console.log(data);
+	currentMatch.usernamePlayer1 = data.username;
+	currentMatch.usernamePlayer2 = "Antagonist";
+	document.getElementById("matchUsername1").innerText = data.username;
+	document.getElementById("matchUsername2").innerText = "Antagonist";
 }
 
 function backToConnexion() {
@@ -159,8 +172,12 @@ function backToConnexion() {
 }
 
 function displayNextGame() {
+	currentTournament.gamesPlayed++;
 	document.getElementById('EOGButtons').classList.add('d-none');
-	getNextTournamentMatch();
+	document.getElementById('matchVictorContainer').classList.add('d-none');
+	document.getElementById('matchInfoContainer').classList.remove('d-none');
+	setCurrentMatch();
+	displayMatchInfo();
 	rmStartNodePvp();
 }
 
