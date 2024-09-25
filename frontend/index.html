@@ -257,7 +257,7 @@
 					<button id="quickPlay" class="btn btn-outline-warning m-1 d-flex" onclick="DisplayQuickPlayOptions()">Quick Play</button>
 					<div id="quickPlayOptions" class="d-none">
 						<button class="btn btn-outline-warning m-1" onclick="DisplayPlayerConnection(2)">1v1</button>
-						<button id="botGameStart" class="btn btn-outline-warning m-1">Bot</button>
+						<button id="botGameStart" class="btn btn-outline-warning m-1" onclick="rmStartNode()">Bot</button>
 					</div>
 				</div>
 				<!-- Tournament buttons -->
@@ -296,14 +296,14 @@
 				</div>
 				<!-- Form confirm password -->
 				<div class="mb-2 d-none" id="confirmPasswordContainer">
-					<label for="inputConfirmPassword" class="form-label">Confirm password</label>
-					<input type="password" class="form-control" id="passwordConfirmationInput">
+					<label for=inputConfirmPassword class="form-label">Confirm password</label>
+					<input type=password class="form-control" id="passwordConfirmationInput">
 				</div>
 			</form>
-			<div id="connectionErrorMessage" class="text-danger"></div>
+			<div id=connectionErrorMessage class="text-danger"></div>
 			<div class="m-4">
 				<button id=loginBackButton class="btn btn-outline-secondary mx-2" onclick="BackButtonConnection()">Back</button>
-				<button class="btn btn-outline-primary mx-2" onclick="submitUserForm()">Submit</button>
+				<button id=submitButton class="btn btn-outline-primary mx-2" onclick="submitUserForm()">Submit</button>
 			</div>
 		</div>
 		<!-- 2FA view -->
@@ -409,8 +409,20 @@
 	</div>
 	<!-- Game container -->
 	<div id="gameContainer" class="flex-column d-none">
-		<div id="matchInfoContainer"></div>
-		<div id="matchInfoSubtitle"></div>
+		<div id="matchVictorContainer" class="d-none"></div>
+		<div id ="matchInfoContainer" class="row">
+			<div class="col text-center">
+				<div id="matchUsername1"></div>
+				<div id="matchScore1">0</div>
+			</div>
+			<div class="col">
+				<h1>VS</h1>
+			</div>
+			<div class="col text-center">
+				<div id="matchUsername2"></div>
+				<div id="matchScore2">0</div>
+			</div>
+		</div>
 		<canvas id="canvas-id" width = "1000" height = "500"></canvas>
 		<!--<canvas id="canvas-2d" width = "1000" height = "500"></canvas>-->
 		<div id="EOGButtons" class="row mt-3 d-none">
@@ -419,7 +431,7 @@
 			</div>
 			<div class="col">
 				<button id="replayButton" class="btn btn-danger" onclick="replayButtonEOG()">Replay</button>
-				<button id="nextGameButton" class="btn btn-danger d-none">Next Game</button>
+				<button id="nextGameButton" class="btn btn-danger d-none" onclick="displayNextGame()">Next Game</button>
 			</div>
 		</div>
 	</div>

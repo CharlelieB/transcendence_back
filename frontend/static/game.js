@@ -8,9 +8,6 @@ var lightIntensity = 1; //default lightIntensity = 1;
 
 /*-----2D-----*/
 var init = false;
-
-// Obtention de mes deux canvas
-var bot = document.getElementById("botGameStart");
 var canvas = document.getElementById("canvas-id");
 //const canvas_ = document.getElementById("canvas-2d");
 //const context = canvas_.getContext("2d");
@@ -1209,42 +1206,7 @@ function updatePaddlePositionPvp()
     }
 }
 
-function displayScorePvp() {
-    // Définir la police et l'alignement pour le score
-    context.font = "20px 'Press Start 2P'";// "40px Arial";
-    context.fillStyle = "white"; // Couleur du texte
-
-    // Afficher le score du joueur à gauche
-    context.fillText("PLAYER: " + currentMatch.scorePlayer1, canvas.width / 2 + 50, 50);
-
-    // Afficher le score de l'antagoniste à droite
-    context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, canvas.width / 2 - 300, 50);
-}
-
-//function displayScore() {
-//    // Définir la police et l'alignement pour le score
-//    context.font = "20px 'Press Start 2P'";// "40px Arial";
-//    context.fillStyle = "white"; // Couleur du texte
-
-//    // Afficher le score du joueur à gauche
-//    context.fillText("PLAYER: " + currentMatch.scorePlayer1, MID_WIDTH + 50, 50);
-
-//    // Afficher le score de l'antagoniste à droite
-//    context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, MID_WIDTH - 300, 50);
-//}
-
-//function displayResult(splitScreenActivated) {
-//    // Définir la police et l'alignement pour le score
-//    context.font = "20px 'Press Start 2P'";// "40px Arial";
-//    context.fillStyle = "white"; // Couleur du texte
-
-//	if (splitScreenActivated)
-//		context.fillText("THE GAME IS OVER", (MID_WIDTH * 2) - 180 , 50);
-//	else
-//		context.fillText("THE GAME IS OVER", MID_WIDTH - 180, 50);
-//}
-
-/*Game Lopp Breakout*/
+/*Game loop*/
 function gameLoopBreakout(currentTime)
 {
 	deltaTime = (currentTime - lastTime) / primeDeltaTime;
@@ -1268,23 +1230,23 @@ function gameLoopBreakout(currentTime)
 	colorTexture.needsUpdate = true;
 	renderer.render(scene, camera);
 
-	if (brickWall.length) //TODO;
+	if (brickWall.length)
 	{
-		//displayScore();
+		displayScore();
 		requestAnimationFrame(gameLoopBreakout);
 	}
 	else {
-		//displayResult(false);
-		//canvas.classList.add('d-none');
-		//document.getElementById('canva_score').classList.remove('d-none');
-		//document.getElementById('canva_score').classList.add('d-flex');
-
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
+			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
+			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
+		}
+		else {
+			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
+			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+		}
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
-		//Display buttons
-			//Restart
-			//Back
 	}
 }
 
@@ -1317,15 +1279,18 @@ function gameLoopPvpBreakout(currentTime)
 
 	if (brickWall.length && brickWall2.length) //TODO:
 	{
-		//displayScorePvp();
+		displayScore();
 		requestAnimationFrame(gameLoopPvpBreakout);
 	}
 	else {
-		//displayResult(true);
-		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
+			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
-		else
+		}
+		else {
+			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+		}
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
@@ -1357,11 +1322,18 @@ function gameLoop(currentTime)
 
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
-		//displayScore();
+		displayScore();
 		requestAnimationFrame(gameLoop);
 	}
 	else {
-		//displayResult(false);
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
+			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
+			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
+		}
+		else {
+			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
+			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+		}
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
@@ -1374,7 +1346,6 @@ function gameLoopPvp(currentTime)
 	lastTime = currentTime;
 
 	/*map display*/
-	//context.clearRect(0, 0, canvas.width, canvas.height);
 	renderer.clear();
 	colorBuffer.set(gridColorBuffer);
 
@@ -1397,15 +1368,18 @@ function gameLoopPvp(currentTime)
 
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
-		//displayScorePvp();
+		displayScore();
 		requestAnimationFrame(gameLoopPvp);
 	}
 	else {
-		//displayResult(true);
-		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
+			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
-		else
+		}
+		else {
+			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+		}
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
@@ -1480,7 +1454,8 @@ function rmStartNode()
 		create3Dobstacle(0, breakout);
 	create3Dbrick();
 	createBrickWall();
-	DisplayGameBot();
+	displayBotInfo();
+	DisplayGame();
 	initDeltaTime();
 }
 
@@ -1530,6 +1505,7 @@ function rmStartNodePvp()
 	createBrickWall2();
 	currentMatch.bot = false;
 	winnerScore = document.getElementById("customVictoryValue").value;
+	displayMatchInfo();
 	DisplayGame();
 	initDeltaTimePvp();
 }
@@ -1542,4 +1518,3 @@ document.addEventListener('keydown', function(event){
 document.addEventListener('keyup', function(event) {
     keysPressed[event.key] = false;
 })
-bot.onclick = rmStartNode;

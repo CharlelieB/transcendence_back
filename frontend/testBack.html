@@ -26,7 +26,6 @@ function login(email, password) {
 	.then(data => {
 		// Store the access token in memory or a variable
 		window.accessToken = data.access_token;
-		console.log('Logged in successfully:', data);
 	})
 	.catch(error => {
 		console.error('Error during login:', error);
@@ -52,7 +51,6 @@ function refreshToken() {
 	.then(data => {
 		// Update the access token
 		window.accessToken = data.access;
-		console.log('Token refreshed successfully');
 	})
 	.catch(error => {
 		console.error('Error refreshing token:', error);
