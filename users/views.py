@@ -560,3 +560,26 @@ class DeactivateTwoFactorView(views.APIView):
         TOTPDevice.objects.filter(user=user).delete()
 
         return Response({'message': 'Authentification à deux facteurs désactivée avec succès.'}, status=status.HTTP_200_OK)
+
+import os
+
+class UploadImageView(APIView):
+    parser_classes = [MultiPartParser, FormParser] 
+    def post(self, request):
+        if 'image' not in request.FILES:
+            return Response({"error": "Aucun fichier n'a été téléchargé"}, status=status.HTTP_400_BAD_REQUEST)
+
+        image = request.FILES['image'] 
+
+        avatar_folder = os.path.join(settings.MEDIA_ROOT, 'avatars')  
+        
+        if not os.path.exists(avatar_folder):
+            os.makedirs(avatar_folder)
+
+        file_path = os.path.join(avatar_folder, image.name)
+
+        with open(file_path, 'wb+') as destination:
+            for chunk in image.chunks():
+                destination.write(chunk)
+
+        return Response({"message": "Image uploadée avec succès", "file_path": file_path}, status=status.HTTP_201_CREATED)
