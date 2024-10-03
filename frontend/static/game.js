@@ -941,6 +941,12 @@ function updateBallPositionBreakout(rebound)
     if (xBall2 <= XMIN || xBall2 >= XMAX)
         xVelocity2 = -xVelocity2;
 
+//Malus Update
+	if (zBall <= ZMIN - 0.5)
+		++playerMalus;
+    if (zBall2 <= ZMIN - 0.5)
+		++player2Malus;
+
     // Vérifier les limites du terrain sur l'axe Z
     if (zBall >= ZMAX + 0.5 || zBall <= ZMIN - 0.5)
 	{
@@ -1085,12 +1091,6 @@ function updateBallPosition(rebound)
     }
 
     // Vérifier les limites du terrain sur l'axe Z
-	
-    if (zBall <= ZMIN - 0.5)
-		++playerMalus;
-    if (zBall2 <= ZMIN - 0.5)
-		++player2Malus;
-
     if (zBall >= ZMAX + 0.5 || zBall <= ZMIN - 0.5)
 	{
         // Inverser la direction sur Z si on atteint les bords arrière
@@ -1280,7 +1280,11 @@ function gameLoopBreakout(currentTime)
 	}
 	else {
 		currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
-		currentMatch.scorePlayer2 = 24 - brickWall.length - player2Malus;
+		currentMatch.scorePlayer2 = 24 - brickWall2.length - player2Malus;
+		console.log("score1 = " + currentMatch.scorePlayer1);
+		console.log("Malus1 = " + playerMalus);
+		console.log("score2 = " + currentMatch.scorePlayer2);
+		console.log("Malus2 = " + player2Malus);
 		//displayResult(false);
 		//canvas.classList.add('d-none');
 		//document.getElementById('canva_score').classList.remove('d-none');
@@ -1326,7 +1330,9 @@ function gameLoopPvpBreakout(currentTime)
 	}
 	else {
 		currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
-		currentMatch.scorePlayer2 = 24 - brickWall.length - player2Malus;
+		currentMatch.scorePlayer2 = 24 - brickWall2.length - player2Malus;
+		console.log(currentMatch.scorePlayer1);
+		console.log(currentMatch.scorePlayer2);
 		//displayResult(true);
 		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
