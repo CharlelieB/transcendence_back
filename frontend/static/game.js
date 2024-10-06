@@ -5,6 +5,7 @@ var breakout = true;
 var effectEnabled = false; //true; //false;
 var lightWave = true; //true; //false;
 var lightIntensity = 1; //default lightIntensity = 1;
+var score = 0;
 
 /*-----2D-----*/
 var init = false;
@@ -35,7 +36,9 @@ const material = new THREE.ShaderMaterial({
     uniforms: {
         colorMap: { value: colorTexture },
         time: { value: 0.0 },  // Ajout de l'uniform pour l'animation
+		chromaticShift: { value: 0.005},
         effectEnabled: { value: effectEnabled }, // Pour activer ou désactiver l'effet de vagues
+        score: { value: score }, // aberration chromatique
         lightIntensity: { value: lightIntensity } // Uniform pour la brillance
     },
     vertexShader: `
@@ -48,8 +51,10 @@ const material = new THREE.ShaderMaterial({
     fragmentShader: `
       uniform sampler2D colorMap;
       uniform bool effectEnabled; // Uniform pour activer ou désactiver l'effet de vagues
+      uniform bool score; // aberration chromatique
       uniform float time; // Uniform pour le temps
       uniform float lightIntensity; // Uniform pour simuler la brillance
+	  uniform float chromaticShift; // Facteur de décalage avec une fréquence de variation
       varying vec2 vUv;
 
       void main() {
@@ -60,9 +65,13 @@ const material = new THREE.ShaderMaterial({
           uv.x += sin(uv.y * 10.0 + time * 5.0) * 0.02; // Déplacement en vague sur l'axe X
           uv.y += sin(uv.x * 10.0 + time * 3.0) * 0.02; // Déplacement en vague sur l'axe Y
         }
-
         vec4 color = texture(colorMap, uv);
-
+		if (score) {
+			// Utilisation d'une sinusoïde pour faire varier l'intensité de l'aberration chromatique
+			color.r = texture(colorMap, uv + vec2(chromaticShift, 0.0)).r;  // Décalage rouge
+			color.g = texture(colorMap, uv + vec2(-chromaticShift, 0.0)).g; // Décalage vert
+			color.b = texture(colorMap, uv + vec2(0.0, chromaticShift)).b;  // Décalage bleu
+		}
         // Simuler la brillance en augmentant l'intensité lumineuse
         color.rgb *= lightIntensity;
 
@@ -997,6 +1006,10 @@ function updateBallPositionBreakout(rebound)
 			brickWall2.splice(i,1);
 		}
 	}
+	currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
+	currentMatch.scorePlayer2 =	24 - brickWall2.length - player2Malus;
+	console.log("P1 score = " + currentMatch.scorePlayer1);
+	//console.log("P2 score = " + currentMatch.scorePlayer2);
     // Vérifier les collision avec les obstacles.
 	if (customMapNb && (zBall <= ZMAX_ / 2 + obstacleSize && zBall >= ZMAX_ / 2 - obstacleSize)
 		&& (xBall <= XMAX / 2 + obstacleWidth && xBall >= XMAX / 2 - obstacleWidth))
@@ -1424,6 +1437,7 @@ var setLt = true;
 /*initDeltaTime*/
 function initDeltaTimePvp(currentTime)
 {
+	material.uniforms.score.value = true;
 	lastTime = currentTime;
 	if (currentTime === undefined)
 	{
@@ -1436,8 +1450,11 @@ function initDeltaTimePvp(currentTime)
 			lt = currentTime;
 			setLt = false;
 		}
-		if (currentTime - lt > 3000)
+		if (currentTime - lt > 6000)
+		{	
+			material.uniforms.score.value = false;
 			requestAnimationFrame(gameLoopPvpBreakout);
+		}
 		else	
 			requestAnimationFrame(initDeltaTimePvp);
 		if (lightWave)
@@ -1454,8 +1471,11 @@ function initDeltaTimePvp(currentTime)
 			lt = currentTime;
 			setLt = false;
 		}
-		if (currentTime - lt > 3000)
+		if (currentTime - lt > 6000)
+		{
+			material.uniforms.score.value = false;
 			requestAnimationFrame(gameLoopPvp);
+		}
 		else	
 			requestAnimationFrame(initDeltaTimePvp);
 		if (lightWave)
@@ -1469,6 +1489,8 @@ function initDeltaTimePvp(currentTime)
 
 function initDeltaTime(currentTime)
 {
+	material.uniforms.score.value = true;
+	material.uniforms.chromaticShift.value = 0.01 * Math.sin(currentTime * 0.002);
 	lastTime = currentTime;
 	if (currentTime === undefined)
 	{
@@ -1481,8 +1503,11 @@ function initDeltaTime(currentTime)
 			lt = currentTime;
 			setLt = false;
 		}
-		if (currentTime - lt > 3000)
+		if (currentTime - lt > 6000)
+		{
+			material.uniforms.score.value = false;
 			requestAnimationFrame(gameLoopBreakout);
+		}
 		else	
 			requestAnimationFrame(initDeltaTime);
 		if (lightWave)
@@ -1499,8 +1524,11 @@ function initDeltaTime(currentTime)
 			lt = currentTime;
 			setLt = false;
 		}
-		if (currentTime - lt > 3000)
+		if (currentTime - lt > 6000)
+		{
+			material.uniforms.score.value = false;
 			requestAnimationFrame(gameLoop);
+		}
 		else	
 			requestAnimationFrame(initDeltaTime);
 		if (lightWave)
