@@ -108,12 +108,19 @@ var xPadelPlayer = 0;
 var zPadel = 2;
 var xAntagonist = 0;
 var zAntagonist = 21;
+var rp = 240;
+var gp = 240;
+var bp = 240;
+
 /*Ball*/
 var ballSize = 0.15;
 var xBall = 0;
 var zBall = zPadel;
 var zBallPvp = zAntagonist;
 var ballScaler = 1; //experimental.
+var rb = 100;
+var gb = 100;
+var bb = 100;
 /*Screen Space*/
 var MID_WIDTH = canvas.width / 2;
 var MID_WIDTHPvp = (canvas.width / 4) * 3;
@@ -561,7 +568,7 @@ function create3Dgrid(map)
 function drawBrickWall()
 {
 	let r = 0;
-	let g = 255;
+	let g = 100;
 	let b = 0;
 
 	for (let i = 0; i < brickWall.length; ++i)
@@ -602,7 +609,7 @@ function drawBrickWall()
 function drawBrickWall2()
 {
 	let r = 0;
-	let g = 255;
+	let g = 100;
 	let b = 0;
 
 	for (let i = 0; i < brickWall2.length; ++i)
@@ -643,8 +650,8 @@ function drawBrickWall2()
 function drawObstaclePvpBreakout()
 {
 	let r = 0;
-	let g = 255;
-	let b = 255;
+	let g = 100;
+	let b = 100;
 
 	projectObstacleLine(0, 1, XMAX/2, ZMAX_/2, MID_WIDTHPvp, r, g , b);
 	projectObstacleLine(1, 2, XMAX/2, ZMAX_/2, MID_WIDTHPvp, r, g , b);
@@ -685,8 +692,8 @@ function drawObstaclePvp()
 	let x1 = 0;
 	let y1 = 0;
 	let r = 0;
-	let g = 255;
-	let b = 255;
+	let g = 100;
+	let b = 100;
 
 	projectObstacleLine(0, 1, XMAX/2, ZMAX_/2 + 1, MID_WIDTHPvp, r, g , b);
 	projectObstacleLine(1, 2, XMAX/2, ZMAX_/2 + 1, MID_WIDTHPvp, r, g , b);
@@ -727,8 +734,8 @@ function drawObstacle()
 	let x1 = 0;
 	let y1 = 0;
 	let r = 0;
-	let g = 255;
-	let b = 255;
+	let g = 100;
+	let b = 100;
 
 	projectObstacleLine(0, 1, XMAX/2, ZMAX_/2, MID_WIDTH, r, g , b);
 	projectObstacleLine(1, 2, XMAX/2, ZMAX_/2, MID_WIDTH, r, g , b);
@@ -768,31 +775,31 @@ function drawBallPvp()
 	let y0 = 0;
 	let x1 = 0;
 	let y1 = 0;
-	let r = 255;
-	let g = 255;
-	let b = 255;
 
 	if (zBall <= ZMIN || zBall >= ZMAX)
 	{
-		r = 255;
-		g = 0;
-		b = 0;
+		rb = 255;
+		gb = 0;
+		bb = 0;
 	}
 	rotateY(ball3D, xBall * deltaTime);
-	projectBallLine(0, 1, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(1, 2, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(2, 3, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(3, 0, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
+	projectBallLine(0, 1, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(1, 2, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(2, 3, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(3, 0, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
 
-	projectBallLine(4, 5, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(5, 6, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(6, 7, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(7, 4, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
+	projectBallLine(4, 5, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(5, 6, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(6, 7, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(7, 4, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
 
-	projectBallLine(4, 0, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(5, 1, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(6, 2, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(7, 3, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
+	projectBallLine(4, 0, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(5, 1, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(6, 2, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(7, 3, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	rb = 100;
+	gb = 100;
+	bb = 100;
 }
 
 function drawBall()
@@ -801,32 +808,31 @@ function drawBall()
 	let y0 = 0;
 	let x1 = 0;
 	let y1 = 0;
-	let r = 255;
-	let g = 255;
-	let b = 255;
 
-	if (zBall <= ZMIN || zBall >= ZMAX)
+	if (zBall <= ZMIN || zBall >= ZMAX && !breakout)
 	{
-		r = 255;
-		g = 0;
-		b = 0;
-		b = 0;
+		rb = 255;
+		gb = 0;
+		bb = 0;
 	}
 	rotateY(ball3D, xBall * deltaTime);
-	projectBallLine(0, 1, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(1, 2, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(2, 3, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(3, 0, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
+	projectBallLine(0, 1, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(1, 2, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(2, 3, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(3, 0, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
 
-	projectBallLine(4, 5, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(5, 6, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(6, 7, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(7, 4, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
+	projectBallLine(4, 5, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(5, 6, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(6, 7, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(7, 4, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
 
-	projectBallLine(4, 0, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(5, 1, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(6, 2, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(7, 3, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
+	projectBallLine(4, 0, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(5, 1, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(6, 2, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(7, 3, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	rb = 100;
+	gb = 100;
+	bb = 100;
 }
 
 function drawBall2()
@@ -835,32 +841,31 @@ function drawBall2()
 	let y0 = 0;
 	let x1 = 0;
 	let y1 = 0;
-	let r = 255;
-	let g = 255;
-	let b = 255;
 
-	if (zBall2 <= ZMIN || zBall2 >= ZMAX)
+	if (zBall2 <= ZMIN || zBall2 >= ZMAX && !breakout)
 	{
-		r = 255;
-		g = 0;
-		b = 0;
-		b = 0;
+		rb = 255;
+		gb = 0;
+		bb = 0;
 	}
 	rotateY(ball3D2, xBall2 * deltaTime);
-	projectBallLine(0, 1, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(1, 2, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(2, 3, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(3, 0, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
+	projectBallLine(0, 1, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(1, 2, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(2, 3, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(3, 0, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
 
-	projectBallLine(4, 5, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(5, 6, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(6, 7, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(7, 4, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
+	projectBallLine(4, 5, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(5, 6, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(6, 7, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(7, 4, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
 
-	projectBallLine(4, 0, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(5, 1, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(6, 2, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(7, 3, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
+	projectBallLine(4, 0, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(5, 1, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(6, 2, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(7, 3, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	rb = 100;
+	gb = 100;
+	bb = 100;
 }
 
 function drawAntagonistPvp(r, g, b)
@@ -1278,7 +1283,7 @@ function gameLoopBreakout(currentTime)
 	/*draw*/
 	drawBrickWall();
 	drawBall();
-	drawPadel(255, 255, 255);
+	drawPadel(rp, gp, bp);
 
 	material.uniforms.time.value = currentTime * 0.001;
 	if (lightWave)
@@ -1324,11 +1329,11 @@ function gameLoopPvpBreakout(currentTime)
 	/*Player*/
 	drawBrickWall();
 	drawBall();
-	drawPadel(255, 255, 255);
+	drawPadel(rp, gp, bp);
 	/*Player2*/
 	drawBrickWall2();
 	drawBall2();
-	drawPadel2(255, 255, 255);
+	drawPadel2(rp, gp, bp);
 
 	material.uniforms.time.value = currentTime * 0.001;
 	if (lightWave)
@@ -1368,9 +1373,9 @@ function gameLoop(currentTime)
 
 	updatePaddlePosition();
 	updateBallPosition(2.5);
-	drawAntagonist(255, 255, 255);
+	drawAntagonist(rp, gp, bp);
 	drawBall();
-	drawPadel(255, 255, 255);
+	drawPadel(rp, gp, bp);
 
 	material.uniforms.time.value = currentTime * 0.001;
 	if (lightWave)
@@ -1402,13 +1407,13 @@ function gameLoopPvp(currentTime)
 	updatePaddlePositionPvp();
 	updateBallPosition(4);
 	/*Player*/
-	drawAntagonist(255, 255, 255);
+	drawAntagonist(rp, gp, bp);
 	drawBall();
-	drawPadel(255, 255, 255);
+	drawPadel(rp, gp, bp);
 	/*Antagoniste*/
-	drawAntagonistPvp(255, 255, 255);
+	drawAntagonistPvp(rp, gp, bp);
 	drawBallPvp();
-	drawPadelPvp(255, 255, 255);
+	drawPadelPvp(rp, gp, bp);
 
 	material.uniforms.time.value = currentTime * 0.001;
 	if (lightWave)
@@ -1544,6 +1549,9 @@ function initDeltaTime(currentTime)
 
 function rmStartNode()
 {
+	rp = 100;
+	gp = 100;
+	bp = 100;
 	ZMAX = 22;
 	zVelocity = ballSpeed;
 	xVelocity = 0.01;
@@ -1597,6 +1605,9 @@ function rmStartNode()
 
 function rmStartNodePvp()
 {
+	rp = 100;
+	gp = 100;
+	bp = 100;
 	ZMAX = 22;
 	zVelocity = ballSpeed;
 	xVelocity = 0.01;
