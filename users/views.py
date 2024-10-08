@@ -1,6 +1,8 @@
 import base64
 from io import BytesIO
 
+
+import os
 import qrcode
 from django.shortcuts import get_object_or_404
 from customization.models import UserCustom
@@ -461,10 +463,8 @@ class TOTPCreateView(views.APIView):
         if not created and device.confirmed:
             return Response({'detail': 'Appareil TOTP déjà configuré.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Générer l'URL de configuration TOTP
         url = device.config_url
 
-        # Générer le QR code à partir de l'URL
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -474,15 +474,12 @@ class TOTPCreateView(views.APIView):
         qr.add_data(url)
         qr.make(fit=True)
 
-        # Créer une image QR code
         img = qr.make_image(fill='black', back_color='white')
 
-        # Sauvegarder l'image dans un buffer
         buffered = BytesIO()
         img.save(buffered, format="PNG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
 
-        # Retourner l'image du QR code en base64
         return Response({'qr_code': img_str}, status=status.HTTP_201_CREATED)
 
 class TOTPVerifySerializer(serializers.Serializer):
@@ -589,7 +586,37 @@ class DeactivateTwoFactorView(views.APIView):
         user.is_two_factor_enabled = False
         user.save()
 
-        # Supprimer les dispositifs TOTP existants
         TOTPDevice.objects.filter(user=user).delete()
 
         return Response({'message': 'Authentification à deux facteurs désactivée avec succès.'}, status=status.HTTP_200_OK)
+
+
+class UploadImageView(APIView):
+    parser_classes = [MultiPartParser, FormParser]  
+
+    def post(self, request):
+        user = request.user 
+
+        if 'image' not in request.FILES:
+            return Response({"error": "Aucun fichier n'a été téléchargé"}, status=status.HTTP_400_BAD_REQUEST)
+
+        image = request.FILES['image'] 
+
+        avatar_folder = os.path.join(settings.MEDIA_ROOT, 'avatars')
+
+        if not os.path.exists(avatar_folder):
+            os.makedirs(avatar_folder)
+
+        file_extension = os.path.splitext(image.name)[1] 
+        filename = f'{user.username}{file_extension}'
+        file_path = os.path.join(avatar_folder, filename)
+
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+        with open(file_path, 'wb+') as destination:
+            for chunk in image.chunks():
+                destination.write(chunk)
+        user.avatar = file_path
+        user.save()
+        return Response({"message": "Image uploadée avec succès", "file_path": file_path}, status=status.HTTP_201_CREATED)
