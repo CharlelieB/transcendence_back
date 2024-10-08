@@ -569,7 +569,7 @@ class UploadImageView(APIView):
 
         image = request.FILES['image'] 
 
-        avatar_folder = os.path.join(settings.MEDIA_ROOT, 'avatars')
+        avatar_folder = os.path.join('/media/', 'avatars/')
 
         if not os.path.exists(avatar_folder):
             os.makedirs(avatar_folder)
