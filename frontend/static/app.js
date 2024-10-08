@@ -114,6 +114,31 @@ function makeAuthenticatedRequest(url, options = {}) {
 	});
 }
 
+function makeAuthenticatedFileUpload(url, options = {}) {
+
+	const csrfToken = getCookie('csrftoken');
+	if (!csrfToken) {
+		console.error('CSRF token is missing. Cannot refresh token.');
+		return 1;
+	}
+
+	options.headers = options.headers || {};
+	options.headers['Authorization'] = `Bearer ${window.accessToken}`;
+	options.headers['X-CSRFToken'] = csrfToken;
+	options.credentials = 'include';
+
+	return fetch(url, options)
+	.then(response => {
+		if (response.status === 401) {
+			return refreshToken().then(() => {
+				options.headers['Authorization'] = `Bearer ${window.accessToken}`;
+				return fetch(url, options);
+			});
+		}
+		return response;
+	});
+}
+
 // REFRESH
 
 function refreshToken()
