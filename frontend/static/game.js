@@ -949,20 +949,14 @@ function updateBallPositionBreakout(rebound)
 	if (zBall2 < ZMIN - 0.5)
 		zBall2 = ZMIN - 0.5;
 
-    // Vérifier les limites du terrain sur l'axe X
-    if (xBall <= XMIN || xBall >= XMAX)
-        xVelocity = -xVelocity;
-    if (xBall2 <= XMIN || xBall2 >= XMAX)
-        xVelocity2 = -xVelocity2;
-
 //Malus Update
 	if (zBall <= ZMIN - 0.5)
 		++playerMalus;
     if (zBall2 <= ZMIN - 0.5)
 		++player2Malus;
 
-    // Vérifier les limites du terrain sur l'axe Z
-    if (zBall >= ZMAX + 0.5 || zBall <= ZMIN - 0.5)
+    // Vérifier les limites du terrain sur l'axe Z et X
+	if (zBall >= ZMAX + 0.5 || zBall <= ZMIN - 0.5)
 	{
         // Inverser la direction sur Z si on atteint les bords arrière
 		zVelocity = -zVelocity;
@@ -972,6 +966,8 @@ function updateBallPositionBreakout(rebound)
 			xVelocity /= 7;
 		}
     }
+    else if (xBall <= XMIN || xBall >= XMAX)
+        xVelocity = -xVelocity;
 
 	if (zBall2 >= ZMAX + 0.5 || zBall2 <= ZMIN - 0.5)
 	{
@@ -982,6 +978,9 @@ function updateBallPositionBreakout(rebound)
 			xVelocity2 /= 7;
 		}
 	}
+	else if (xBall2 <= XMIN || xBall2 >= XMAX)
+        xVelocity2 = -xVelocity2;
+
     // Vérifier les collision avec le brick wall.
 	for (let i = 0; i < brickWall.length; ++i)
 	{
