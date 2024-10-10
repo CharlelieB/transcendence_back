@@ -157,6 +157,8 @@ async function displayMatchInfo() {
 	document.getElementById('matchUsername1').innerText = names[0];
 	document.getElementById('matchUsername2').innerText = names[1];
 
+	document.getElementById("matchInfo2").classList.remove('d-none');
+	document.getElementById("matchInfoVS").classList.remove('d-none');
 }
 
 async function displayBotInfo() {
@@ -169,6 +171,15 @@ async function displayBotInfo() {
 	document.getElementById("matchUsername2").innerText = "Antagonist";
 	document.getElementById('matchInfoContainer').classList.remove('d-none');
 	document.getElementById('matchVictorContainer').classList.add('d-none');
+
+	if (breakout) {
+		document.getElementById("matchInfo2").classList.add('d-none');
+		document.getElementById("matchInfoVS").classList.add('d-none');
+	}
+	else {
+		document.getElementById("matchInfo2").classList.remove('d-none');
+		document.getElementById("matchInfoVS").classList.remove('d-none');
+	}
 }
 
 function backToConnexion() {
@@ -213,3 +224,16 @@ connectAccountRadio.addEventListener('change', function() {
 		createAccountForm.classList.add("d-none");
     }
 });
+
+function togglePongCustomization(status) {
+	customVictory = document.getElementById("customVictoryValue");
+	customVictoryField = document.getElementById("customVictoryField");
+	if (status) {
+		customVictory.classList.remove('d-none');
+		customVictoryField.classList.remove('d-none');
+	}
+	else {
+		customVictory.classList.add('d-none');
+		customVictoryField.classList.add('d-none');
+	}
+}

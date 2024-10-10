@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 		ReplaceElement("containerEmpty", "buttonsContainer");
 		document.getElementById("containerCustomButton").classList.remove('d-none');
 		getCustomizationSettings();
+		makeAuthenticatedRequest("/api/login/", {method: 'POST'});
 	} else {
 		console.error("access token not saved");
 	}

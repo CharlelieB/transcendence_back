@@ -34,6 +34,12 @@
 				</div>
 				<div class="modal-body">
 					<div class="custom-modal-body">
+						<div class="btn-group-horizontal d-flex justify-content-center mb-3">
+							<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb0" onclick="changeGame(0)">
+							<label class="btn btn-outline-dark m-2" for="vbtn-ball-nb0">Pong</label>
+							<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb1" onclick="changeGame(1)">
+							<label class="btn btn-outline-dark m-2" for="vbtn-ball-nb1">Breaker</label>
+						</div>
 						<div>
 							<label for="customRange" class="form-label" id="customVictoryField">Score required for victory : 5</label>
 							<input type="range" class="form-range" min="1" max="10" step="1" id="customVictoryValue">
@@ -411,14 +417,16 @@
 	<div id="gameContainer" class="flex-column d-none">
 		<div id="matchVictorContainer" class="d-none"></div>
 		<div id ="matchInfoContainer" class="row">
-			<div class="col text-center">
+			<div class="col text-center" id="matchInfo1">
+				<div id="matchCalculus1"></div>
 				<div id="matchUsername1"></div>
 				<div id="matchScore1">0</div>
 			</div>
-			<div class="col">
+			<div class="col" id="matchInfoVS">
 				<h1>VS</h1>
 			</div>
-			<div class="col text-center">
+			<div class="col text-center" id="matchInfo2">
+				<div id="matchCalculus2"></div>
 				<div id="matchUsername2"></div>
 				<div id="matchScore2">0</div>
 			</div>

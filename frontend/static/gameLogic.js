@@ -171,3 +171,30 @@ function displayResult(winner, winnerId) {
 	}
 	victorField.innerHTML = "<h1>Victory for " + winner + "</h1>";
 }
+
+function displayTideResult() {
+	const victorField = document.getElementById("matchVictorContainer");
+
+	document.getElementById('matchInfoContainer').classList.add('d-none');
+	victorField.classList.remove('d-none');
+	victorField.innerHTML = "<h1>Tide</h1>"
+}
+
+function displaySinglePlayerResult() {
+	const victorField = document.getElementById("matchVictorContainer");
+
+	document.getElementById('matchInfoContainer').classList.add('d-none');
+	victorField.classList.remove('d-none');
+	victorField.innerHTML = "<h1>You finished the game</h1>"
+}
+
+function changeGame(gameIndex) {
+	if (gameIndex == 1) {
+		togglePongCustomization(false);
+		breakout = true;
+	}
+	else {
+		togglePongCustomization(true);
+		breakout = false;
+	}
+}
