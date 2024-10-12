@@ -4,5 +4,5 @@ from .models import UserCustom
 class CustomSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCustom
-        fields = ['score_win', 'color_1', 'color_2', 'color_filet', 'size_raquette', 'nb_balls']
+        fields = ['score_win', 'color_rackets', 'color_filet', 'ball_speed', 'map', 'game_type', 'drunk_effect']
         
