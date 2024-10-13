@@ -6,6 +6,8 @@ import os
 import qrcode
 from django.shortcuts import get_object_or_404
 from customization.models import UserCustom
+from django.conf import settings
+from django.utils._os import safe_join
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from rest_framework import views, status, permissions, serializers, exceptions as rest_exceptions, response
 from django.contrib.auth import authenticate
@@ -558,32 +560,39 @@ class DeactivateTwoFactorView(views.APIView):
         return Response({'message': 'Authentification à deux facteurs désactivée avec succès.'}, status=status.HTTP_200_OK)
 
 
+
 class UploadImageView(APIView):
     parser_classes = [MultiPartParser, FormParser]  
 
     def post(self, request):
-        user = request.user 
+        user = request.user
 
-        if 'image' not in request.FILES:
-            return Response({"error": "Aucun fichier n'a été téléchargé"}, status=status.HTTP_400_BAD_REQUEST)
+        image = request.FILES['image']
 
-        image = request.FILES['image'] 
+        avatar_folder = os.path.join(settings.MEDIA_ROOT, 'avatars/')
 
-        avatar_folder = os.path.join('/media/', 'avatars/')
 
-        if not os.path.exists(avatar_folder):
-            os.makedirs(avatar_folder)
+        file_extension = os.path.splitext(image.name)[1]
+        valid_extensions = ['.jpg', '.jpeg', '.png']
+        if file_extension.lower() not in valid_extensions:
+            return Response({"error": "Type de fichier non pris en charge"}, status=status.HTTP_400_BAD_REQUEST)
 
-        file_extension = os.path.splitext(image.name)[1] 
         filename = f'{user.username}{file_extension}'
-        file_path = os.path.join(avatar_folder, filename)
+        file_path = safe_join(avatar_folder, filename)
 
         if os.path.exists(file_path):
             os.remove(file_path)
+        try:
+            with open(file_path, 'wb+') as destination:
+                for chunk in image.chunks():
+                    destination.write(chunk)
+        except IOError as e:
+            return Response({"error": "Erreur lors du téléchargement du fichier"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        with open(file_path, 'wb+') as destination:
-            for chunk in image.chunks():
-                destination.write(chunk)
-        user.avatar = file_path
+        relative_path = os.path.join('avatars', filename)
+        user.avatar = relative_path 
         user.save()
-        return Response({"message": "Image uploadée avec succès", "file_path": file_path}, status=status.HTTP_201_CREATED)
+
+        file_url = settings.MEDIA_URL + relative_path
+
+        return Response({"message": "Image uploadée avec succès", "file_path": file_url}, status=status.HTTP_201_CREATED)
