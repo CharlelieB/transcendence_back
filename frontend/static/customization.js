@@ -3,14 +3,14 @@
 const bgClassList = ["bg-primary", "bg-secondary", "bg-success", "bg-danger", "bg-warning", "bg-dark"];
 const customScoreValue = document.getElementById('customVictoryValue');
 const customVictoryScoreField = document.getElementById('customVictoryField');
-const customColorRacket1 = document.getElementById('formColorRacket1');
-const colorBoxRacket1 = document.getElementById("colorBoxRacket1");
-const customColorRacket2 = document.getElementById('formColorRacket2');
-const colorBoxRacket2 = document.getElementById('colorBoxRacket2');
+const customColorRackets = document.getElementById('formColorRackets');
+const colorBoxRackets = document.getElementById("colorBoxRackets");
 const customColorNet = document.getElementById('formColorNet');
 const colorBoxNet = document.getElementById('colorBoxNet');
-const customRacketSize = document.getElementById('formRacketSize');
+const customBallSpeed = document.getElementById('formBallSpeed');
 let customMapNb = 0;
+let pong = true;
+const switchDrunkMode = document.getElementById("switchDrunkMode");
 
 function getCustomizationSettings() {
 	makeAuthenticatedRequest("/api/customization/view/", { method: "GET"})
@@ -21,12 +21,14 @@ function getCustomizationSettings() {
 		return response.json();
 	})
 	.then(data => {
+		console.log(data);
 		customScoreValue.value = data.score_win;
-		customColorRacket1.value = data.color_1;
-		customColorRacket2.value = data.color_2;
+		customColorRackets.value = data.color_rackets;
 		customColorNet.value = data.color_filet;
-		customRacketSize.value = getRacketSize(data.size_raquette);
-		customMapNb = data.nb_balls;
+		customBallSpeed.value = getBallSpeed(data.ball_speed);
+		pong = data.game_type;
+		customMapNb = data.map;
+		effectEnabled = data.drunk_effect;
 		updateCustomModalUI();
 	})
 	.catch(error => {
@@ -37,11 +39,12 @@ function getCustomizationSettings() {
 function updateCustomizationSettings() {
 	data = {
 		score_win : customScoreValue.value,
-		color_1 : customColorRacket1.value,
-		color_2 : customColorRacket2.value,
+		color_rackets : customColorRackets.value,
 		color_filet : customColorNet.value,
-		size_raquette : setRacketSize(customRacketSize.value),
-		nb_balls : customMapNb
+		ball_speed : setBallSpeed(customBallSpeed.value),
+		map : customMapNb,
+		game_type : pong,
+		drunk_effect : effectEnabled
 	};
 
 	makeAuthenticatedRequest("/api/customization/update/", {
@@ -61,11 +64,12 @@ function updateCustomizationSettings() {
 
 function restoreCustomizationSettings() {
 	customScoreValue.value = 5;
-	customColorRacket1.value = 3;
-	customColorRacket2.value = 4;
+	customColorRackets.value = 3;
 	customColorNet.value = 2;
-	customRacketSize.value = getRacketSize("regular");
+	customBallSpeed.value = getBallSpeed("regular");
 	customMapNb = 1;
+	pong = true;
+	effectEnabled = false;
 
 	updateCustomizationSettings();
 	updateCustomModalUI();
@@ -73,51 +77,69 @@ function restoreCustomizationSettings() {
 
 function updateCustomModalUI() {
 	setSquareColors();
+	console.log("setting radios");
 	selectBallsNbRadioButton();
+	console.log("the end");
 	customVictoryScoreField.innerHTML = "Score required for victory : " + customScoreValue.value;
+	if (effectEnabled)
+		switchDrunkMode.checked = true;
+	else
+		switchDrunkMode.checked = false;
 }
 
 function setSquareColors()
 {
-	colorBoxRacket1.classList.remove(bgClassList[0], bgClassList[1], bgClassList[2], bgClassList[3], bgClassList[4], bgClassList[5]);
-	colorBoxRacket1.classList.add(bgClassList[customColorRacket1.value]);
-	colorBoxRacket2.classList.remove(bgClassList[0], bgClassList[1], bgClassList[2], bgClassList[3], bgClassList[4], bgClassList[5]);
-	colorBoxRacket2.classList.add(bgClassList[customColorRacket2.value]);
+	colorBoxRackets.classList.remove(bgClassList[0], bgClassList[1], bgClassList[2], bgClassList[3], bgClassList[4], bgClassList[5]);
+	colorBoxRackets.classList.add(bgClassList[customColorRackets.value]);
 	colorBoxNet.classList.remove(bgClassList[0], bgClassList[1], bgClassList[2], bgClassList[3], bgClassList[4], bgClassList[5]);
 	colorBoxNet.classList.add(bgClassList[customColorNet.value]);
 }
 
-function getRacketSize(size) {
-	if (size === "small") {
+function getBallSpeed(size) {
+	if (size === "slow") {
+		ballSpeed = 0.1
 		return (0);
 	}
 	else if (size === "regular") {
+		ballSpeed = 0.3
 		return (1);
 	}
-	else if (size === "large") {
+	else if (size === "fast") {
+		ballSpeed = 0.5
 		return (2);
 	}
 }
 
-function setRacketSize(value) {
+function setBallSpeed(value) {
 	if (value === "0") {
-		return ("small");
+		ballSpeed = 0.1
+		return ("slow");
 	}
 	else if (value === "1") {
+		ballSpeed = 0.3
 		return ("regular");
 	}
 	else if (value === "2") {
-		return ("large");
+		ballSpeed = 0.5
+		return ("fast");
 	}
 }
 
 function selectBallsNbRadioButton() {
-	let mapNbRadioId = "vbtn-ball-nb" + customMapNb;
+	let mapNbRadioId = "vbtn-map-nb" + customMapNb;
+	let gameTypeId = "vbtn-game-nb";
+	if (pong)
+		gameTypeId += 0;
+	else
+		gameTypeId += 1;
 	document.getElementById(mapNbRadioId).checked = true;
+	console.log(gameTypeId);
+	console.log(mapNbRadioId);
+	document.getElementById(gameTypeId).checked = true;
 }
 
-function updateMapNumber(ballsNb) {
-	customMapNb = ballsNb;
+function updateMapNumber(MapNb) {
+	customMapNb = MapNb;
 }
 
 ////// Event Listenner for Score Label
@@ -128,17 +150,19 @@ customScoreValue.addEventListener('change', function() {
 
 ////// Event Listenner for Boxes
 
-customColorRacket1.addEventListener('change', function() {
-	colorBoxRacket1.classList.remove(bgClassList[0], bgClassList[1], bgClassList[2], bgClassList[3], bgClassList[4], bgClassList[5]);
-	colorBoxRacket1.classList.add(bgClassList[customColorRacket1.value]);
-});
-
-customColorRacket2.addEventListener('change', function() {
-	colorBoxRacket2.classList.remove(bgClassList[0], bgClassList[1], bgClassList[2], bgClassList[3], bgClassList[4], bgClassList[5]);
-	colorBoxRacket2.classList.add(bgClassList[customColorRacket2.value]);
+customColorRackets.addEventListener('change', function() {
+	colorBoxRackets.classList.remove(bgClassList[0], bgClassList[1], bgClassList[2], bgClassList[3], bgClassList[4], bgClassList[5]);
+	colorBoxRackets.classList.add(bgClassList[customColorRackets.value]);
 });
 
 customColorNet.addEventListener('change', function() {
 	colorBoxNet.classList.remove(bgClassList[0], bgClassList[1], bgClassList[2], bgClassList[3], bgClassList[4], bgClassList[5]);
 	colorBoxNet.classList.add(bgClassList[customColorNet.value]);
+})
+
+switchDrunkMode.addEventListener("change", async () => {
+	if(switchDrunkMode.checked)
+		effectEnabled = true;
+	else
+		effectEnabled = false;
 })

@@ -35,40 +35,22 @@
 				<div class="modal-body">
 					<div class="custom-modal-body">
 						<div class="btn-group-horizontal d-flex justify-content-center mb-3">
-							<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb0" onclick="changeGame(0)">
-							<label class="btn btn-outline-dark m-2" for="vbtn-ball-nb0">Pong</label>
-							<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb1" onclick="changeGame(1)">
-							<label class="btn btn-outline-dark m-2" for="vbtn-ball-nb1">Breaker</label>
+							<input type="radio" class="btn-check" name="game-nb-radio" id="vbtn-game-nb0" onclick="changeGame(0)">
+							<label class="btn btn-outline-dark m-2" for="vbtn-game-nb0">Pong</label>
+							<input type="radio" class="btn-check" name="game-nb-radio" id="vbtn-game-nb1" onclick="changeGame(1)">
+							<label class="btn btn-outline-dark m-2" for="vbtn-game-nb1">Breaker</label>
 						</div>
 						<div>
 							<label for="customRange" class="form-label" id="customVictoryField">Score required for victory : 5</label>
 							<input type="range" class="form-range" min="1" max="10" step="1" id="customVictoryValue">
 						</div>
 						<div>
-							Color first racket
+							Color rackets
 							<div class="container-custom-colors flex-column ms-2">
 								<div class="row d-flex align-items-center">
-									<div class="color-box bg-danger col-2 ms-2" id="colorBoxRacket1"></div>
+									<div class="color-box bg-danger col-2 ms-2" id="colorBoxRackets"></div>
 									<div class="col-8">
-										<select class="form-select m-2" id="formColorRacket1">
-											<option value="0">Blue</option>
-											<option value="1">Grey</option>
-											<option value="2">Green</option>
-											<option value="3">Red</option>
-											<option value="4">Yellow</option>
-											<option value="5">Black</option>
-										</select>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div>
-							Color second racket
-							<div class="container-custom-colors flex-column ms-2">
-								<div class="row d-flex align-items-center">
-									<div class="color-box bg-warning col-2 ms-2" id="colorBoxRacket2"></div>
-									<div class="col-8">
-										<select class="form-select m-2" id="formColorRacket2">
+										<select class="form-select m-2" id="formColorRackets">
 											<option value="0">Blue</option>
 											<option value="1">Grey</option>
 											<option value="2">Green</option>
@@ -99,21 +81,25 @@
 							</div>
 						</div>
 						<div>
-							Racket size
-							<select class="form-select m-2" id="formRacketSize">
-								<option value="0">Small</option>
+							Ball Speed
+							<select class="form-select m-2" id="formBallSpeed">
+								<option value="0">Slow</option>
 								<option value="1">Regular</option>
-								<option value="2">Large</option>
+								<option value="2">Fast</option>
 							</select>
 						</div>
 						<div>
 							Map
 							<div class="btn-group-horizontal d-flex justify-content-start container-ball-nb">
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb0" onclick="updateMapNumber(0)">
-								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb0">Classic</label>
-								<input type="radio" class="btn-check" name="ball-nb-radio" id="vbtn-ball-nb1" onclick="updateMapNumber(1)">
-								<label class="btn btn-outline-info m-2" for="vbtn-ball-nb1">Tron Grid</label>
+								<input type="radio" class="btn-check" name="map-nb-radio" id="vbtn-map-nb0" onclick="updateMapNumber(0)">
+								<label class="btn btn-outline-info m-2" for="vbtn-map-nb0">Classic</label>
+								<input type="radio" class="btn-check" name="map-nb-radio" id="vbtn-map-nb1" onclick="updateMapNumber(1)">
+								<label class="btn btn-outline-info m-2" for="vbtn-map-nb1">Tron Grid</label>
 							</div>
+						</div>
+						<div class="form-check form-switch">
+							<input class="form-check-input" type="checkbox" role="switch" id="switchDrunkMode">
+							<label class="form-check-label" for="switchDrunkMode">Drunk mode</label>
 						</div>
 						<div class="d-flex justify-content-center mt-2">
 							<button type="button" class="btn btn-outline-primary" onclick="restoreCustomizationSettings()">Restore to default</button>

@@ -91,12 +91,6 @@ function uploadImage() {
 			body: formData
 		})
 	}
-
-	//if (file) {
-		//NEED TO CHECK THE DIMENSIONS
-	//}
-	// UPLOAD THE FILE TO THE BACK
-	//RELOAD THE DRAWER
 }
 
 
