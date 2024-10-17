@@ -1341,11 +1341,11 @@ function gameLoop(currentTime)
 	else {
 		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
 			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
-			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
+			// recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 		}
 		else {
 			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
-			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+			// recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
 		}
 		currentMatch.scorePlayer1 = 0;
 		currentMatch.scorePlayer2 = 0;

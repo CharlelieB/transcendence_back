@@ -77,9 +77,7 @@ function restoreCustomizationSettings() {
 
 function updateCustomModalUI() {
 	setSquareColors();
-	console.log("setting radios");
 	selectBallsNbRadioButton();
-	console.log("the end");
 	customVictoryScoreField.innerHTML = "Score required for victory : " + customScoreValue.value;
 	if (effectEnabled)
 		switchDrunkMode.checked = true;
@@ -133,8 +131,6 @@ function selectBallsNbRadioButton() {
 	else
 		gameTypeId += 1;
 	document.getElementById(mapNbRadioId).checked = true;
-	console.log(gameTypeId);
-	console.log(mapNbRadioId);
 	document.getElementById(gameTypeId).checked = true;
 }
 
@@ -161,8 +157,10 @@ customColorNet.addEventListener('change', function() {
 })
 
 switchDrunkMode.addEventListener("change", async () => {
-	if(switchDrunkMode.checked)
+	if(switchDrunkMode.checked) {
 		effectEnabled = true;
+		console.log("activating drunk mode");
+	}
 	else
 		effectEnabled = false;
 })
