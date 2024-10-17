@@ -1,16 +1,14 @@
 /*------Game Switch-----*/
-var breakout = true;
+var breakout = false;
 
 /*-----Wave effect-----*/
 var effectEnabled = false; //true; //false;
 var lightWave = true; //true; //false;
 var lightIntensity = 1; //default lightIntensity = 1;
+var score = 0;
 
 /*-----2D-----*/
 var init = false;
-
-// Obtention de mes deux canvas
-var bot = document.getElementById("botGameStart");
 var canvas = document.getElementById("canvas-id");
 //const canvas_ = document.getElementById("canvas-2d");
 //const context = canvas_.getContext("2d");
@@ -35,7 +33,9 @@ const material = new THREE.ShaderMaterial({
     uniforms: {
         colorMap: { value: colorTexture },
         time: { value: 0.0 },  // Ajout de l'uniform pour l'animation
+		chromaticShift: { value: 0.005},
         effectEnabled: { value: effectEnabled }, // Pour activer ou désactiver l'effet de vagues
+        score: { value: score }, // aberration chromatique
         lightIntensity: { value: lightIntensity } // Uniform pour la brillance
     },
     vertexShader: `
@@ -48,8 +48,10 @@ const material = new THREE.ShaderMaterial({
     fragmentShader: `
       uniform sampler2D colorMap;
       uniform bool effectEnabled; // Uniform pour activer ou désactiver l'effet de vagues
+      uniform bool score; // aberration chromatique
       uniform float time; // Uniform pour le temps
       uniform float lightIntensity; // Uniform pour simuler la brillance
+	  uniform float chromaticShift; // Facteur de décalage avec une fréquence de variation
       varying vec2 vUv;
 
       void main() {
@@ -60,9 +62,13 @@ const material = new THREE.ShaderMaterial({
           uv.x += sin(uv.y * 10.0 + time * 5.0) * 0.02; // Déplacement en vague sur l'axe X
           uv.y += sin(uv.x * 10.0 + time * 3.0) * 0.02; // Déplacement en vague sur l'axe Y
         }
-
         vec4 color = texture(colorMap, uv);
-
+		if (score) {
+			// Utilisation d'une sinusoïde pour faire varier l'intensité de l'aberration chromatique
+			color.r = texture(colorMap, uv + vec2(chromaticShift, 0.0)).r;  // Décalage rouge
+			color.g = texture(colorMap, uv + vec2(-chromaticShift, 0.0)).g; // Décalage vert
+			color.b = texture(colorMap, uv + vec2(0.0, chromaticShift)).b;  // Décalage bleu
+		}
         // Simuler la brillance en augmentant l'intensité lumineuse
         color.rgb *= lightIntensity;
 
@@ -99,12 +105,19 @@ var xPadelPlayer = 0;
 var zPadel = 2;
 var xAntagonist = 0;
 var zAntagonist = 21;
+var rp = 240;
+var gp = 240;
+var bp = 240;
+
 /*Ball*/
 var ballSize = 0.15;
 var xBall = 0;
 var zBall = zPadel;
 var zBallPvp = zAntagonist;
 var ballScaler = 1; //experimental.
+var rb = 100;
+var gb = 100;
+var bb = 100;
 /*Screen Space*/
 var MID_WIDTH = canvas.width / 2;
 var MID_WIDTHPvp = (canvas.width / 4) * 3;
@@ -552,7 +565,7 @@ function create3Dgrid(map)
 function drawBrickWall()
 {
 	let r = 0;
-	let g = 255;
+	let g = 100;
 	let b = 0;
 
 	for (let i = 0; i < brickWall.length; ++i)
@@ -593,7 +606,7 @@ function drawBrickWall()
 function drawBrickWall2()
 {
 	let r = 0;
-	let g = 255;
+	let g = 100;
 	let b = 0;
 
 	for (let i = 0; i < brickWall2.length; ++i)
@@ -634,8 +647,8 @@ function drawBrickWall2()
 function drawObstaclePvpBreakout()
 {
 	let r = 0;
-	let g = 255;
-	let b = 255;
+	let g = 100;
+	let b = 100;
 
 	projectObstacleLine(0, 1, XMAX/2, ZMAX_/2, MID_WIDTHPvp, r, g , b);
 	projectObstacleLine(1, 2, XMAX/2, ZMAX_/2, MID_WIDTHPvp, r, g , b);
@@ -676,8 +689,8 @@ function drawObstaclePvp()
 	let x1 = 0;
 	let y1 = 0;
 	let r = 0;
-	let g = 255;
-	let b = 255;
+	let g = 100;
+	let b = 100;
 
 	projectObstacleLine(0, 1, XMAX/2, ZMAX_/2 + 1, MID_WIDTHPvp, r, g , b);
 	projectObstacleLine(1, 2, XMAX/2, ZMAX_/2 + 1, MID_WIDTHPvp, r, g , b);
@@ -718,8 +731,8 @@ function drawObstacle()
 	let x1 = 0;
 	let y1 = 0;
 	let r = 0;
-	let g = 255;
-	let b = 255;
+	let g = 100;
+	let b = 100;
 
 	projectObstacleLine(0, 1, XMAX/2, ZMAX_/2, MID_WIDTH, r, g , b);
 	projectObstacleLine(1, 2, XMAX/2, ZMAX_/2, MID_WIDTH, r, g , b);
@@ -759,31 +772,31 @@ function drawBallPvp()
 	let y0 = 0;
 	let x1 = 0;
 	let y1 = 0;
-	let r = 255;
-	let g = 255;
-	let b = 255;
 
 	if (zBall <= ZMIN || zBall >= ZMAX)
 	{
-		r = 255;
-		g = 0;
-		b = 0;
+		rb = 255;
+		gb = 0;
+		bb = 0;
 	}
 	rotateY(ball3D, xBall * deltaTime);
-	projectBallLine(0, 1, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(1, 2, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(2, 3, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(3, 0, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
+	projectBallLine(0, 1, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(1, 2, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(2, 3, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(3, 0, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
 
-	projectBallLine(4, 5, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(5, 6, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(6, 7, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(7, 4, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
+	projectBallLine(4, 5, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(5, 6, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(6, 7, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(7, 4, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
 
-	projectBallLine(4, 0, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(5, 1, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(6, 2, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
-	projectBallLine(7, 3, xBall, zBallPvp, MID_WIDTHPvp, r, g , b, ball3D);
+	projectBallLine(4, 0, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(5, 1, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(6, 2, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	projectBallLine(7, 3, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
+	rb = 100;
+	gb = 100;
+	bb = 100;
 }
 
 function drawBall()
@@ -792,32 +805,31 @@ function drawBall()
 	let y0 = 0;
 	let x1 = 0;
 	let y1 = 0;
-	let r = 255;
-	let g = 255;
-	let b = 255;
 
-	if (zBall <= ZMIN || zBall >= ZMAX)
+	if (zBall <= ZMIN || zBall >= ZMAX && !breakout)
 	{
-		r = 255;
-		g = 0;
-		b = 0;
-		b = 0;
+		rb = 255;
+		gb = 0;
+		bb = 0;
 	}
 	rotateY(ball3D, xBall * deltaTime);
-	projectBallLine(0, 1, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(1, 2, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(2, 3, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(3, 0, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
+	projectBallLine(0, 1, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(1, 2, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(2, 3, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(3, 0, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
 
-	projectBallLine(4, 5, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(5, 6, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(6, 7, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(7, 4, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
+	projectBallLine(4, 5, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(5, 6, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(6, 7, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(7, 4, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
 
-	projectBallLine(4, 0, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(5, 1, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(6, 2, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
-	projectBallLine(7, 3, xBall, zBall, MID_WIDTH, r, g , b, ball3D);
+	projectBallLine(4, 0, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(5, 1, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(6, 2, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	projectBallLine(7, 3, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
+	rb = 100;
+	gb = 100;
+	bb = 100;
 }
 
 function drawBall2()
@@ -826,32 +838,31 @@ function drawBall2()
 	let y0 = 0;
 	let x1 = 0;
 	let y1 = 0;
-	let r = 255;
-	let g = 255;
-	let b = 255;
 
-	if (zBall2 <= ZMIN || zBall2 >= ZMAX)
+	if (zBall2 <= ZMIN || zBall2 >= ZMAX && !breakout)
 	{
-		r = 255;
-		g = 0;
-		b = 0;
-		b = 0;
+		rb = 255;
+		gb = 0;
+		bb = 0;
 	}
 	rotateY(ball3D2, xBall2 * deltaTime);
-	projectBallLine(0, 1, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(1, 2, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(2, 3, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(3, 0, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
+	projectBallLine(0, 1, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(1, 2, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(2, 3, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(3, 0, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
 
-	projectBallLine(4, 5, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(5, 6, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(6, 7, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(7, 4, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
+	projectBallLine(4, 5, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(5, 6, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(6, 7, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(7, 4, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
 
-	projectBallLine(4, 0, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(5, 1, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(6, 2, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
-	projectBallLine(7, 3, xBall2, zBall2, MID_WIDTHPvp, r, g , b, ball3D2);
+	projectBallLine(4, 0, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(5, 1, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(6, 2, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	projectBallLine(7, 3, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
+	rb = 100;
+	gb = 100;
+	bb = 100;
 }
 
 function drawAntagonistPvp(r, g, b)
@@ -935,14 +946,14 @@ function updateBallPositionBreakout(rebound)
 	if (zBall2 < ZMIN - 0.5)
 		zBall2 = ZMIN - 0.5;
 
-    // Vérifier les limites du terrain sur l'axe X
-    if (xBall <= XMIN || xBall >= XMAX)
-        xVelocity = -xVelocity;
-    if (xBall2 <= XMIN || xBall2 >= XMAX)
-        xVelocity2 = -xVelocity2;
+//Malus Update
+	if (zBall <= ZMIN - 0.5)
+		++playerMalus;
+    if (zBall2 <= ZMIN - 0.5)
+		++player2Malus;
 
-    // Vérifier les limites du terrain sur l'axe Z
-    if (zBall >= ZMAX + 0.5 || zBall <= ZMIN - 0.5)
+    // Vérifier les limites du terrain sur l'axe Z et X
+	if (zBall >= ZMAX + 0.5 || zBall <= ZMIN - 0.5)
 	{
         // Inverser la direction sur Z si on atteint les bords arrière
 		zVelocity = -zVelocity;
@@ -952,6 +963,8 @@ function updateBallPositionBreakout(rebound)
 			xVelocity /= 7;
 		}
     }
+    else if (xBall <= XMIN || xBall >= XMAX)
+        xVelocity = -xVelocity;
 
 	if (zBall2 >= ZMAX + 0.5 || zBall2 <= ZMIN - 0.5)
 	{
@@ -962,6 +975,9 @@ function updateBallPositionBreakout(rebound)
 			xVelocity2 /= 7;
 		}
 	}
+	else if (xBall2 <= XMIN || xBall2 >= XMAX)
+        xVelocity2 = -xVelocity2;
+
     // Vérifier les collision avec le brick wall.
 	for (let i = 0; i < brickWall.length; ++i)
 	{
@@ -991,6 +1007,8 @@ function updateBallPositionBreakout(rebound)
 			brickWall2.splice(i,1);
 		}
 	}
+	currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
+	currentMatch.scorePlayer2 =	24 - brickWall2.length - player2Malus;
     // Vérifier les collision avec les obstacles.
 	if (customMapNb && (zBall <= ZMAX_ / 2 + obstacleSize && zBall >= ZMAX_ / 2 - obstacleSize)
 		&& (xBall <= XMAX / 2 + obstacleWidth && xBall >= XMAX / 2 - obstacleWidth))
@@ -1085,12 +1103,6 @@ function updateBallPosition(rebound)
     }
 
     // Vérifier les limites du terrain sur l'axe Z
-	
-    if (zBall <= ZMIN - 0.5)
-		++playerMalus;
-    if (zBall2 <= ZMIN - 0.5)
-		++player2Malus;
-
     if (zBall >= ZMAX + 0.5 || zBall <= ZMIN - 0.5)
 	{
         // Inverser la direction sur Z si on atteint les bords arrière
@@ -1214,42 +1226,7 @@ function updatePaddlePositionPvp()
     }
 }
 
-//function displayScorePvp() {
-    // Définir la police et l'alignement pour le score
-//    context.font = "20px 'Press Start 2P'";// "40px Arial";
-//    context.fillStyle = "white"; // Couleur du texte
-
-    // Afficher le score du joueur à gauche
-  //  context.fillText("PLAYER: " + currentMatch.scorePlayer1, canvas.width / 2 + 50, 50);
-
-    // Afficher le score de l'antagoniste à droite
-    //context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, canvas.width / 2 - 300, 50);
-//}
-
-//function displayScore() {
-//    // Définir la police et l'alignement pour le score
-//    context.font = "20px 'Press Start 2P'";// "40px Arial";
-//    context.fillStyle = "white"; // Couleur du texte
-
-//    // Afficher le score du joueur à gauche
-//    context.fillText("PLAYER: " + currentMatch.scorePlayer1, MID_WIDTH + 50, 50);
-
-//    // Afficher le score de l'antagoniste à droite
-//    context.fillText("ANTAGONIST: " + currentMatch.scorePlayer2, MID_WIDTH - 300, 50);
-//}
-
-//function displayResult(splitScreenActivated) {
-//    // Définir la police et l'alignement pour le score
-//    context.font = "20px 'Press Start 2P'";// "40px Arial";
-//    context.fillStyle = "white"; // Couleur du texte
-
-//	if (splitScreenActivated)
-//		context.fillText("THE GAME IS OVER", (MID_WIDTH * 2) - 180 , 50);
-//	else
-//		context.fillText("THE GAME IS OVER", MID_WIDTH - 180, 50);
-//}
-
-/*Game Lopp Breakout*/
+/*Game loop*/
 function gameLoopBreakout(currentTime)
 {
 	deltaTime = (currentTime - lastTime) / primeDeltaTime;
@@ -1265,7 +1242,7 @@ function gameLoopBreakout(currentTime)
 	/*draw*/
 	drawBrickWall();
 	drawBall();
-	drawPadel(255, 255, 255);
+	drawPadel(rp, gp, bp);
 
 	material.uniforms.time.value = currentTime * 0.001;
 	if (lightWave)
@@ -1273,22 +1250,19 @@ function gameLoopBreakout(currentTime)
 	colorTexture.needsUpdate = true;
 	renderer.render(scene, camera);
 
-	if (brickWall.length) //TODO;
-	{
-		//displayScore();
+	if (brickWall.length) {
 		requestAnimationFrame(gameLoopBreakout);
+		displayScore();
 	}
 	else {
 		currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
-		currentMatch.scorePlayer2 = 24 - brickWall.length - player2Malus;
-		//displayResult(false);
-		//canvas.classList.add('d-none');
-		//document.getElementById('canva_score').classList.remove('d-none');
-		//document.getElementById('canva_score').classList.add('d-flex');
+		currentMatch.scorePlayer2 = 24 - brickWall2.length - player2Malus;
+		console.log("score1 = " + currentMatch.scorePlayer1);
+		console.log("Malus1 = " + playerMalus);
+		console.log("score2 = " + currentMatch.scorePlayer2);
+		console.log("Malus2 = " + player2Malus);
+		displaySinglePlayerResult();
 		displayEOGMenu();
-		//Display buttons
-			//Restart
-			//Back
 	}
 }
 
@@ -1307,11 +1281,11 @@ function gameLoopPvpBreakout(currentTime)
 	/*Player*/
 	drawBrickWall();
 	drawBall();
-	drawPadel(255, 255, 255);
+	drawPadel(rp, gp, bp);
 	/*Player2*/
 	drawBrickWall2();
 	drawBall2();
-	drawPadel2(255, 255, 255);
+	drawPadel2(rp, gp, bp);
 
 	material.uniforms.time.value = currentTime * 0.001;
 	if (lightWave)
@@ -1319,19 +1293,19 @@ function gameLoopPvpBreakout(currentTime)
 	colorTexture.needsUpdate = true;
 	renderer.render(scene, camera);
 
-	if (brickWall.length && brickWall2.length) //TODO:
-	{
-		//displayScorePvp();
+	if (brickWall.length && brickWall2.length) {
 		requestAnimationFrame(gameLoopPvpBreakout);
+		displayScore();
 	}
 	else {
 		currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
-		currentMatch.scorePlayer2 = 24 - brickWall.length - player2Malus;
-		//displayResult(true);
+		currentMatch.scorePlayer2 = 24 - brickWall2.length - player2Malus;
 		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
-			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
+			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
+		else if (currentMatch.scorePlayer1 === currentMatch.scorePlayer2)
+			displayTideResult()
 		else
-			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
 		displayEOGMenu();
 	}
 }
@@ -1349,9 +1323,9 @@ function gameLoop(currentTime)
 
 	updatePaddlePosition();
 	updateBallPosition(2.5);
-	drawAntagonist(255, 255, 255);
+	drawAntagonist(rp, gp, bp);
 	drawBall();
-	drawPadel(255, 255, 255);
+	drawPadel(rp, gp, bp);
 
 	material.uniforms.time.value = currentTime * 0.001;
 	if (lightWave)
@@ -1361,11 +1335,20 @@ function gameLoop(currentTime)
 
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
-		//displayScore();
+		displayScore();
 		requestAnimationFrame(gameLoop);
 	}
 	else {
-		//displayResult(false);
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
+			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
+			// recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
+		}
+		else {
+			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
+			// recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+		}
+		currentMatch.scorePlayer1 = 0;
+		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
 	}
 }
@@ -1376,20 +1359,19 @@ function gameLoopPvp(currentTime)
 	lastTime = currentTime;
 
 	/*map display*/
-	//context.clearRect(0, 0, canvas.width, canvas.height);
 	renderer.clear();
 	colorBuffer.set(gridColorBuffer);
 
 	updatePaddlePositionPvp();
 	updateBallPosition(4);
 	/*Player*/
-	drawAntagonist(255, 255, 255);
+	drawAntagonist(rp, gp, bp);
 	drawBall();
-	drawPadel(255, 255, 255);
+	drawPadel(rp, gp, bp);
 	/*Antagoniste*/
-	drawAntagonistPvp(255, 255, 255);
+	drawAntagonistPvp(rp, gp, bp);
 	drawBallPvp();
-	drawPadelPvp(255, 255, 255);
+	drawPadelPvp(rp, gp, bp);
 
 	material.uniforms.time.value = currentTime * 0.001;
 	if (lightWave)
@@ -1399,15 +1381,20 @@ function gameLoopPvp(currentTime)
 
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
-		//displayScorePvp();
+		displayScore();
 		requestAnimationFrame(gameLoopPvp);
 	}
 	else {
-		//displayResult(true);
-		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
+			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
-		else
+		}
+		else {
+			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
+		}
+		currentMatch.scorePlayer1 = 0;
+		currentMatch.scorePlayer2 = 0;
 		displayEOGMenu();
 	}
 }
@@ -1418,6 +1405,7 @@ var setLt = true;
 /*initDeltaTime*/
 function initDeltaTimePvp(currentTime)
 {
+	material.uniforms.score.value = true;
 	lastTime = currentTime;
 	if (currentTime === undefined)
 	{
@@ -1430,9 +1418,12 @@ function initDeltaTimePvp(currentTime)
 			lt = currentTime;
 			setLt = false;
 		}
-		if (currentTime - lt > 3000)
+		if (currentTime - lt > 6000)
+		{
+			material.uniforms.score.value = false;
 			requestAnimationFrame(gameLoopPvpBreakout);
-		else	
+		}
+		else
 			requestAnimationFrame(initDeltaTimePvp);
 		if (lightWave)
 			material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
@@ -1448,9 +1439,12 @@ function initDeltaTimePvp(currentTime)
 			lt = currentTime;
 			setLt = false;
 		}
-		if (currentTime - lt > 3000)
+		if (currentTime - lt > 6000)
+		{
+			material.uniforms.score.value = false;
 			requestAnimationFrame(gameLoopPvp);
-		else	
+		}
+		else
 			requestAnimationFrame(initDeltaTimePvp);
 		if (lightWave)
 			material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
@@ -1463,6 +1457,8 @@ function initDeltaTimePvp(currentTime)
 
 function initDeltaTime(currentTime)
 {
+	material.uniforms.score.value = true;
+	material.uniforms.chromaticShift.value = 0.01 * Math.sin(currentTime * 0.002);
 	lastTime = currentTime;
 	if (currentTime === undefined)
 	{
@@ -1475,9 +1471,12 @@ function initDeltaTime(currentTime)
 			lt = currentTime;
 			setLt = false;
 		}
-		if (currentTime - lt > 3000)
+		if (currentTime - lt > 6000)
+		{
+			material.uniforms.score.value = false;
 			requestAnimationFrame(gameLoopBreakout);
-		else	
+		}
+		else
 			requestAnimationFrame(initDeltaTime);
 		if (lightWave)
 			material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
@@ -1493,9 +1492,12 @@ function initDeltaTime(currentTime)
 			lt = currentTime;
 			setLt = false;
 		}
-		if (currentTime - lt > 3000)
+		if (currentTime - lt > 6000)
+		{
+			material.uniforms.score.value = false;
 			requestAnimationFrame(gameLoop);
-		else	
+		}
+		else
 			requestAnimationFrame(initDeltaTime);
 		if (lightWave)
 			material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
@@ -1510,6 +1512,9 @@ function initDeltaTime(currentTime)
 
 function rmStartNode()
 {
+	rp = 100;
+	gp = 100;
+	bp = 100;
 	ZMAX = 22;
 	zVelocity = ballSpeed;
 	xVelocity = 0.01;
@@ -1557,12 +1562,16 @@ function rmStartNode()
 		create3Dobstacle(0, breakout);
 	create3Dbrick();
 	createBrickWall();
-	DisplayGameBot();
+	displayBotInfo();
+	DisplayGame();
 	initDeltaTime();
 }
 
 function rmStartNodePvp()
 {
+	rp = 100;
+	gp = 100;
+	bp = 100;
 	ZMAX = 22;
 	zVelocity = ballSpeed;
 	xVelocity = 0.01;
@@ -1613,6 +1622,7 @@ function rmStartNodePvp()
 	createBrickWall2();
 	currentMatch.bot = false;
 	winnerScore = document.getElementById("customVictoryValue").value;
+	displayMatchInfo();
 	DisplayGame();
 	initDeltaTimePvp();
 }
@@ -1625,4 +1635,3 @@ document.addEventListener('keydown', function(event){
 document.addEventListener('keyup', function(event) {
     keysPressed[event.key] = false;
 })
-bot.onclick = rmStartNode;

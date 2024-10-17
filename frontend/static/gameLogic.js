@@ -5,13 +5,16 @@ let currentMatch = {
 	idPlayer2 : 0,
 	scorePlayer1 : 0,
 	scorePlayer2 : 0,
-	bot : false
+	bot : false,
+	usernamePlayer1 : "",
+	usernamePlayer2 : ""
 };
 
 let currentTournament = {
 	active: false,
 	idPlayers : [],
-	winner : 0,
+	idWinners : [],
+	scoreDifferences : [],
 	gameType : "",
 	numberOfPlayers : 0,
 	gamesPlayed : 0
@@ -22,9 +25,6 @@ let currentTournament = {
 async function checkAdversaryCredentials() {
 	email = document.getElementById("emailInput").value;
 	password = document.getElementById("passwordInput").value;
-
-	console.log(email);
-	console.log(password);
 
 	const input = {
 		email: email,
@@ -102,6 +102,8 @@ function RecordLoss(data) {
 
 function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner) {
 
+	if(currentTournament.active)
+		return ;
 	const data = {
 		player1 : idPlayer1,
 		player2 : idPlayer2,
@@ -110,7 +112,6 @@ function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner)
 		winner : idWinner
 	};
 
-	console.log("recording match for " + idPlayer1 + " and " + idPlayer2);
 	makeAuthenticatedRequest('/api/games/matches/create/', {
 		method: 'POST',
 		body: JSON.stringify(data)
@@ -118,7 +119,6 @@ function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner)
 		if(!response.ok) {
 			throw new Error('Network response was not ok');
 		}
-		console.log("Match added successfully");
 	}).catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
 	})
@@ -126,41 +126,77 @@ function recordMatch(idPlayer1, idPlayer2, scorePlayer1, scorePlayer2, idWinner)
 	RecordLoss(data);
 }
 
-// GAME VIEW
-
-function addPointPlayer1() {
-	currentMatch.scorePlayer1++;
-	document.getElementById("scorePlayer1").innerText = currentMatch.scorePlayer1;
-	if (currentMatch.scorePlayer1 === customData.customVictoryPoints)	{
-		if (!currentTournament.active) {
-			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
-			currentMatch.scorePlayer1 = 0;
-			currentMatch.scorePlayer2 = 0;
-			displayEOGMenu();
-		}
-		else {
-			console.log("inside end of tournament game");
-			currentTournament.gamesPlayed++;
-			currentMatch.scorePlayer1 = 0;
-			currentMatch.scorePlayer2 = 0;
-			DisplayTournamentView(currentMatch.idPlayer1);
-		}
-	}
-}
-
-function addPointPlayer2() {
-	currentMatch.scorePlayer2++;
-	document.getElementById("scorePlayer2").innerText = currentMatch.scorePlayer2;
-	if(currentMatch.scorePlayer2 === customData.customVictoryPoints) {
-		recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
-		currentMatch.scorePlayer1 = 0;
-		currentMatch.scorePlayer2 = 0;
-		DisplayWinnerMenu();
-	}
-}
-
 // TOURNAMENT
 
-function displayNextTournamentGame() {
-	displayMatchInfo();
+function setCurrentMatch() {
+	if (isFirstRound()) {
+		currentMatch.idPlayer1 = currentTournament.idPlayers[0 + (2 * currentTournament.gamesPlayed)];
+		currentMatch.idPlayer2 = currentTournament.idPlayers[1 + (2 * currentTournament.gamesPlayed)];
+	}
+	else {
+		currentMatch.idPlayer1 = currentTournament.idWinners[0];
+		currentMatch.idPlayer2 = currentTournament.idWinners[1];
+		currentTournament.idWinners.shift();
+		currentTournament.idWinners.shift();
+	}
+}
+
+function isFirstRound() {
+	if(currentTournament.numberOfPlayers === 4 && currentTournament.gamesPlayed < 2)
+		return true;
+	if(currentTournament.numberOfPlayers === 6 && currentTournament.gamesPlayed < 3)
+		return true;
+	if(currentTournament.numberOfPlayers === 8 && currentTournament.gamesPlayed < 4)
+		return true;
+}
+
+function displayScore() {
+	document.getElementById("matchScore1").innerText = currentMatch.scorePlayer1;
+	document.getElementById("matchScore2").innerText = currentMatch.scorePlayer2;
+}
+
+function displayResult(winner, winnerId) {
+
+	const victorField = document.getElementById("matchVictorContainer");
+
+	document.getElementById('matchInfoContainer').classList.add('d-none');
+	victorField.classList.remove('d-none');
+	if (currentTournament.active) {
+		if (currentTournament.idWinners.length === 0 && currentTournament.gamesPlayed > 0) {
+			victorField.innerHTML = "<h2>Congratulation " + winner + ", you won the tournament</h2>";
+			return ;
+		}
+		else
+			currentTournament.idWinners.push(winnerId);
+	}
+	victorField.innerHTML = "<h1>Victory for " + winner + "</h1>";
+}
+
+function displayTideResult() {
+	const victorField = document.getElementById("matchVictorContainer");
+
+	document.getElementById('matchInfoContainer').classList.add('d-none');
+	victorField.classList.remove('d-none');
+	victorField.innerHTML = "<h1>Tide</h1>"
+}
+
+function displaySinglePlayerResult() {
+	const victorField = document.getElementById("matchVictorContainer");
+
+	document.getElementById('matchInfoContainer').classList.add('d-none');
+	victorField.classList.remove('d-none');
+	victorField.innerHTML = "<h1>You finished the game</h1>"
+}
+
+function changeGame(gameIndex) {
+	if (gameIndex === 1) {
+		togglePongCustomization(false);
+		breakout = true;
+		pong = false;
+	}
+	else {
+		togglePongCustomization(true);
+		breakout = false;
+		pong = true;
+	}
 }

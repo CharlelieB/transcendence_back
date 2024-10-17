@@ -2,7 +2,7 @@ Django
 djangorestframework
 djangorestframework-simplejwt
 django-filter
-psycopg2-binary
+psycopg2-binary==2.9.6
 pillow
 drf-spectacular
 drf-spectacular-sidecar
@@ -10,3 +10,4 @@ django-otp
 qrcode
 requests
 django-cors-headers
+

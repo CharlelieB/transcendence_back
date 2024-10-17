@@ -59,7 +59,6 @@ function changePassword() {
 
 switch2FA.addEventListener("change", async () => {
 	if(switch2FA.checked) {
-		console.log("activating 2fa");
 		makeAuthenticatedRequest("/api/2fa/activate/", {method: 'POST'})
 		.then(async () => {
 			let response = await makeAuthenticatedRequest("/api/2fa/create/", {method: 'GET'});
@@ -70,7 +69,6 @@ switch2FA.addEventListener("change", async () => {
 		})
 	}
 	else {
-		console.log("desactivating 2fa");
 		makeAuthenticatedRequest("/api/2fa/deactivate/", {method: 'POST'});
 		document.getElementById('QRcodeContainer').innerHTML = "";
 	}
@@ -85,10 +83,17 @@ function uploadImage() {
 	fileInput.onchange = () => {
  		const selectedFile = fileInput.files[0];
  		console.log(selectedFile);
+
+		const formData = new FormData();
+		formData.append('image', selectedFile);
+		makeAuthenticatedFileUpload("/api/avatar/", {
+			method: 'POST',
+			body: formData
+		})
 	}
-	//if (file) {
-		//NEED TO CHECK THE DIMENSIONS
-	//}
-	// UPLOAD THE FILE TO THE BACK
-	//RELOAD THE DRAWER
 }
+
+
+avatar:"/media/code/media/avatars/Blata.jpg"
+
+avatar: "/media/avatars/bilel.jpeg"
