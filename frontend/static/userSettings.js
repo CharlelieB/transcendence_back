@@ -89,8 +89,11 @@ function uploadImage() {
 		makeAuthenticatedFileUpload("/api/avatar/", {
 			method: 'POST',
 			body: formData
+		}).then(() => {
+			displaySocialDrawer();
 		})
 	}
+
 }
 
 
