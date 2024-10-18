@@ -28,6 +28,49 @@ document.addEventListener('keydown', function(event) {
 
 /////    FUNCTIONS TO DISPLAY HTML ELEMENTS /////
 
+function displayHomePage() {
+	document.getElementById("gameContainer").classList.add('d-none');
+	document.getElementById("buttonsContainer").classList.remove('d-none');
+	document.getElementById("buttonsContainer").classList.add('d-flex');
+	document.getElementById("playerConnection").classList.add('d-none');
+	document.getElementById("containerCustomButton").classList.remove('d-none');
+	document.getElementById("containerTitle").classList.remove("d-none");
+	document.getElementById('EOGButtons').classList.add('d-none');
+	ResetMenuButtons();
+	playerIndex = 2;
+	history.pushState({ page: 'home' }, 'Home', '/home');
+}
+
+ function DisplayPlayerConnection(playerNb)
+ {
+	playerNumber = playerNb;
+	heading = document.getElementById("loginTitle");
+	errorMessageContainer.innerText = "";
+
+	if(playerNumber > 2) {
+		currentTournament.active = true;
+		currentTournament.numberOfPlayers = playerNumber;
+	}
+	ResetMenuButtons();
+	ReplaceElement("buttonsContainer", "playerConnection");
+	document.getElementById("loginBackButton").classList.remove("d-none");
+	document.getElementById("userForm").reset();
+	heading.innerText = "Player " + playerIndex + " login";
+	history.pushState({page: 'login'}, 'Login', '/login');
+ }
+
+ function DisplayGame()
+ {
+	document.getElementById("containerCustomButton").classList.add("d-none");
+	document.getElementById("containerTitle").classList.add("d-none");
+	 if (currentMatch.bot)
+		 ReplaceElement("buttonsContainer", "gameContainer");
+	 else
+		 ReplaceElement("playerConnection", "gameContainer");
+	 history.pushState({ page: 'game' }, 'Game', '/game');
+	//make background black
+ }
+
 //       OTHER DISPLAYING FUNCTIONS
 
 function DisplayQuickPlayOptions() {
@@ -46,23 +89,6 @@ function DisplayTournamentOptions() {
 	ReplaceElement("quickPlayOptions", "quickPlay");
  }
 
- function DisplayPlayerConnection(playerNb)
- {
-	playerNumber = playerNb;
-	heading = document.getElementById("loginTitle");
-	errorMessageContainer.innerText = "";
-
-	if(playerNumber > 2) {
-		currentTournament.active = true;
-		currentTournament.numberOfPlayers = playerNumber;
-	}
-	ResetMenuButtons();
-	ReplaceElement("buttonsContainer", "playerConnection");
-	document.getElementById("loginBackButton").classList.remove("d-none");
-	document.getElementById("userForm").reset();
-	heading.innerText = "Player " + playerIndex + " login";
-
- }
 
 function BackButtonConnection()
 {
@@ -71,15 +97,7 @@ function BackButtonConnection()
 	ReplaceElement("playerConnection", "buttonsContainer");
 }
 
-function DisplayGame()
-{
-	document.getElementById("containerCustomButton").classList.add("d-none");
-	document.getElementById("containerTitle").classList.add("d-none");
-	if (currentMatch.bot)
-		ReplaceElement("buttonsContainer", "gameContainer");
-	else
-		ReplaceElement("playerConnection", "gameContainer");
-}
+
 
 function displayEOGMenu() {
 	document.getElementById("EOGButtons").classList.remove('d-none');
@@ -100,6 +118,7 @@ function backButtonEOG() {
 	document.getElementById("containerCustomButton").classList.remove("d-none");
 	document.getElementById("containerTitle").classList.remove("d-none");
 	document.getElementById('EOGButtons').classList.add('d-none');
+	ResetMenuButtons();
 	playerIndex = 2;
 	currentTournament.active = false;
 	currentTournament.idPlayers = [];
@@ -237,3 +256,11 @@ function togglePongCustomization(status) {
 		customVictoryField.classList.add('d-none');
 	}
 }
+
+window.addEventListener('popstate', (event) => {
+	if (event.state && event.state.page === 'game') {
+        rmStartNode();
+    }
+	else
+		displayHomePage();
+});
