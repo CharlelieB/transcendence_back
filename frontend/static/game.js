@@ -93,6 +93,7 @@ const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 var BUFFER_SIZE = canvas.width * canvas.height * 4;
 var RED_SIDE_SIZE = canvas.width / 2;
 var GREEN_SIDE_SIZE = canvas.width;
+var frameId = 0;
 /*-----PERSPECTIVE-----*/
 var yGridOffset = 4.2;
 var zGridOffset = 6;
@@ -1251,7 +1252,7 @@ function gameLoopBreakout(currentTime)
 	renderer.render(scene, camera);
 
 	if (brickWall.length) {
-		requestAnimationFrame(gameLoopBreakout);
+		frameId = requestAnimationFrame(gameLoopBreakout);
 		displayScore();
 	}
 	else {
@@ -1293,11 +1294,13 @@ function gameLoopPvpBreakout(currentTime)
 	colorTexture.needsUpdate = true;
 	renderer.render(scene, camera);
 
-	if (brickWall.length && brickWall2.length) {
-		requestAnimationFrame(gameLoopPvpBreakout);
+	if (brickWall.length && brickWall2.length)
+	{
+		frameId = requestAnimationFrame(gameLoopPvpBreakout);
 		displayScore();
 	}
-	else {
+	else
+	{
 		currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
 		currentMatch.scorePlayer2 = 24 - brickWall2.length - player2Malus;
 		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
@@ -1336,14 +1339,17 @@ function gameLoop(currentTime)
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
 		displayScore();
-		requestAnimationFrame(gameLoop);
+		frameId = requestAnimationFrame(gameLoop);
 	}
-	else {
-		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
+	else
+	{
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
+		{
 			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
 			// recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 		}
-		else {
+		else
+		{
 			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
 			// recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
 		}
@@ -1382,14 +1388,17 @@ function gameLoopPvp(currentTime)
 	if (currentMatch.scorePlayer1 != winnerScore && currentMatch.scorePlayer2 != winnerScore)
 	{
 		displayScore();
-		requestAnimationFrame(gameLoopPvp);
+		frameId = requestAnimationFrame(gameLoopPvp);
 	}
-	else {
-		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2) {
+	else
+	{
+		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
+		{
 			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer1);
 		}
-		else {
+		else
+		{
 			displayResult(currentMatch.usernamePlayer2, currentMatch.idPlayer2);
 			recordMatch(currentMatch.idPlayer1, currentMatch.idPlayer2, currentMatch.scorePlayer1, currentMatch.scorePlayer2, currentMatch.idPlayer2);
 		}
@@ -1409,7 +1418,7 @@ function initDeltaTimePvp(currentTime)
 	lastTime = currentTime;
 	if (currentTime === undefined)
 	{
-		requestAnimationFrame(initDeltaTimePvp);
+		frameId = requestAnimationFrame(initDeltaTimePvp);
 	}
 	else if (breakout)
 	{
@@ -1421,10 +1430,10 @@ function initDeltaTimePvp(currentTime)
 		if (currentTime - lt > 6000)
 		{
 			material.uniforms.score.value = false;
-			requestAnimationFrame(gameLoopPvpBreakout);
+			frameId = requestAnimationFrame(gameLoopPvpBreakout);
 		}
 		else
-			requestAnimationFrame(initDeltaTimePvp);
+			frameId = requestAnimationFrame(initDeltaTimePvp);
 		if (lightWave)
 			material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
 		renderer.clear();
@@ -1442,10 +1451,10 @@ function initDeltaTimePvp(currentTime)
 		if (currentTime - lt > 6000)
 		{
 			material.uniforms.score.value = false;
-			requestAnimationFrame(gameLoopPvp);
+			frameId = requestAnimationFrame(gameLoopPvp);
 		}
 		else
-			requestAnimationFrame(initDeltaTimePvp);
+			frameId = requestAnimationFrame(initDeltaTimePvp);
 		if (lightWave)
 			material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
 		renderer.clear();
@@ -1462,7 +1471,7 @@ function initDeltaTime(currentTime)
 	lastTime = currentTime;
 	if (currentTime === undefined)
 	{
-		requestAnimationFrame(initDeltaTime);
+		frameId = requestAnimationFrame(initDeltaTime);
 	}
 	else if (breakout)
 	{
@@ -1474,10 +1483,10 @@ function initDeltaTime(currentTime)
 		if (currentTime - lt > 6000)
 		{
 			material.uniforms.score.value = false;
-			requestAnimationFrame(gameLoopBreakout);
+			frameId = requestAnimationFrame(gameLoopBreakout);
 		}
 		else
-			requestAnimationFrame(initDeltaTime);
+			frameId = requestAnimationFrame(initDeltaTime);
 		if (lightWave)
 			material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
 		renderer.clear();
@@ -1495,10 +1504,10 @@ function initDeltaTime(currentTime)
 		if (currentTime - lt > 6000)
 		{
 			material.uniforms.score.value = false;
-			requestAnimationFrame(gameLoop);
+			frameId = requestAnimationFrame(gameLoop);
 		}
 		else
-			requestAnimationFrame(initDeltaTime);
+			frameId = requestAnimationFrame(initDeltaTime);
 		if (lightWave)
 			material.uniforms.lightIntensity.value =  2 + 0.5 * Math.sin(currentTime * 0.002);
 		renderer.clear();
@@ -1512,6 +1521,9 @@ function initDeltaTime(currentTime)
 
 function rmStartNode()
 {
+	if (frameId)
+		cancelAnimationFrame(frameId);
+	frameId = 0;
 	rp = 100;
 	gp = 100;
 	bp = 100;
@@ -1569,6 +1581,9 @@ function rmStartNode()
 
 function rmStartNodePvp()
 {
+	if (frameId)
+		cancelAnimationFrame(frameId);
+	frameId = 0;
 	rp = 100;
 	gp = 100;
 	bp = 100;
