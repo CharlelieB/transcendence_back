@@ -29,62 +29,67 @@ colorTexture.needsUpdate = true;
 gridTexture.needsUpdate = true;
 
 //Creation du shader de mon 'ecran'.
-const material = new THREE.ShaderMaterial({
-    uniforms: {
-        colorMap: { value: colorTexture },
-        time: { value: 0.0 },  // Ajout de l'uniform pour l'animation
-		chromaticShift: { value: 0.005},
-        effectEnabled: { value: effectEnabled }, // Pour activer ou désactiver l'effet de vagues
-        score: { value: score }, // aberration chromatique
-        lightIntensity: { value: lightIntensity } // Uniform pour la brillance
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform sampler2D colorMap;
-      uniform bool effectEnabled; // Uniform pour activer ou désactiver l'effet de vagues
-      uniform bool score; // aberration chromatique
-      uniform float time; // Uniform pour le temps
-      uniform float lightIntensity; // Uniform pour simuler la brillance
-	  uniform float chromaticShift; // Facteur de décalage avec une fréquence de variation
-      varying vec2 vUv;
+var material = null;
+var mesh = null;
+var scene = null;
 
-      void main() {
-        vec2 uv = vUv;
+function updateMaterialShader() {
+	material = new THREE.ShaderMaterial({
+		uniforms: {
+			colorMap: { value: colorTexture },
+			time: { value: 0.0 },  // Ajout de l'uniform pour l'animation
+			chromaticShift: { value: 0.005},
+			effectEnabled: { value: effectEnabled }, // Pour activer ou désactiver l'effet de vagues
+			score: { value: score }, // aberration chromatique
+			lightIntensity: { value: lightIntensity } // Uniform pour la brillance
+		},
+		vertexShader: `
+		  varying vec2 vUv;
+		  void main() {
+			vUv = uv;
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+		  }
+		`,
+		fragmentShader: `
+		  uniform sampler2D colorMap;
+		  uniform bool effectEnabled; // Uniform pour activer ou désactiver l'effet de vagues
+		  uniform bool score; // aberration chromatique
+		  uniform float time; // Uniform pour le temps
+		  uniform float lightIntensity; // Uniform pour simuler la brillance
+		  uniform float chromaticShift; // Facteur de décalage avec une fréquence de variation
+		  varying vec2 vUv;
 
-        // Ajout d'une distorsion dynamique
-        if (effectEnabled) {
-          uv.x += sin(uv.y * 10.0 + time * 5.0) * 0.02; // Déplacement en vague sur l'axe X
-          uv.y += sin(uv.x * 10.0 + time * 3.0) * 0.02; // Déplacement en vague sur l'axe Y
-        }
-        vec4 color = texture(colorMap, uv);
-		if (score) {
-			// Utilisation d'une sinusoïde pour faire varier l'intensité de l'aberration chromatique
-			color.r = texture(colorMap, uv + vec2(chromaticShift, 0.0)).r;  // Décalage rouge
-			color.g = texture(colorMap, uv + vec2(-chromaticShift, 0.0)).g; // Décalage vert
-			color.b = texture(colorMap, uv + vec2(0.0, chromaticShift)).b;  // Décalage bleu
-		}
-        // Simuler la brillance en augmentant l'intensité lumineuse
-        color.rgb *= lightIntensity;
+		  void main() {
+			vec2 uv = vUv;
 
-        gl_FragColor = color;
-      }
-    `
-});
+			// Ajout d'une distorsion dynamique
+			if (effectEnabled) {
+			  uv.x += sin(uv.y * 10.0 + time * 5.0) * 0.02; // Déplacement en vague sur l'axe X
+			  uv.y += sin(uv.x * 10.0 + time * 3.0) * 0.02; // Déplacement en vague sur l'axe Y
+			}
+			vec4 color = texture(colorMap, uv);
+			if (score) {
+				// Utilisation d'une sinusoïde pour faire varier l'intensité de l'aberration chromatique
+				color.r = texture(colorMap, uv + vec2(chromaticShift, 0.0)).r;  // Décalage rouge
+				color.g = texture(colorMap, uv + vec2(-chromaticShift, 0.0)).g; // Décalage vert
+				color.b = texture(colorMap, uv + vec2(0.0, chromaticShift)).b;  // Décalage bleu
+			}
+			// Simuler la brillance en augmentant l'intensité lumineuse
+			color.rgb *= lightIntensity;
+
+			gl_FragColor = color;
+		  }
+		`
+	});
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.rotation.z = Math.PI;
+	// Création d'une scène et ajout du mesh
+	scene = new THREE.Scene();
+	scene.add(mesh);
+}
 
 // Création d'une géométrie pleine écran
 const geometry = new THREE.PlaneGeometry(2, 2);
-const mesh = new THREE.Mesh(geometry, material);
-mesh.rotation.z = Math.PI;
-
-// Création d'une scène et ajout du mesh
-const scene = new THREE.Scene();
-scene.add(mesh);
 
 // Ajout d'une caméra orthographique (pleine écran)
 const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -773,6 +778,9 @@ function drawBallPvp()
 	let y0 = 0;
 	let x1 = 0;
 	let y1 = 0;
+	let rbTmp = rb;
+	let gbTmp = gb;
+	let bbTmp = bb;
 
 	if (zBall <= ZMIN || zBall >= ZMAX)
 	{
@@ -795,9 +803,9 @@ function drawBallPvp()
 	projectBallLine(5, 1, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
 	projectBallLine(6, 2, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
 	projectBallLine(7, 3, xBall, zBallPvp, MID_WIDTHPvp, rb, gb , bb, ball3D);
-	rb = 100;
-	gb = 100;
-	bb = 100;
+	rb = rbTmp;
+	gb = gbTmp;
+	bb = bbTmp;
 }
 
 function drawBall()
@@ -806,6 +814,9 @@ function drawBall()
 	let y0 = 0;
 	let x1 = 0;
 	let y1 = 0;
+	let rbTmp = rb;
+	let gbTmp = gb;
+	let bbTmp = bb;
 
 	if (zBall <= ZMIN || zBall >= ZMAX && !breakout)
 	{
@@ -828,9 +839,9 @@ function drawBall()
 	projectBallLine(5, 1, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
 	projectBallLine(6, 2, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
 	projectBallLine(7, 3, xBall, zBall, MID_WIDTH, rb, gb , bb, ball3D);
-	rb = 100;
-	gb = 100;
-	bb = 100;
+	rb = rbTmp;
+	gb = gbTmp;
+	bb = bbTmp;
 }
 
 function drawBall2()
@@ -839,6 +850,9 @@ function drawBall2()
 	let y0 = 0;
 	let x1 = 0;
 	let y1 = 0;
+	let rbTmp = rb;
+	let gbTmp = gb;
+	let bbTmp = bb;
 
 	if (zBall2 <= ZMIN || zBall2 >= ZMAX && !breakout)
 	{
@@ -861,9 +875,9 @@ function drawBall2()
 	projectBallLine(5, 1, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
 	projectBallLine(6, 2, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
 	projectBallLine(7, 3, xBall2, zBall2, MID_WIDTHPvp, rb, gb , bb, ball3D2);
-	rb = 100;
-	gb = 100;
-	bb = 100;
+	rb = rbTmp;
+	gb = gbTmp;
+	bb = bbTmp;
 }
 
 function drawAntagonistPvp(r, g, b)
@@ -1415,6 +1429,7 @@ var setLt = true;
 function initDeltaTimePvp(currentTime)
 {
 	material.uniforms.score.value = true;
+	material.uniforms.chromaticShift.value = 0.01 * Math.sin(currentTime * 0.002);
 	lastTime = currentTime;
 	if (currentTime === undefined)
 	{
@@ -1521,6 +1536,7 @@ function initDeltaTime(currentTime)
 
 function rmStartNode()
 {
+	updateMaterialShader();
 	if (frameId)
 		cancelAnimationFrame(frameId);
 	frameId = 0;
@@ -1581,6 +1597,7 @@ function rmStartNode()
 
 function rmStartNodePvp()
 {
+	updateMaterialShader();
 	if (frameId)
 		cancelAnimationFrame(frameId);
 	frameId = 0;
