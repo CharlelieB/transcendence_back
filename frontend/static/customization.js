@@ -25,7 +25,7 @@ function getCustomizationSettings() {
 		customScoreValue.value = data.score_win;
 		customColorRackets.value = data.color_rackets;
 		customColorNet.value = data.color_filet;
-		customBallSpeed.value = getBallSpeed(data.ball_speed);
+		customBallSpeed.value = getBallSpeed(data.ball_speed, data.game_type);
 		pong = data.game_type;
 		customMapNb = data.map;
 		effectEnabled = data.drunk_effect;
@@ -93,17 +93,17 @@ function setSquareColors()
 	colorBoxNet.classList.add(bgClassList[customColorNet.value]);
 }
 
-function getBallSpeed(size) {
+function getBallSpeed(size, game_type) {
 	if (size === "slow") {
-		ballSpeed = 0.1
+		ballSpeed = 0.15
 		return (0);
 	}
 	else if (size === "regular") {
-		ballSpeed = 0.3
+		ballSpeed = 0.25
 		return (1);
 	}
 	else if (size === "fast") {
-		ballSpeed = 0.5
+		ballSpeed = 0.33
 		return (2);
 	}
 }
@@ -130,6 +130,7 @@ function selectBallsNbRadioButton() {
 		gameTypeId += 0;
 	else
 		gameTypeId += 1;
+	console.log(gameTypeId);
 	document.getElementById(mapNbRadioId).checked = true;
 	document.getElementById(gameTypeId).checked = true;
 }
