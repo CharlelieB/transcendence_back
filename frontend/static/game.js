@@ -1163,32 +1163,68 @@ function updateBallPosition(rebound)
 	}
 }
 
+let lastBotUpdate = 0;
+let goSide = 0;
+
+function checkWorldBorderLimits(x) {
+	if (x <= XMIN - 1)
+		return XMIN - 1;
+	if (x >= XMAX + 1)
+		return XMAX + 1;
+	return x;
+}
+
+const STRAT_OFFSET = padelWidth*1.8
+
+function predictBallPosition() {
+    let predictedX = xBall;
+    let predictedZ = zBall;
+    let velocityX = xVelocity;
+    let velocityZ = zVelocity;
+
+    while (predictedZ < zAntagonist) {
+        predictedX += velocityX;
+        predictedZ += velocityZ;
+
+        // Check for collisions with the walls and reverse the velocity if necessary
+        if (predictedX <= XMIN || predictedX >= XMAX) {
+            velocityX = -velocityX;
+        }
+        if (predictedZ <= ZMIN || predictedZ >= ZMAX) {
+            velocityZ = -velocityZ;
+        }
+    }
+    return predictedX + STRAT_OFFSET * Math.random() * 2 - 1;
+}
+const centerX = (XMIN + XMAX) / 2;
+var predictedX = centerX
+function updateBotPaddlePosition() {
+    if (Date.now() > lastBotUpdate + 1000) {
+		predictedX = zVelocity > 0 ? predictBallPosition() : centerX
+        lastBotUpdate = Date.now();
+    }
+	if (predictedX > xAntagonist) {
+		goSide = 1;
+	} else if (predictedX < xAntagonist) {
+		goSide = -1;
+	} else {
+		goSide = 0;
+		console.log("COUCOU")
+	}
+    xAntagonist = checkWorldBorderLimits(padelSpeed * deltaTime * goSide + xAntagonist);
+}
+
 function updatePaddlePosition()
 {
-	if (xBall > xAntagonist)
-	{
-		xAntagonist += padelSpeed * deltaTime;
-        if (xPadelPlayer <= XMIN - 1)
-			xPadelPlayer = XMIN - 1;
-	}
-	if (xBall < xAntagonist)
-	{
-		xAntagonist -= padelSpeed * deltaTime;
-        if (xPadelPlayer >= XMAX + 1)
-			xPadelPlayer = XMAX + 1;
-	}
+	updateBotPaddlePosition();
     if (keysPressed["ArrowLeft"])
-	{
         xPadelPlayer += padelSpeed * deltaTime;
-        if (xPadelPlayer <= XMIN - 1)
-			xPadelPlayer = XMIN - 1;
-    }
     if (keysPressed["ArrowRight"])
-	{
         xPadelPlayer -= padelSpeed * deltaTime;
-        if (xPadelPlayer >= XMAX + 1)
-			xPadelPlayer = XMAX + 1;
-    }
+	if (xPadelPlayer <= XMIN - 1)
+		xPadelPlayer = XMIN - 1;
+	if (xPadelPlayer >= XMAX + 1)
+		xPadelPlayer = XMAX + 1;
 }
 
 function updatePaddlePositionPvp()

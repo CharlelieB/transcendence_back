@@ -187,7 +187,7 @@ async function displayBotInfo() {
 	currentMatch.usernamePlayer1 = data.username;
 	currentMatch.usernamePlayer2 = "Antagonist";
 	document.getElementById("matchUsername1").innerText = data.username;
-	document.getElementById("matchUsername2").innerText = "Antagonist";
+	document.getElementById("matchUsername2").innerText = "TOTO";
 	document.getElementById('matchInfoContainer').classList.remove('d-none');
 	document.getElementById('matchVictorContainer').classList.add('d-none');
 
