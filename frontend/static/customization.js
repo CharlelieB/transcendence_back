@@ -30,6 +30,7 @@ function getCustomizationSettings() {
 		customMapNb = data.map;
 		effectEnabled = data.drunk_effect;
 		updateCustomModalUI();
+		setBallAndRacketsColors(data.color_filet, data.color_rackets);
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -83,6 +84,63 @@ function updateCustomModalUI() {
 		switchDrunkMode.checked = true;
 	else
 		switchDrunkMode.checked = false;
+}
+
+function setBallAndRacketsColors(color_ball, color_rackets) {
+	switch (color_ball) {
+		case 0 :
+			rb = 13;
+			gb = 110;
+			bb = 253;
+		case 1:
+			rb = 108;
+			gb = 117;
+			bb = 125;
+		case 2:
+			rb = 25;
+			gb = 135;
+			bb = 84;
+
+		case 3:
+			rb = 220;
+			gb = 53;
+			bb = 69;
+		case 4:
+			rb = 255;
+			gb = 193;
+			bb = 7;
+		case 5:
+			rb = 0;
+			gb = 0;
+			bb = 0;
+	}
+	switch (color_rackets) {
+		case 0 :
+			rp = 13;
+			gp = 110;
+			bp = 253;
+		case 1:
+			rp = 108;
+			gp = 117;
+			bp = 125;
+		case 2:
+			rp = 25;
+			gp = 135;
+			bp = 84;
+
+		case 3:
+			rp = 220;
+			gp = 53;
+			bp = 69;
+		case 4:
+			rp = 255;
+			gp = 193;
+			bp = 7;
+		case 5:
+			rp = 0;
+			gp = 0;
+			bp = 0;
+	}
 }
 
 function setSquareColors()
