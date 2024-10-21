@@ -19,12 +19,16 @@ function displaySocialDrawer() {
 		document.getElementById("profilePic").innerHTML = "<img src=\"http://localhost:8000" + data.avatar + "\" class=\"img-thumbnail\">";
 		getFriendsList(data);
 		// getUserStats();
+		getLoggedInStatus();
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
 	})
 }
 
+function getLoggedInStatus() {
+	makeAuthenticatedRequest("/api/is-connect/", {method: 'GET'});
+}
 
 function getFriendsList(data) {
 	const followList = {
