@@ -255,8 +255,8 @@ AUTH_USER_MODEL = 'users.UserProfile'
 
 STATICFILES_DIRS = [BASE_DIR / "nginx/frontend" / "static"]
 
-CORS_ALLOWED_ORIGINS=['https://localhost:4430']
-CSRF_TRUSTED_ORIGINS=['https://localhost:4430']
+CORS_ALLOWED_ORIGINS=['https://localhost']
+CSRF_TRUSTED_ORIGINS=['https://localhost']
 
 CORDS_ALLOW_CREDENTIALS=True
 CSRF_COOKIE_SECURE=True
