@@ -24,8 +24,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost"]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -121,7 +122,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_otp.middleware.OTPMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'transcendence.urls'
@@ -129,7 +130,7 @@ ROOT_URLCONF = 'transcendence.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend/')],
+        'DIRS': [os.path.join(BASE_DIR, 'nginx/frontend/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -252,10 +253,10 @@ SWAGGER_SETTINGS = {
 
 AUTH_USER_MODEL = 'users.UserProfile'
 
-STATICFILES_DIRS = [BASE_DIR / "frontend" / "static"]
+STATICFILES_DIRS = [BASE_DIR / "nginx/frontend" / "static"]
 
-CORS_ALLOWED_ORIGINS=['http://127.0.0.1:8000']
-CSRF_TRUSTED_ORIGINS=['http://127.0.0.1:8000']
+CORS_ALLOWED_ORIGINS=['https://localhost:4430']
+CSRF_TRUSTED_ORIGINS=['https://localhost:4430']
 
 CORDS_ALLOW_CREDENTIALS=True
 CSRF_COOKIE_SECURE=True
@@ -264,3 +265,5 @@ CORDS_EXPOSE_HEADERS=["Content-Type", 'X-CSRFToken']
 SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SAMESITE="Lax"
 SESSION_COOKIE_SAMESITE="Lax"
+
+SECURE_SSL_REDIRECT = False

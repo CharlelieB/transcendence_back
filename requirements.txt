@@ -10,4 +10,4 @@ django-otp
 qrcode
 requests
 django-cors-headers
-
+gunicorn

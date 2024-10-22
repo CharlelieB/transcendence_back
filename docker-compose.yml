@@ -16,11 +16,12 @@ services:
       bash -c "python manage.py makemigrations &&
       python manage.py migrate &&
       python create_superuser.py &&
-      python manage.py runserver 0.0.0.0:8000"
+      python manage.py collectstatic --noinput &&
+      gunicorn transcendence.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/code
-    ports:
-      - "8000:8000"
+    expose:
+      - 8000
     env_file:
       - .env.db
       - .env.backend
@@ -29,12 +30,13 @@ services:
     networks:
       - mynetwork
   
-  frontend:
-    build:
-     context: .
-     dockerfile: Dockerfile.front
+  nginx:
+    build: ./nginx
     ports:
       - "8080:80"
+      - "4430:443"
+    depends_on:
+      - backend
     networks:
       - mynetwork
 
@@ -43,3 +45,4 @@ networks:
 
 volumes:
  dbdata:
+ static_volume:
