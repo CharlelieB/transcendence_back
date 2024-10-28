@@ -37,21 +37,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'drf_spectacular',#swager
-    'drf_spectacular_sidecar',#swager
-    'rest_framework',
+	'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
-    'django_otp',#2fa
-    'django_otp.plugins.otp_totp',#2fa
-    'corsheaders',
 	#'base.apps.BaseConfig',
 	#'authenfication',
+	'corsheaders',
     'users',
     'games',
     'tournois',
-    'customization'
+    'customization',
+	'django_otp',#2fa
+    'django_otp.plugins.otp_totp', #2fa
+	'drf_spectacular', #swager
+    'drf_spectacular_sidecar'#swager
 ]
 
 REST_FRAMEWORK = {
