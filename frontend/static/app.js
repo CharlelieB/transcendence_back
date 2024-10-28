@@ -58,6 +58,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 		document.getElementById("containerCustomButton").classList.remove('d-none');
 		getCustomizationSettings();
 		makeAuthenticatedRequest("/api/login/", {method: 'POST'});
+		statusLoop();
+
 	} else {
 		console.error("access token not saved");
 	}
@@ -142,6 +144,7 @@ function refreshToken()
 
 function disconnect() {
 	makeAuthenticatedRequest("/api/logout/", {method: 'POST'});
+	hostConnected = false;
 	backToConnexion();
 }
 
@@ -333,4 +336,12 @@ async function verify2FA() {
 		body: JSON.stringify(input2)
 	});
 	console.log("2fa verificated for " + data.id);
+}
+
+async function statusLoop() {
+	while (hostConnected) {
+		console.log("Ping to server from client");
+		makeAuthenticatedRequest("/api/is_connect/", {method: 'GET'});
+		setTimeout(5000);
+	}
 }
