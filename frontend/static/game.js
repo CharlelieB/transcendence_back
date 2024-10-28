@@ -1540,9 +1540,6 @@ function rmStartNode()
 	if (frameId)
 		cancelAnimationFrame(frameId);
 	frameId = 0;
-	rp = 100;
-	gp = 100;
-	bp = 100;
 	ZMAX = 22;
 	zVelocity = ballSpeed;
 	xVelocity = 0.01;
@@ -1592,6 +1589,7 @@ function rmStartNode()
 	createBrickWall();
 	displayBotInfo();
 	DisplayGame();
+	displayScore();
 	initDeltaTime();
 }
 
@@ -1601,9 +1599,6 @@ function rmStartNodePvp()
 	if (frameId)
 		cancelAnimationFrame(frameId);
 	frameId = 0;
-	rp = 100;
-	gp = 100;
-	bp = 100;
 	ZMAX = 22;
 	zVelocity = ballSpeed;
 	xVelocity = 0.01;
@@ -1656,6 +1651,7 @@ function rmStartNodePvp()
 	winnerScore = document.getElementById("customVictoryValue").value;
 	displayMatchInfo();
 	DisplayGame();
+	displayScore();
 	initDeltaTimePvp();
 }
 /*----------Main----------*/
