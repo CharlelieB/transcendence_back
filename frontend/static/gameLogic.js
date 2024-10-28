@@ -192,11 +192,9 @@ function changeGame(gameIndex) {
 	if (gameIndex === 1) {
 		togglePongCustomization(false);
 		breakout = true;
-		pong = false;
 	}
 	else {
 		togglePongCustomization(true);
 		breakout = false;
-		pong = true;
 	}
 }

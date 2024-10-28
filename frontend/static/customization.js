@@ -9,7 +9,6 @@ const customColorNet = document.getElementById('formColorNet');
 const colorBoxNet = document.getElementById('colorBoxNet');
 const customBallSpeed = document.getElementById('formBallSpeed');
 let customMapNb = 0;
-let pong = true;
 const switchDrunkMode = document.getElementById("switchDrunkMode");
 
 function getCustomizationSettings() {
@@ -26,7 +25,7 @@ function getCustomizationSettings() {
 		customColorRackets.value = data.color_rackets;
 		customColorNet.value = data.color_filet;
 		customBallSpeed.value = getBallSpeed(data.ball_speed, data.game_type);
-		pong = data.game_type;
+		breakout = data.game_type;
 		customMapNb = data.map;
 		effectEnabled = data.drunk_effect;
 		updateCustomModalUI();
@@ -42,9 +41,9 @@ function updateCustomizationSettings() {
 		score_win : customScoreValue.value,
 		color_rackets : customColorRackets.value,
 		color_filet : customColorNet.value,
-		ball_speed : setBallSpeed(customBallSpeed.value),
+		ball_speed : setBallSpeed(customBallSpeed.value, breakout),
 		map : customMapNb,
-		game_type : pong,
+		game_type : breakout,
 		drunk_effect : effectEnabled
 	};
 
@@ -69,7 +68,7 @@ function restoreCustomizationSettings() {
 	customColorNet.value = 2;
 	customBallSpeed.value = getBallSpeed("regular");
 	customMapNb = 1;
-	pong = true;
+	breakout = false;
 	effectEnabled = false;
 
 	updateCustomizationSettings();
@@ -163,30 +162,48 @@ function setSquareColors()
 
 function getBallSpeed(size, game_type) {
 	if (size === "slow") {
-		ballSpeed = 0.15
+		if(game_type === false)
+			ballSpeed = 0.1
+		else
+			ballSpeed = 0.15
 		return (0);
 	}
 	else if (size === "regular") {
-		ballSpeed = 0.25
+		if(game_type === false)
+			ballSpeed = 0.2
+		else
+			ballSpeed = 0.25
 		return (1);
 	}
 	else if (size === "fast") {
-		ballSpeed = 0.33
+		if(game_type === false)
+			ballSpeed = 0.33
+		else
+			ballSpeed = 0.3
 		return (2);
 	}
 }
 
-function setBallSpeed(value) {
+function setBallSpeed(value, game_type) {
 	if (value === "0") {
-		ballSpeed = 0.1
+		if(game_type === false)
+			ballSpeed = 0.1
+		else
+			ballSpeed = 0.15
 		return ("slow");
 	}
 	else if (value === "1") {
-		ballSpeed = 0.3
+		if(game_type === false)
+			ballSpeed = 0.2
+		else
+			ballSpeed = 0.25
 		return ("regular");
 	}
 	else if (value === "2") {
-		ballSpeed = 0.5
+		if(game_type === false)
+			ballSpeed = 0.33
+		else
+			ballSpeed = 0.3
 		return ("fast");
 	}
 }
@@ -194,7 +211,7 @@ function setBallSpeed(value) {
 function selectBallsNbRadioButton() {
 	let mapNbRadioId = "vbtn-map-nb" + customMapNb;
 	let gameTypeId = "vbtn-game-nb";
-	if (pong)
+	if (!breakout)
 		gameTypeId += 0;
 	else
 		gameTypeId += 1;
