@@ -93,12 +93,23 @@ canvas {
 	justify-content: center;
 	align-items: center;
 }
-/* .loginCircle {
-	width: 2px;
-	height: 10px;
+
+.status-circle {
+	width: 15px;
+	height: 15px;
 	border-radius: 50%;
-	background-color: #ff0000;
-} */
+	display: inline-block;
+	margin-right: 8px;
+}
+
+.online {
+	background-color: green;
+}
+
+.offline {
+	background-color: red;
+}
+
 /* GAME STYLES */
 
 #bot-id
@@ -143,3 +154,4 @@ canvas {
     font-weight: normal;
     font-style: normal;
 }
+
