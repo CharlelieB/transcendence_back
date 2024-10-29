@@ -19,12 +19,16 @@ function displaySocialDrawer() {
 		document.getElementById("profilePic").innerHTML = "<img src=\"http://localhost:8000" + data.avatar + "\" class=\"img-thumbnail\">";
 		getFriendsList(data);
 		// getUserStats();
+		getLoggedInStatus();
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
 	})
 }
 
+function getLoggedInStatus() {
+	makeAuthenticatedRequest("/api/is-connect/", {method: 'GET'});
+}
 
 function getFriendsList(data) {
 	const followList = {
@@ -45,14 +49,21 @@ function getFriendsList(data) {
 		const userIds = JSONdata.map(user => user.id);
 		var responseHTML = "";
 		for(let i = 0; i < usernames.length; i++) {
-			responseHTML = responseHTML + "<div class=\"row m-2\" id=\"friendContainer" + userIds[i] + "\"> \
-			<div class=\"h5 col-auto d-flex align-items-center\">" + usernames[i] + "</div> \
-			<div class=\"col d-flex justify-content-end\"> \
-				<button class=\"btn btn-outline-dark friend-stats-button\" data-bs-toggle=\"modal\"\
-				data-bs-target=\"#friendModal\" data-user-id=\""+ userIds[i] + "\"> \
-				<i class=\"bi bi-three-dots\"></i></button>\
-			</div> \
-			</div>";
+			const onlineStatusClass = connectedUserIds.includes(userIds[i]) ? "online" : "offline";
+
+			responseHTML +=
+			"<div class=\"row m-2\" id=\"friendContainer" + userIds[i] + "\"> \
+				<div class=\"col-auto d-flex align-items-center\"> \
+					<span class=\"status-circle " + onlineStatusClass + "\"></span> \
+					<div class=\"h5 ms-2\">" +  usernames[i] + "</div> \
+				</div> \
+				<div class=\"col d-flex justify-content-end\"> \
+					<button class=\"btn btn-outline-dark friend-stats-button\" data-bs-toggle=\"modal\" \
+						data-bs-target=\"#friendModal\" data-user-id=\"" + userIds[i] + "\"> \
+						<i class=\"bi bi-three-dots\"></i> \
+					</button> \
+				</div> \
+			</div> ";
 		}
 		followListContainer.innerHTML = responseHTML;
 		const friendsButtons = document.querySelectorAll(".friend-stats-button");

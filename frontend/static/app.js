@@ -5,6 +5,8 @@ let hostId = 0;
 let playerIndex = 2;
 let playerNumber = 1;
 let gamesNb = 1;
+let connectedUserIds = []
+
 
 //Tournament of 8 : 7 games
 //Tournament of 6 : 6 games
@@ -55,9 +57,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 			hostId = data.id;
 		});
 		ReplaceElement("containerEmpty", "buttonsContainer");
+		apiLoginLoop();
 		document.getElementById("containerCustomButton").classList.remove('d-none');
 		getCustomizationSettings();
-		makeAuthenticatedRequest("/api/login/", {method: 'POST'});
 		history.pushState({ page: 'home' }, 'Home', '/home');
 	} else {
 		console.error("access token not saved");
@@ -165,6 +167,7 @@ function refreshToken()
 
 function disconnect() {
 	makeAuthenticatedRequest("/api/logout/", {method: 'POST'});
+	hostConnected = false;
 	backToConnexion();
 }
 
@@ -347,4 +350,23 @@ async function verify2FA() {
 		method: 'PUT',
 		body: JSON.stringify(input2)
 	});
+}
+
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function apiLoginLoop() {
+	while (hostConnected) {
+		makeAuthenticatedRequest("/api/is-connect/", {method: 'GET'})
+		.then(response => {
+			if(!response.ok) {
+				throw new Error ('Network response was not ok');
+			}
+			return response.json();
+		}).then(data => {
+			connectedUserIds = data.connected_user_ids;
+		})
+		await wait(5000);
+		displaySocialDrawer();
+    }
 }

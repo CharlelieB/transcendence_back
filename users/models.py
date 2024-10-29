@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.utils import timezone
 
 class UserProfileManager(BaseUserManager):
     """Manager for user profiles"""
@@ -39,6 +40,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_two_factor_enabled = models.BooleanField(default=False)  # Nouveau champ
     is_connect = models.BooleanField(default=False)
+    last_called_at = models.DateTimeField(default=timezone.now)
     objects = UserProfileManager()
 
     USERNAME_FIELD = 'email'

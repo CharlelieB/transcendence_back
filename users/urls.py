@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterUserView, UserView, LoginView, AllUsersView, LogoutView, CookieTokenRefreshView, FollowProfileView, UnfollowProfileView, UserFollowersView, BulkUserView, UploadImageView, UserStatsView, IncrementWins, IncrementLosses, TOTPCreateView, TOTPVerifyView, ActivateTwoFactorView, DeactivateTwoFactorView, GuestLoginView
+from .views import RegisterUserView, UserView, LoginView, AllUsersView, LogoutView, CookieTokenRefreshView, FollowProfileView, UnfollowProfileView, UserFollowersView, BulkUserView, UploadImageView, UserStatsView, IncrementWins, IncrementLosses, TOTPCreateView, TOTPVerifyView, ActivateTwoFactorView, DeactivateTwoFactorView, GuestLoginView, UpdateLastCalled
 #from rest_framework_simplejwt.views import (
 #    TokenObtainPairView,
 #    TokenRefreshView,
@@ -27,4 +27,5 @@ urlpatterns = [
     path('2fa/activate/', ActivateTwoFactorView.as_view(), name='activate-two-factor'),
     path('2fa/deactivate/', DeactivateTwoFactorView.as_view(), name='deactivate-two-factor'),
     path('avatar/', UploadImageView.as_view(), name='avatar'),
+    path('is-connect/', UpdateLastCalled.as_view(), name='is-connect'),
 ]

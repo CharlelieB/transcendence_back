@@ -26,6 +26,10 @@ from .serializers import UserProfileSerializer, UserStatsSerializer, UserMinimal
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt import tokens, views as jwt_views, serializers as jwt_serializers, exceptions as jwt_exceptions
+from datetime import timedelta
+from django.utils import timezone
+
+
 
 def get_user_tokens(user):
     refresh = tokens.RefreshToken.for_user(user)
@@ -629,3 +633,30 @@ class UploadImageView(APIView):
         file_url = settings.MEDIA_URL + relative_path
 
         return Response({"message": "Image uploadée avec succès", "file_path": file_url}, status=status.HTTP_201_CREATED)
+    
+class UpdateLastCalled(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user.last_called_at = timezone.now()
+        user.is_connect = True
+        user.save()
+
+        now = timezone.now()
+        seven_seconds_ago = now - timedelta(seconds=7)
+
+        users_to_disconnect = UserProfile.objects.filter(is_connect=True, last_called_at__lt=seven_seconds_ago)
+
+        for other_user in users_to_disconnect:
+            other_user.is_connect = False
+            other_user.save()
+
+        connected_users = UserProfile.objects.filter(is_connect=True)
+
+        connected_user_ids = connected_users.values_list('id', flat=True)
+
+        return Response({
+            "message": "Le champ last_called_at a été mis à jour avec succès.",
+            "connected_user_ids": list(connected_user_ids) 
+        }, status=status.HTTP_200_OK)
