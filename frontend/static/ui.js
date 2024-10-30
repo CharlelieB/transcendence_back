@@ -120,6 +120,7 @@ function backButtonEOG() {
 	document.getElementById('EOGButtons').classList.add('d-none');
 	ResetMenuButtons();
 	playerIndex = 2;
+	playerNumber = 1;
 	currentTournament.active = false;
 	currentTournament.idPlayers = [];
 	currentTournament.idWinners = [];

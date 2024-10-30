@@ -168,6 +168,8 @@ function refreshToken()
 function disconnect() {
 	makeAuthenticatedRequest("/api/logout/", {method: 'POST'});
 	hostConnected = false;
+	playerNumber = 1;
+	playerIndex = 2;
 	backToConnexion();
 }
 
