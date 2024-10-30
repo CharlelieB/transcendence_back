@@ -1230,7 +1230,8 @@ function updateBotPaddlePosition() {
 
 function updatePaddlePosition()
 {
-	updateBotPaddlePosition();
+	if (!breakout)
+		updateBotPaddlePosition();
     if (keysPressed["ArrowLeft"])
         xPadelPlayer += padelSpeed * deltaTime;
     if (keysPressed["ArrowRight"])
