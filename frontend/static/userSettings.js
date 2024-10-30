@@ -95,8 +95,3 @@ function uploadImage() {
 	}
 
 }
-
-
-avatar:"/media/code/media/avatars/Blata.jpg"
-
-avatar: "/media/avatars/bilel.jpeg"
