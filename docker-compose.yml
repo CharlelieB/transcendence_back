@@ -3,6 +3,11 @@ version: '3.8'
 services:
   db:
     image: postgres:16
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - dbdata:/var/lib/postgresql/data
     env_file:
@@ -16,25 +21,27 @@ services:
       bash -c "python manage.py makemigrations &&
       python manage.py migrate &&
       python create_superuser.py &&
-      python manage.py runserver 0.0.0.0:8000"
+      gunicorn transcendence.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/code
-    ports:
-      - "8000:8000"
+    expose:
+      - 8000
     env_file:
       - .env.db
       - .env.backend
     depends_on:
-      - db
+      db:
+       condition: service_healthy
     networks:
       - mynetwork
   
-  frontend:
-    build:
-     context: .
-     dockerfile: Dockerfile.front
+  nginx:
+    build: ./nginx
     ports:
-      - "8080:80"
+      #- "8080:80"
+      - "8443:8443"
+    depends_on:
+      - backend
     networks:
       - mynetwork
 
@@ -43,3 +50,4 @@ networks:
 
 volumes:
  dbdata:
+ static_volume:

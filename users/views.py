@@ -616,7 +616,7 @@ class UploadImageView(APIView):
 
         filename = f'{user.username}{file_extension}'
         file_path = safe_join(avatar_folder, filename)
-
+        print (file_path)
         if os.path.exists(file_path):
             os.remove(file_path)
         try:
@@ -624,7 +624,7 @@ class UploadImageView(APIView):
                 for chunk in image.chunks():
                     destination.write(chunk)
         except IOError as e:
-            return Response({"error": "Erreur lors du téléchargement du fichier"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Erreur lors du téléchargement du fichier" }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         relative_path = os.path.join('avatars', filename)
         user.avatar = relative_path 
