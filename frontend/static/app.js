@@ -170,6 +170,7 @@ function disconnect() {
 	hostConnected = false;
 	playerNumber = 1;
 	playerIndex = 2;
+	history.pushState({page: 'login'}, 'Login', '/login');
 	backToConnexion();
 }
 
@@ -347,6 +348,7 @@ async function verify2FA() {
 	ReplaceElement("2FAview", "buttonsContainer");
 	document.getElementById("containerEmpty").classList.add('d-none');
 	document.getElementById("containerCustomButton").classList.remove('d-none');
+	document.getElementById("2FAinput").reset();
 	let input2 = {is_connect: true};
 	makeAuthenticatedRequest("/api/user/", {
 		method: 'PUT',
