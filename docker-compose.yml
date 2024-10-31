@@ -38,8 +38,9 @@ services:
   nginx:
     build: ./nginx
     ports:
-      #- "8080:80"
       - "8443:8443"
+    volumes:
+      - ./nginx/frontend:/usr/share/nginx/html
     depends_on:
       - backend
     networks:
