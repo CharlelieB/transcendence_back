@@ -87,8 +87,6 @@ function updateCustomModalUI() {
 }
 
 function setBallAndRacketsColors(color_ball, color_rackets) {
-	console.log(color_ball + ": color ball");
-	console.log(color_rackets + ": color rackets");
 	if (color_ball === "0" || color_ball === 0) {
 		rb = 13 / 2;
 		gb = 110 / 2;
