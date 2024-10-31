@@ -14,19 +14,19 @@ function ReplaceElement(elementToHideId, elementToShowId)
 	}
 }
 
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        // Get references to the buttons
-        const submitButton = document.getElementById('submitButton');
-        const nextGameButton = document.getElementById('nextGameButton');
+// document.addEventListener('keydown', function(event) {
+//     if (event.key === 'Enter') {
+//         // Get references to the buttons
+//         const submitButton = document.getElementById('submitButton');
+//         const nextGameButton = document.getElementById('nextGameButton');
 
-        // Trigger the click event on the buttons
-        if (hostConnected)
-			submitButton.click();
-        if (CurrentTournament.active)
-			nextGameButton.click();
-    }
-});
+//         // Trigger the click event on the buttons
+//         if (hostConnected)
+// 			submitButton.click();
+//         if (CurrentTournament.active)
+// 			nextGameButton.click();
+//     }
+// });
 
 /////    FUNCTIONS TO DISPLAY HTML ELEMENTS /////
 

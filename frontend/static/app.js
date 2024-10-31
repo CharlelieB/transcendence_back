@@ -170,6 +170,7 @@ function disconnect() {
 	hostConnected = false;
 	playerNumber = 1;
 	playerIndex = 2;
+	document.getElementById("loginBackButton").classList.add('d-none');
 	history.pushState({page: 'login'}, 'Login', '/login');
 	backToConnexion();
 }
