@@ -1573,6 +1573,8 @@ function initDeltaTime(currentTime)
 
 function rmStartNode()
 {
+	setBallAndRacketsColors(document.getElementById("formColorNet").value, document.getElementById("formColorRackets").value);
+	console.log("rb : " + rb + "gb : " + gb + "bb : " + bb);
 	updateMaterialShader();
 	if (frameId)
 		cancelAnimationFrame(frameId);

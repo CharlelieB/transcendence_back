@@ -17,9 +17,9 @@ function displaySocialDrawer() {
 		document.getElementById("userNameContainer").innerText = data.username;
 		document.getElementById("userEmailContainer").innerText = data.email;
 		document.getElementById("profilePic").innerHTML = "<img src=\"http://localhost:8000" + data.avatar + "\" class=\"img-thumbnail\">";
+		getLoggedInStatus();
 		getFriendsList(data);
 		// getUserStats();
-		getLoggedInStatus();
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
@@ -27,7 +27,15 @@ function displaySocialDrawer() {
 }
 
 function getLoggedInStatus() {
-	makeAuthenticatedRequest("/api/is-connect/", {method: 'GET'});
+	makeAuthenticatedRequest("/api/is-connect/", {method: 'GET'})
+	.then(response => {
+		if(!response.ok) {
+			throw new Error ('Network response was not ok');
+		}
+		return response.json();
+	}).then(data => {
+		connectedUserIds = data.connected_user_ids;
+	})
 }
 
 function getFriendsList(data) {

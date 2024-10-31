@@ -171,6 +171,7 @@ function disconnect() {
 	playerNumber = 1;
 	playerIndex = 2;
 	document.getElementById("loginBackButton").classList.add('d-none');
+	document.getElementById("loginTitle").innerText = "Login";
 	history.pushState({page: 'login'}, 'Login', '/login');
 	backToConnexion();
 }
@@ -372,6 +373,14 @@ async function apiLoginLoop() {
 			connectedUserIds = data.connected_user_ids;
 		})
 		await wait(5000);
-		displaySocialDrawer();
+		makeAuthenticatedRequest('/api/user/', {method: 'GET'})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			return response.json(); // Parse the response as JSON
+		}).then( data => {
+			getFriendsList(data);
+		})
     }
 }
