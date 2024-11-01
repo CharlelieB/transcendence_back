@@ -105,7 +105,38 @@ class RegisterUserView(APIView):
             return res
             # return Response({'id': user.id,'refresh': str(refresh), 'access_token': access_token,}, status=status.HTTP_201_CREATED) 
         
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+
+class GuestRegisterUserView(APIView):
+    serializer_class = UserProfileSerializer
+
+    def post(self, request):
+        if UserProfile.objects.filter(email=request.data['email']).exists():
+            return Response({'error': 'Email déjà enregistré'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            UserStats.objects.create(user=user)
+            UserCustom.objects.create(user=user)
+            # refresh = RefreshToken.for_user(user)
+            # access_token = str(refresh.access_token)
+            user.is_connect = True
+            user.save()
+            
+            user_id = user.id
+            res = response.Response(
+                user_serializer.data,
+                status=status.HTTP_200_OK
+            )
+
+           
+
+            res["X-CSRFToken"] = csrf.get_token(request)
+            return res
+            # return Response({'id': user.id,'refresh': str(refresh), 'access_token': access_token,}, status=status.HTTP_201_CREATED) 
+        
+        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
 @extend_schema(
     tags=["Authentication"],
@@ -117,6 +148,10 @@ class LoginView(GenericAPIView):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def post(self, request):
+
+        if request.user.is_authenticated:
+            return Response({'detail': 'Vous êtes déjà connecté.'},status=status.HTTP_409_CONFLICT)
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -126,7 +161,7 @@ class LoginView(GenericAPIView):
         user = authenticate(email=email, password=password)
         if user is not None:
             if user.is_two_factor_enabled:
-                return Response({'detail': 'L\'authentification à deux facteurs est activée.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'detail': 'L\'authentification à deux facteurs est activée.'}, status=status.HTTP_403_FORBIDDEN)
             user.is_connect = True
             user.save()
             tokens = get_user_tokens(user)
@@ -174,6 +209,10 @@ class GuestLoginView(GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
+
+        if request.user.is_authenticated:
+            return Response({'detail': 'Vous êtes déjà connecté.'},status=status.HTTP_409_CONFLICT)
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -181,6 +220,11 @@ class GuestLoginView(GenericAPIView):
         password = serializer.validated_data["password"]
 
         user = authenticate(email=email, password=password)
+        if user is not None:
+            if user.is_two_factor_enabled:
+                return Response({'detail': 'L\'authentification à deux facteurs est activée.'}, status=status.HTTP_403_FORBIDDEN)
+            user.is_connect = True
+            user.save()
 
         if user is not None:
             user_serializer = UserMinimalSerializer(user)

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterUserView, UserView, LoginView, AllUsersView, LogoutView, CookieTokenRefreshView, FollowProfileView, UnfollowProfileView, UserFollowersView, BulkUserView, UploadImageView, UserStatsView, IncrementWins, IncrementLosses, TOTPCreateView, TOTPVerifyView, ActivateTwoFactorView, DeactivateTwoFactorView, GuestLoginView, UpdateLastCalled
+from .views import RegisterUserView, UserView, LoginView, AllUsersView, LogoutView, CookieTokenRefreshView, FollowProfileView, UnfollowProfileView, UserFollowersView, BulkUserView, UploadImageView, UserStatsView, IncrementWins, IncrementLosses, TOTPCreateView, TOTPVerifyView, ActivateTwoFactorView, DeactivateTwoFactorView, GuestLoginView, UpdateLastCalled, GuestRegisterUserView
 #from rest_framework_simplejwt.views import (
 #    TokenObtainPairView,
 #    TokenRefreshView,
@@ -9,6 +9,8 @@ urlpatterns = [
     path('users/', AllUsersView.as_view()),
     path('user/', UserView.as_view()),
     path('register/', RegisterUserView.as_view()),
+    path('guest-register/', GuestRegisterUserView.as_view()),
+
     #path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     #path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('login/', LoginView.as_view(), name='login'),
