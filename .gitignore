@@ -1,3 +1,4 @@
 .env.db
 .env.backend
 save_data.json
+staticfiles
