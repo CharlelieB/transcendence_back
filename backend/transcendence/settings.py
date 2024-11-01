@@ -130,7 +130,7 @@ ROOT_URLCONF = 'transcendence.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'nginx/frontend/')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -253,7 +253,7 @@ SWAGGER_SETTINGS = {
 
 AUTH_USER_MODEL = 'users.UserProfile'
 
-STATICFILES_DIRS = [BASE_DIR / "nginx/frontend" / "static"]
+#STATICFILES_DIRS = [BASE_DIR / "nginx/frontend" / "static"]
 
 CORS_ALLOWED_ORIGINS=['https://localhost:8443']
 CSRF_TRUSTED_ORIGINS=['https://localhost:8443']

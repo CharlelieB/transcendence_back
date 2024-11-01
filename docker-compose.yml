@@ -17,14 +17,14 @@ services:
       - mynetwork
 
   backend:
-    build: .
+    build: ./backend
     command: >
       bash -c "python manage.py makemigrations &&
       python manage.py migrate &&
       python create_superuser.py &&
       gunicorn transcendence.wsgi:application --bind 0.0.0.0:8000"
     volumes:
-      - .:/code
+      - ./backend:/code
       - ./media:/usr/media
     expose:
       - 8000
@@ -41,7 +41,7 @@ services:
     ports:
       - "8443:8443"
     volumes:
-      - ./nginx/frontend:/usr/share/nginx/html
+      - ./frontend:/usr/share/nginx/html
       - ./media:/www/media
     depends_on:
       - backend
