@@ -24,6 +24,7 @@ services:
       gunicorn transcendence.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/code
+      - ./media:/usr/media
     expose:
       - 8000
     env_file:
@@ -42,6 +43,7 @@ services:
       - "8443:8443"
     volumes:
       - ./nginx/frontend:/usr/share/nginx/html
+      - ./media:/www/media
     depends_on:
       - backend
     networks:
