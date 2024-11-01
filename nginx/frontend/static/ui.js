@@ -14,17 +14,19 @@ function ReplaceElement(elementToHideId, elementToShowId)
 	}
 }
 
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        // Get references to the buttons
-        const button1 = document.getElementById('submitButton');
-        const button2 = document.getElementById('nextGameButton');
+// document.addEventListener('keydown', function(event) {
+//     if (event.key === 'Enter') {
+//         // Get references to the buttons
+//         const submitButton = document.getElementById('submitButton');
+//         const nextGameButton = document.getElementById('nextGameButton');
 
-        // Trigger the click event on the buttons
-        if (button1) button1.click();
-        if (button2) button2.click();
-    }
-});
+//         // Trigger the click event on the buttons
+//         if (hostConnected)
+// 			submitButton.click();
+//         if (CurrentTournament.active)
+// 			nextGameButton.click();
+//     }
+// });
 
 /////    FUNCTIONS TO DISPLAY HTML ELEMENTS /////
 
@@ -120,6 +122,7 @@ function backButtonEOG() {
 	document.getElementById('EOGButtons').classList.add('d-none');
 	ResetMenuButtons();
 	playerIndex = 2;
+	playerNumber = 1;
 	currentTournament.active = false;
 	currentTournament.idPlayers = [];
 	currentTournament.idWinners = [];
