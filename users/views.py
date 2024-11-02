@@ -67,8 +67,6 @@ class RegisterUserView(APIView):
             user = serializer.save()
             UserStats.objects.create(user=user)
             UserCustom.objects.create(user=user)
-            # refresh = RefreshToken.for_user(user)
-            # access_token = str(refresh.access_token)
             user.is_connect = True
             user.save()
             tokens = get_user_tokens(user)
@@ -103,7 +101,6 @@ class RegisterUserView(APIView):
 
             res["X-CSRFToken"] = csrf.get_token(request)
             return res
-            # return Response({'id': user.id,'refresh': str(refresh), 'access_token': access_token,}, status=status.HTTP_201_CREATED) 
         
         return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -148,8 +145,6 @@ class LoginView(GenericAPIView):
 
     def post(self, request):
 
-        
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -185,8 +180,6 @@ class LoginView(GenericAPIView):
             )
 
             user_id = user.id
-
-
             res.data = {
                 'id': user_id,
                 'access_token': tokens["access_token"],
@@ -206,12 +199,9 @@ class LoginView(GenericAPIView):
 class GuestLoginView(GenericAPIView):
     serializer_class = LoginSerializer
     parser_classes = [JSONParser, MultiPartParser, FormParser]
-    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
 
-        if request.user.is_authenticated:
-            return Response({'detail': 'Vous êtes déjà connecté.'},status=status.HTTP_409_CONFLICT)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -221,9 +211,10 @@ class GuestLoginView(GenericAPIView):
 
         user = authenticate(email=email, password=password)
         if user is not None:
+            if user.is_connect:
+                return Response({'detail': 'Vous êtes déjà connecté.'},status=status.HTTP_409_CONFLICT)
             if user.is_two_factor_enabled:
                 return Response({'detail': 'L\'authentification à deux facteurs est activée.'}, status=status.HTTP_403_FORBIDDEN)
-            user.is_connect = True
             user.save()
 
         if user is not None:
