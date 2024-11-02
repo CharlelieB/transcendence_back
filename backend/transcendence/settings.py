@@ -130,7 +130,7 @@ ROOT_URLCONF = 'transcendence.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'nginx/frontend/')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -197,7 +197,7 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, '/usr/media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -253,10 +253,10 @@ SWAGGER_SETTINGS = {
 
 AUTH_USER_MODEL = 'users.UserProfile'
 
-STATICFILES_DIRS = [BASE_DIR / "nginx/frontend" / "static"]
+#STATICFILES_DIRS = [BASE_DIR / "nginx/frontend" / "static"]
 
-CORS_ALLOWED_ORIGINS=['https://localhost']
-CSRF_TRUSTED_ORIGINS=['https://localhost']
+CORS_ALLOWED_ORIGINS=['https://localhost:8443']
+CSRF_TRUSTED_ORIGINS=['https://localhost:8443']
 
 CORDS_ALLOW_CREDENTIALS=True
 CSRF_COOKIE_SECURE=True
