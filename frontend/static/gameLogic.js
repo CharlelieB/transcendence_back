@@ -36,8 +36,22 @@ async function checkAdversaryCredentials() {
 		body: JSON.stringify(input)
 	});
 	if (!response.ok) {
-		errorMessageContainer.innerText = "Email or password incorect"
-		return false;
+		if (response.status === 403) {
+			display2FA();
+			return true;
+		}
+		else if (response.status === 401) {
+			errorMessageContainer.innerText = "Email or password incorect";
+			return false;
+		}
+		else if (response.status === 400) {
+			errorMessageContainer.innerText = "Wrong Email format";
+			return false;
+		}
+		else if (response.status === 409) {
+			errorMessageContainer.innerText = "Host user allready connected";
+			return false;
+		}
 	}
 	let data = await response.json();
 	if (data) {
@@ -63,12 +77,16 @@ async function createAdversaryCredentials () {
 		username: email,
 		password: password
 	};
+	if (!validateEmail(email)) {
+		errorMessageContainer.innerText = "Please enter a valid email address";
+		return false;
+	}
 	if (password !== passwordComfirmation)
 	{
 		errorMessageContainer.innerText = "The passwords don't match";
 		return false;
 	}
-	let response = await makeUnauthenticatedRequest("/api/register/", {
+	let response = await makeUnauthenticatedRequest("/api/guest-register/", {
 		method: 'POST',
 		body: JSON.stringify(input)
 	});

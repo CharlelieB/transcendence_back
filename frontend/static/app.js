@@ -186,10 +186,8 @@ async function submitUserForm() {
 		}
 		else {
 			let ret = await checkAdversaryCredentials();
-			if (ret === false) {
-				console.log("No user with these credentials");
+			if (ret === false)
 				return ;
-			}
 			else if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
 				rmStartNodePvp();
@@ -217,6 +215,8 @@ async function submitUserForm() {
 		}
 		else {
 			let ret = await createAdversaryCredentials();
+			if (ret === false)
+					return ;
 			if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
 				rmStartNodePvp();
@@ -253,12 +253,18 @@ function userLogin() {
 	})
 	.then(response => {
 		if(!response.ok) {
-			if (response.status === 400) {
+			if (response.status === 403) {
 				display2FA();
 				throw new Error("2FA activated");
 			}
-			else {
-				throw new Error('Network response was not ok');
+			else if (response.status === 401) {
+				throw new Error('Email or password incorect');
+			}
+			else if (response.status === 400) {
+				throw new Error('Wrong Email format');
+			}
+			else if (response.status === 409) {
+				throw new Error('User allready connected');
 			}
 		}
 		return response.json();
@@ -276,7 +282,7 @@ function userLogin() {
 		document.getElementById("containerCustomButton").classList.remove("d-none");
 	})
 	.catch(error => {
-		errorMessageContainer.innerText = "Email or password incorect"
+		errorMessageContainer.innerText = error;
 	})
 }
 
