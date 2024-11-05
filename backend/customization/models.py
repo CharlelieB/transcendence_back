@@ -8,8 +8,8 @@ class UserCustom(models.Model):
     color_filet = models.IntegerField(default=4)
     ball_speed = models.CharField(default='regular')
     map = models.IntegerField(default=1)
-    game_type = models.BooleanField(default=True)
+    game_type = models.BooleanField(default=False)
     drunk_effect = models.BooleanField(default=False)
-    
+
     def __str__(self):
         return f"Custom {self.user.username}"

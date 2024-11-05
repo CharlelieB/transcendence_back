@@ -179,6 +179,8 @@ function disconnect() {
 // LOGIN & REGISTER
 
 async function submitUserForm() {
+	console.log("Player nb is : " + playerNumber);
+	console.log("Player Index is : " + playerIndex);
 	if(connectAccountRadio.checked)
 	{
 		if (!hostConnected) {
@@ -200,7 +202,7 @@ async function submitUserForm() {
 					document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
 				}
 				else {
-					playerIndex = 0;
+					playerIndex = 2;
 					currentTournament.idPlayers.push(hostId);
 					setCurrentMatch();
 					rmStartNodePvp();
@@ -222,13 +224,14 @@ async function submitUserForm() {
 				rmStartNodePvp();
 			}
 			else {
-				if (playerIndex <= playerNumber) {
+				if (playerIndex < playerNumber) {
 					playerIndex++;
 					document.getElementById("userForm").reset();
 					document.getElementById("connectionErrorMessage").classList.add("d-none");
 					document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
 				}
 				else {
+					playerIndex = 2;
 					currentTournament.idPlayers.push(hostId);
 					setCurrentMatch();
 					rmStartNodePvp();
