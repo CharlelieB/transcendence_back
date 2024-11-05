@@ -325,7 +325,7 @@ function userRegistration() {
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
-		errorMessageContainer.innerText = "This user is allready registered, you can connect";
+		errorMessageContainer.innerText = "This user is already registered";
 	})
 }
 

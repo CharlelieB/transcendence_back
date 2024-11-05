@@ -91,7 +91,7 @@ async function createAdversaryCredentials () {
 		body: JSON.stringify(input)
 	});
 	if (!response.ok) {
-		errorMessageContainer.innerText = "This user is allready registered, you can connect";
+		errorMessageContainer.innerText = "This user is already registered";
 		return false;
 	}
 	let data = await response.json();
