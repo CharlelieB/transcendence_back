@@ -38,7 +38,7 @@ async function checkAdversaryCredentials() {
 	if (!response.ok) {
 		if (response.status === 403) {
 			display2FA();
-			return true;
+			return false;
 		}
 		else if (response.status === 401) {
 			errorMessageContainer.innerText = "Email or password incorect";

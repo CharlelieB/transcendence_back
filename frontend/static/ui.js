@@ -63,8 +63,10 @@ function displayHomePage() {
 
  function DisplayGame()
  {
+	console.log("Inside DisplayGame");
 	document.getElementById("containerCustomButton").classList.add("d-none");
 	document.getElementById("containerTitle").classList.add("d-none");
+	document.getElementById("container2FA").classList.add('d-none');
 	 if (currentMatch.bot)
 		 ReplaceElement("buttonsContainer", "gameContainer");
 	 else

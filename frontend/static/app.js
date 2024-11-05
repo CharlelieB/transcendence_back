@@ -190,7 +190,7 @@ async function submitUserForm() {
 			let ret = await checkAdversaryCredentials();
 			if (ret === false)
 				return ;
-			else if (playerNumber === 2) {
+			if (playerNumber === 2) {
 				currentMatch.idPlayer1 = hostId;
 				rmStartNodePvp();
 			}
@@ -226,7 +226,7 @@ async function submitUserForm() {
 			else {
 				if (playerIndex < playerNumber) {
 					playerIndex++;
-					document.getElementById("userForm").reset();
+					document.getElementById("userForm").reset()
 					document.getElementById("connectionErrorMessage").classList.add("d-none");
 					document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
 				}
@@ -333,29 +333,55 @@ async function verify2FA() {
 	email = document.getElementById('emailInput').value;
 	password = document.getElementById('passwordInput').value;
 	token = document.getElementById('2FAinput').value;
-
+	let response;
 	input = {
 		email: email,
 		password: password,
 		token : token,
 	};
-
-	let response = await makeUnauthenticatedRequest("/api/2fa/verify/", {
-		method: 'POST',
-		body: JSON.stringify(input)
-	});
+	if (hostConnected) {
+		response = await makeUnauthenticatedRequest("/api/2fa/verify/", {
+			method: 'POST',
+			body: JSON.stringify(input)
+		});
+	}
+	else {
+		response = await makeAuthenticatedRequest("/api/2fa/guest-verify/", {
+			method: 'POST',
+			body: JSON.stringify(input)
+		})
+	}
 	if (!response.ok) {
 		document.getElementById("2FAErrorMessage").innerText = "Wrong token";
 		return ;
 	}
 	let data = await response.json();
-	hostId = data.id;
-	ReplaceElement("2FAview", "buttonsContainer");
-	apiLoginLoop();
-	window.accessToken = data.access_token;
-	document.getElementById("containerEmpty").classList.add('d-none');
-	document.getElementById("containerCustomButton").classList.remove('d-none');
-	document.getElementById("2FAinput").reset();
+	document.getElementById("2FAinput").value = "";
+	if (hostConnected === false) {
+		ReplaceElement("2FAview", "buttonsContainer");
+		document.getElementById("containerEmpty").classList.add('d-none');
+		document.getElementById("containerCustomButton").classList.remove('d-none');
+		window.accessToken = data.access_token;
+		hostConnected = true;
+		hostId = data.id;
+		apiLoginLoop();
+	}
+	else {
+		console.log("inside else of 2fa verify");
+		if (playerIndex < playerNumber) {
+			playerIndex++;
+			ReplaceElement("2FAview", "buttonsContainer");
+			document.getElementById("userForm").reset();
+			document.getElementById("connectionErrorMessage").classList.add("d-none");
+			document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
+		}
+		else {
+			playerIndex = 2;
+			currentTournament.idPlayers.push(hostId);
+			setCurrentMatch();
+			rmStartNodePvp();
+		}
+	}
 }
 
 function wait(ms) {
