@@ -66,11 +66,14 @@ function displayHomePage() {
 	console.log("Inside DisplayGame");
 	document.getElementById("containerCustomButton").classList.add("d-none");
 	document.getElementById("containerTitle").classList.add("d-none");
-	document.getElementById("container2FA").classList.add('d-none');
-	 if (currentMatch.bot)
-		 ReplaceElement("buttonsContainer", "gameContainer");
-	 else
-		 ReplaceElement("playerConnection", "gameContainer");
+	document.getElementById("2FAview").classList.add('d-none');
+	document.getElementById("buttonsContainer").classList.add('d-none');
+	document.getElementById("playerConnection").classList.add('d-none');
+	document.getElementById("gameContainer").classList.remove('d-none');
+	//  if (currentMatch.bot)
+	// 	 ReplaceElement("buttonsContainer", "gameContainer");
+	//  else
+	// 	 ReplaceElement("playerConnection", "gameContainer");
 	 history.pushState({ page: 'game' }, 'Game', '/game');
 	//make background black
  }
@@ -168,6 +171,7 @@ function resetUserSettingsButtons() {
 
 function display2FA() {
 	ReplaceElement("playerConnection", "2FAview");
+	document.getElementById("2FAinput").value = "";
 }
 
 async function displayMatchInfo() {

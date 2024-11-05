@@ -274,6 +274,7 @@ function drawCanvas(wins, losses, chartId) {
 let tmpName
 
 async function getPlayerNames(ids) {
+	console.log("getting names for : " + ids[0] + " and " + ids[1]);
 	let response = await makeAuthenticatedRequest("/api/users/ids/", {
 		method: 'POST',
 		body: JSON.stringify(ids)

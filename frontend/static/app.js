@@ -339,7 +339,7 @@ async function verify2FA() {
 		password: password,
 		token : token,
 	};
-	if (hostConnected) {
+	if (!hostConnected) {
 		response = await makeUnauthenticatedRequest("/api/2fa/verify/", {
 			method: 'POST',
 			body: JSON.stringify(input)
@@ -370,15 +370,21 @@ async function verify2FA() {
 		console.log("inside else of 2fa verify");
 		if (playerIndex < playerNumber) {
 			playerIndex++;
-			ReplaceElement("2FAview", "buttonsContainer");
+			ReplaceElement("2FAview", "playerConnection");
 			document.getElementById("userForm").reset();
 			document.getElementById("connectionErrorMessage").classList.add("d-none");
 			document.getElementById("loginTitle").innerText = "Player " + playerIndex + " login";
+			currentTournament.idPlayers.push(data.id);
 		}
 		else {
 			playerIndex = 2;
-			currentTournament.idPlayers.push(hostId);
-			setCurrentMatch();
+			if (currentTournament.active) {
+				currentTournament.idPlayers.push(hostId);
+				currentTournament.idPlayers.push(data.id);
+				setCurrentMatch();
+			}
+			currentMatch.idPlayer2 = data.id;
+			currentMatch.idPlayer1 = hostId;
 			rmStartNodePvp();
 		}
 	}

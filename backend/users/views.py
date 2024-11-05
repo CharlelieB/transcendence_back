@@ -593,6 +593,43 @@ class TOTPVerifyView(APIView):
         return res
 
 @extend_schema(tags=['Two-Factor Authentication'])
+class guestTOTPVerifyView(APIView):
+    serializer_class = LoginSerializer
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
+
+    def post(self, request):
+        login_serializer = LoginSerializer(data=request.data)
+        login_serializer.is_valid(raise_exception=True)
+
+        email = login_serializer.validated_data["email"]
+        password = login_serializer.validated_data["password"]
+
+        user = authenticate(email=email, password=password)
+        if user is None:
+            raise rest_exceptions.AuthenticationFailed("Email ou mot de passe incorrect!")
+
+        if user.is_two_factor_enabled:
+            totp_serializer = TOTPVerifySerializer(data=request.data)
+            if not totp_serializer.is_valid():
+                return Response(totp_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            token = totp_serializer.validated_data.get('token')
+            device = TOTPDevice.objects.filter(user=user, confirmed=False).first()
+            
+            if not device or not device.verify_token(token):
+                return Response({'detail': 'Code TOTP invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+        user.is_connect = True
+        user.save()
+        user_serializer = UserMinimalSerializer(user)
+        res = Response(
+            user_serializer.data,
+            status=status.HTTP_200_OK
+        )
+        
+        res["X-CSRFToken"] = csrf.get_token(request)
+        return res
+
+@extend_schema(tags=['Two-Factor Authentication'])
 class ActivateTwoFactorView(views.APIView):
     """
     API pour activer l'authentification à deux facteurs.
