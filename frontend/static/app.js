@@ -276,11 +276,8 @@ function userLogin() {
 		window.accessToken = data.access_token;
 		hostId = data.id;
 		hostConnected = true;
+		apiLoginLoop();
 		ReplaceElement("playerConnection", "buttonsContainer");
-		makeAuthenticatedRequest("/api/user/", {
-			method: 'PUT',
-			body: JSON.stringify({is_connect: true})
-		});
 		document.getElementById("containerEmpty").classList.add("d-none");
 		document.getElementById("containerCustomButton").classList.remove("d-none");
 	})
@@ -320,10 +317,7 @@ function userRegistration() {
 		window.accessToken = data.access_token;
 		hostId = data.id;
 		hostConnected = true;
-		makeAuthenticatedRequest("/api/user/", {
-			method: 'PUT',
-			body: JSON.stringify({is_connect: true})
-		});
+		apiLoginLoop();
 		ReplaceElement("playerConnection", "buttonsContainer");
 		document.getElementById("containerEmpty").classList.add("d-none");
 		document.getElementById("containerCustomButton").classList.remove("d-none");
@@ -351,20 +345,17 @@ async function verify2FA() {
 		body: JSON.stringify(input)
 	});
 	if (!response.ok) {
-		errorMessageContainer.innerText = "Wrong token";
+		document.getElementById("2FAErrorMessage").innerText = "Wrong token";
 		return ;
 	}
 	let data = await response.json();
 	hostId = data.id;
 	ReplaceElement("2FAview", "buttonsContainer");
+	apiLoginLoop();
+	window.accessToken = data.access_token;
 	document.getElementById("containerEmpty").classList.add('d-none');
 	document.getElementById("containerCustomButton").classList.remove('d-none');
 	document.getElementById("2FAinput").reset();
-	let input2 = {is_connect: true};
-	makeAuthenticatedRequest("/api/user/", {
-		method: 'PUT',
-		body: JSON.stringify(input2)
-	});
 }
 
 function wait(ms) {
