@@ -153,6 +153,18 @@ class LoginView(GenericAPIView):
 
         user = authenticate(email=email, password=password)
         if user is not None:
+            now = timezone.now()
+            seven_seconds_ago = now - timedelta(seconds=7)
+
+            users_to_disconnect = UserProfile.objects.filter(is_connect=True, last_called_at__lt=seven_seconds_ago)
+
+            for other_user in users_to_disconnect:
+                other_user.is_connect = False
+                other_user.save()
+
+            connected_users = UserProfile.objects.filter(is_connect=True)
+
+            connected_user_ids = connected_users.values_list('id', flat=True)
             if user.is_connect:
                 return Response({'detail': 'Vous êtes déjà connecté.'},status=status.HTTP_409_CONFLICT)
             if user.is_two_factor_enabled:

@@ -1022,8 +1022,8 @@ function updateBallPositionBreakout(rebound)
 			brickWall2.splice(i,1);
 		}
 	}
-	currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
-	currentMatch.scorePlayer2 =	24 - brickWall2.length - player2Malus;
+	currentMatch.scorePlayer1 = 24 - brickWall2.length - player2Malus;
+	currentMatch.scorePlayer2 =	24 - brickWall.length - playerMalus;
     // Vérifier les collision avec les obstacles.
 	if (customMapNb && (zBall <= ZMAX_ / 2 + obstacleSize && zBall >= ZMAX_ / 2 - obstacleSize)
 		&& (xBall <= XMAX / 2 + obstacleWidth && xBall >= XMAX / 2 - obstacleWidth))
@@ -1121,8 +1121,8 @@ function updateBallPosition(rebound)
     if (zBall >= ZMAX + 0.5 || zBall <= ZMIN - 0.5)
 	{
         // Inverser la direction sur Z si on atteint les bords arrière
-		currentMatch.scorePlayer1 += 1 * (zVelocity > 0);
-		currentMatch.scorePlayer2 += 1 * (zVelocity < 0);
+		currentMatch.scorePlayer2 += 1 * (zVelocity > 0);
+		currentMatch.scorePlayer1 += 1 * (zVelocity < 0);
 		zVelocity = -zVelocity;
 		zBall = ZMAX / 2;
 		zBallPvp = zBall + 1;
@@ -1352,8 +1352,8 @@ function gameLoopPvpBreakout(currentTime)
 	}
 	else
 	{
-		currentMatch.scorePlayer1 = 24 - brickWall.length - playerMalus;
-		currentMatch.scorePlayer2 = 24 - brickWall2.length - player2Malus;
+		currentMatch.scorePlayer1 = 24 - brickWall2.length - player2Malus;
+		currentMatch.scorePlayer2 = 24 - brickWall.length - playerMalus;
 		if (currentMatch.scorePlayer1 > currentMatch.scorePlayer2)
 			displayResult(currentMatch.usernamePlayer1, currentMatch.idPlayer1);
 		else if (currentMatch.scorePlayer1 === currentMatch.scorePlayer2)
