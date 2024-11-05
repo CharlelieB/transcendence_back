@@ -160,6 +160,7 @@ function resetUserSettingsButtons() {
 	document.getElementById("passwordChangeButton").classList.remove('d-flex');
 	ReplaceElement("usernameChangeContainer", "usernameChangeButton");
 	document.getElementById("usernameChangeButton").classList.remove('d-flex');
+	document.getElementById("QRcodeContainer").innerHTML = "";
 }
 
 
