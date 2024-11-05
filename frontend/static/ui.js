@@ -166,6 +166,7 @@ function resetUserSettingsButtons() {
 	ReplaceElement("usernameChangeContainer", "usernameChangeButton");
 	document.getElementById("usernameChangeButton").classList.remove('d-flex');
 	document.getElementById("QRcodeContainer").innerHTML = "";
+	document.getElementById("pictureUploadError").innerText = ""
 }
 
 
