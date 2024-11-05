@@ -89,7 +89,11 @@ function uploadImage() {
 		makeAuthenticatedFileUpload("/api/avatar/", {
 			method: 'POST',
 			body: formData
-		}).then(() => {
+		}).then(response => {
+			if(!response.ok) {
+				console.log("inside error element");
+				document.getElementById("pictureUploadError").innerText = "Error while uploading image"
+			}
 			displaySocialDrawer();
 		})
 	}
